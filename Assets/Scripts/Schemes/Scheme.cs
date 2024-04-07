@@ -1,7 +1,10 @@
+using Schemes.Data;
+
 namespace Schemes
 {
     public class Scheme
     {
+        
         #region PRIVATE_VARIABLES
 
         private SchemeData _schemeData;
