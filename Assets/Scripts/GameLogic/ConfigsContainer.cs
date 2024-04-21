@@ -6,6 +6,6 @@ namespace GameLogic
 {
     public class ConfigsContainer : MonoBehaviour
     {
-        [SerializeField] private DefaultScriptableSchemes _defaultScriptableSchemes;
+        [SerializeField] private DefaultScriptableSchemes defaultScriptableSchemes;
     }
 }
