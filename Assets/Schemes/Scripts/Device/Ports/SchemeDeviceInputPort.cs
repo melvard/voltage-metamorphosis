@@ -1,6 +1,4 @@
-using UnityEngine;
-
-namespace Schemes.Device
+namespace Schemes.Device.Ports
 {
     public class SchemeDeviceInputPort : SchemeDevicePort
     {

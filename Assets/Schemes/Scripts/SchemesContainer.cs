@@ -1,17 +1,20 @@
 using System.Collections.Generic;
+using GameLogic;
 using Misc;
+using Schemes.Data;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Schemes
 {
-    public class SchemesContainer
+    public class SchemesContainer : IContainer
     {
-        private readonly Dictionary<SchemeKey, Scheme> _schemeComponents;
+        [ShowInInspector] private readonly Dictionary<string, Scheme> _schemeComponents;
         public SchemesContainer()
         {
             _schemeComponents = new();
         }
-        public void AddSchemes(Scheme[] schemes)
+        public void AddSchemes(List<Scheme> schemes)
         {
             foreach (var scheme in schemes)
             {
@@ -23,13 +26,13 @@ namespace Schemes
             }
         }
 
-        public Scheme GetSchemeByKey(SchemeKey schemeKey)
+        public Scheme GetSchemeByKey(string schemeKeyGuid)
         {
-            if (_schemeComponents.TryGetValue(schemeKey, out var scheme))
+            if (_schemeComponents.TryGetValue(schemeKeyGuid, out var scheme))
             {
                 return scheme;
             }
-            throw new KeyNotFoundException($"Scheme with key '{schemeKey}' is not found");
+            throw new KeyNotFoundException($"Scheme with key '{schemeKeyGuid}' is not found");
         }
 
         public void ClearContainer()
@@ -38,6 +41,7 @@ namespace Schemes
         }
         
         // todo: container needs to be refreshed when scheme changes
+       
     }
 }
 

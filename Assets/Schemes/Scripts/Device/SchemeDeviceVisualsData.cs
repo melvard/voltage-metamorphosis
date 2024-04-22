@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Schemes.Data;
+using Schemes.Device.Ports;
 
 namespace Schemes.Device
 {

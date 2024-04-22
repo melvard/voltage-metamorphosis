@@ -7,7 +7,7 @@ namespace Schemes.Data
     public struct ComponentScheme
     {
         [SerializeField] private int componentIndex;
-        [SerializeField] private int schemeKeyNum;
+        [SerializeField] private SchemeKey schemeKey;
         
         // todo: Scheme get bt schemeKeyNum I guess
     }

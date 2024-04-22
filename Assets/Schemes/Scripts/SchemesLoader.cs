@@ -1,19 +1,32 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using GameLogic;
 using TreeEditor;
 
 namespace Schemes
 {
     public static class SchemesLoader
     {
-        private static void LoadDefaultSchemes()
+        private static List<Scheme> GetDefaultSchemes()
         {
-            throw new NotImplementedException("Load default schemes is not implemented");
+           var schemeDatas =  GameManager.Instance.GetContainerOfType<ConfigsContainer>().GetDefaultSchemes();
+           List<Scheme> defaultSchemes = new();
+           foreach (var schemeData in schemeDatas)
+           {
+               Scheme scheme = new Scheme(schemeData);
+               
+               defaultSchemes.Add(scheme);
+           }
+
+           return defaultSchemes;
         }
         
-        public static async UniTask<Scheme[]> LoadSchemes()
+        public static async UniTask<List<Scheme>> LoadSchemes()
         {
-            LoadDefaultSchemes();
+            var defaultSchemes = GetDefaultSchemes();
+            
+            return defaultSchemes;
             // deserialization here
             throw new NotImplementedException("Load schemes is not implemented");
         }

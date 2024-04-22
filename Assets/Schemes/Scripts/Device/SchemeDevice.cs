@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Schemes.Device.Ports;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -23,8 +24,8 @@ namespace Schemes.Device
             }
             
             _underliningScheme = scheme;
-            var schemeDeviceInputPorts = GenerateInputPorts();
-            var schemeDeviceOutputPorts = GenerateOutputPorts();
+            var schemeDeviceInputPorts = GenerateInputPorts(scheme.SchemeData.SchemeLogicData.NumberOfInputs);
+            var schemeDeviceOutputPorts = GenerateOutputPorts(scheme.SchemeData.SchemeLogicData.NumberOfOutputs);
 
             SchemeDeviceVisualsData schemeDeviceVisualsData = new()
             {   
@@ -37,10 +38,10 @@ namespace Schemes.Device
             // _schemeLogicUnit.Logigalize(scheme.SchemeData.SchemeLogicData);
         }
 
-        private List<SchemeDeviceInputPort> GenerateInputPorts()
+        private List<SchemeDeviceInputPort> GenerateInputPorts(int amountOfInputs)
         {
             List<SchemeDeviceInputPort> schemeDeviceInputPorts = new();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < amountOfInputs; i++)
             {
                 var schemeDeviceInputPort = Instantiate(schemeDeviceInputPortRef, transform);
                 schemeDeviceInputPorts.Add(schemeDeviceInputPort);
@@ -49,10 +50,10 @@ namespace Schemes.Device
             return schemeDeviceInputPorts;
         }
 
-        private List<SchemeDeviceOutputPort> GenerateOutputPorts()
+        private List<SchemeDeviceOutputPort> GenerateOutputPorts(int amountOfInputs)
         {
             List<SchemeDeviceOutputPort> schemeDeviceOutputPorts = new();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < amountOfInputs; i++)
             {
                 var schemeDeviceOutputPort = Instantiate(schemeDeviceOutputPortRef, transform);
                 schemeDeviceOutputPorts.Add(schemeDeviceOutputPort);

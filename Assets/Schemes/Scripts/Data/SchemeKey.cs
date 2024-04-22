@@ -10,19 +10,25 @@ namespace Schemes
         #region PRIVATE_VARIABLES
 
         [DisableInEditorMode][ShowInInspector][OdinSerialize]
-        private string guidStr;
+        private string _guidStr;
         
-
         public SchemeKey()
         {
-            guidStr = Guid.NewGuid().ToString();
+            _guidStr = Guid.NewGuid().ToString();
         }
 
         #endregion
+
+
+        public static implicit operator string(SchemeKey schemeKey)
+        {
+            return schemeKey._guidStr;
+        }
         
         public override string ToString()
         {
-            return guidStr;
+            return _guidStr;
         }
     }
+
 }

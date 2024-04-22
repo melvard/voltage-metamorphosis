@@ -18,8 +18,12 @@ MonoBehaviour:
     schemeVisualsData:
       displayName: Relay
       size: {x: 1, y: 1}
-      inputPositions: []
-      outputPositions: []
+      inputPositions:
+      - {x: -1, y: 0.75}
+      - {x: -1, y: -0.75}
+      outputPositions:
+      - {x: 1, y: 0.75}
+      - {x: 1, y: -0.75}
     schemeLogicData:
       hasComponentSchemes: 0
       componentSchemes: []

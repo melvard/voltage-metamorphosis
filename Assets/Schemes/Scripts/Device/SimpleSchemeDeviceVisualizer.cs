@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Schemes.Data;
+using Schemes.Device.Ports;
 using TMPro;
 using UnityEngine;
 
@@ -30,7 +31,7 @@ namespace Schemes.Device
             {
                 var position = _schemeSchemeVisualsData.schemeVisualsData.GetInputPortPosition(i);
                 // todo: handle positioning in order not to depend the implementer 
-                PositionPort(schemeDeviceOutputPorts[i], position);
+                PositionPort(schemeDeviceInputPorts[i], position);
             }
             
             for (int i = 0; i < schemeDeviceOutputPorts.Count; i++)
@@ -43,7 +44,7 @@ namespace Schemes.Device
         private void PositionPort(SchemeDevicePort schemeDevicePort, Vector2 position)
         {
             schemeDevicePort.transform.SetParent(portsContainer);
-            schemeDevicePort.transform.position = new Vector3(position.x, 0, position.y);
+            schemeDevicePort.transform.localPosition = new Vector3(position.x, 0, position.y);
         }
         
         private void SetDisplayText(string displayText)
@@ -54,8 +55,8 @@ namespace Schemes.Device
         private void SetSize(Vector2 bodySize)
         {
             Vector3 deviceBodyScale = deviceBody.localScale;
-            deviceBodyScale.x = bodySize.x;
-            deviceBodyScale.z = bodySize.y;
+            deviceBodyScale.x *= bodySize.x;
+            deviceBodyScale.z *= bodySize.y;
             deviceBody.localScale = deviceBodyScale;
         }
     }

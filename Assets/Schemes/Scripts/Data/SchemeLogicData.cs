@@ -19,6 +19,9 @@ namespace Schemes.Data
         [SerializeField] private bool isRelayRelation = true;
         [ShowIf("@!isRelayRelation")]
         [SerializeField] private List<SchemeRelation> schemeRelations;
+
+        public int NumberOfInputs => numberOfInputs;
+        public int NumberOfOutputs => numberOfOutputs;
     }
 
     [Serializable]

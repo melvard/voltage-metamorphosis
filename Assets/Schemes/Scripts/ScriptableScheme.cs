@@ -22,6 +22,7 @@ namespace Schemes
     {
         // todo: come here only after visuals
         [SerializeField] private List<SchemeData> defaultSchemesDataList;
-        
+
+        public List<SchemeData> DefaultSchemesDataList => defaultSchemesDataList;
     }
 }
