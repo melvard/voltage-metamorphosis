@@ -14,13 +14,26 @@ namespace GameLogic
 
         [SerializeField] private List<MonoContainer> monoContainers;
         
-        [DisableInEditorMode][ShowInInspector] private List<IContainer> _runtimeContainers;
+        [DisableInPlayMode][DisableInEditorMode][ShowInInspector] private List<IContainer> _runtimeContainers;
         
 
         private async void Start()
         {
             Init();
         }
+        
+        
+        #if UNITY_EDITOR
+        
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Break();
+            }
+        }
+        
+        #endif
         
         private async void Init()
         {

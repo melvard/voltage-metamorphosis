@@ -1,21 +1,20 @@
 using System.Collections.Generic;
-using System.ComponentModel;
-using Misc;
+using AYellowpaper.SerializedCollections;
 using Schemes;
 using Schemes.Data;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameLogic
 {
     public class ConfigsContainer : MonoContainer
     {
-        [SerializeField] private DefaultScriptableSchemes defaultScriptableSchemes;
+        [SerializeField] private DefaultScriptableSchemesSO defaultScriptableSchemesSo;
 
         public List<SchemeData> GetDefaultSchemes()
         {
-            
-            return defaultScriptableSchemes.DefaultSchemesDataList;
-            
+            return defaultScriptableSchemesSo.DefaultSchemesDataList;
         }
     }
 }

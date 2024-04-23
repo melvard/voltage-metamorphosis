@@ -27,19 +27,19 @@ namespace Schemes
             var defaultSchemes = GetDefaultSchemes();
             
             return defaultSchemes;
-            // deserialization here
-            throw new NotImplementedException("Load schemes is not implemented");
+            // todo: deserialization from json file here 
         }
 
+        // Note: will not be used probably
         public static async UniTask<Scheme> LoadSchemeByName()
         {
-            // deserialization here
+            // todo: deserialization from json file here 
             throw new NotImplementedException("Load scheme by name is not implemented");
         }
 
         public static async UniTask<Scheme> LoadSchemeByGuid(string guidStr)
         {
-            // deserialization here
+            // todo: deserialization from json file here 
             throw new NotImplementedException("Load scheme by guid is not implemented");
         }
         

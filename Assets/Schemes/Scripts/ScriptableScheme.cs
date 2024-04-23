@@ -18,7 +18,7 @@ namespace Schemes
 
     [CreateAssetMenu(fileName = "DefaultScriptableSchemes", menuName = "SchemeConfigs/DefaultScriptableSchemes",
         order = 1)]
-    public class DefaultScriptableSchemes : ScriptableObject
+    public class DefaultScriptableSchemesSO : ScriptableObject
     {
         // todo: come here only after visuals
         [SerializeField] private List<SchemeData> defaultSchemesDataList;

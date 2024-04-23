@@ -204,7 +204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Relay
+  m_text: Scheme_display_name
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
   m_sharedMaterial: {fileID: 7695387366603751775, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
@@ -231,7 +231,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 5.4
+  m_fontSize: 1.35
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: {fileID: 807208277626186474}
-  deviceBody: {fileID: 1889936900502597774}
+  deviceBodyMr: {fileID: 8550124604919882524}
   portsContainer: {fileID: 8981273970810565340}
 --- !u!1 &6370916268417300000
 GameObject:

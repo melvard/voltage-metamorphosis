@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 
 namespace Schemes
@@ -10,7 +11,7 @@ namespace Schemes
             throw new NotImplementedException("Save scheme is not implemented");
         }
 
-        public static async UniTask<bool> SaveSchemes(Scheme[] schemes)
+        public static async UniTask<bool> SaveSchemes(List<Scheme> schemes)
         {
             throw new NotImplementedException("Save schemes is not implemented");
         }

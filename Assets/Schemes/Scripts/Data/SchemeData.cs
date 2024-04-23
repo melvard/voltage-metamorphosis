@@ -1,4 +1,5 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Schemes.Data
@@ -8,12 +9,13 @@ namespace Schemes.Data
     {
         #region PRIVATE_VARIABLES
 
+        [Title("@name", bold: true)]
         [SerializeField] private string name;
         [SerializeField] private string description;
         [SerializeField] private SchemeKey schemeKey;
         
         [SerializeField] private SchemeVisualsData schemeVisualsData;
-        [SerializeField] private SchemeLogicData schemeLogicData;
+        [SerializeReference] private SchemeLogicData schemeLogicData;
 
         public SchemeData(SchemeKey schemeKey)
         {
@@ -21,7 +23,7 @@ namespace Schemes.Data
             name = "";
             description = "";
             schemeVisualsData = new();
-            schemeLogicData = new();
+            schemeLogicData = new CompositionLogicData();
         }
         
         #endregion

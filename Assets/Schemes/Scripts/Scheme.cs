@@ -13,7 +13,6 @@ namespace Schemes
         #endregion
 
         #region GETTERS
-
         public SchemeData SchemeData => _schemeData;
         public SchemeKey SchemeKey => _schemeData.SchemeKey;
 

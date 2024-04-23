@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Schemes.Data;
 using Schemes.Device.Ports;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -24,8 +25,18 @@ namespace Schemes.Device
             }
             
             _underliningScheme = scheme;
-            var schemeDeviceInputPorts = GenerateInputPorts(scheme.SchemeData.SchemeLogicData.NumberOfInputs);
-            var schemeDeviceOutputPorts = GenerateOutputPorts(scheme.SchemeData.SchemeLogicData.NumberOfOutputs);
+            List<SchemeDeviceInputPort> schemeDeviceInputPorts = null;
+            List<SchemeDeviceOutputPort> schemeDeviceOutputPorts = null;
+            if (scheme.SchemeData.SchemeLogicData is IInputPortSchemesLogicData inputPortSchemesLogicData)
+            {
+                schemeDeviceInputPorts = GenerateInputPorts(inputPortSchemesLogicData.NumberOfInputs);
+            }
+
+            if (scheme.SchemeData.SchemeLogicData is IOutputPortSchemeLogicData outputPortSchemeLogicData)
+            {
+                schemeDeviceOutputPorts = GenerateOutputPorts(outputPortSchemeLogicData.NumberOfOutputs);
+            }
+       
 
             SchemeDeviceVisualsData schemeDeviceVisualsData = new()
             {   
@@ -38,7 +49,7 @@ namespace Schemes.Device
             // _schemeLogicUnit.Logigalize(scheme.SchemeData.SchemeLogicData);
         }
 
-        private List<SchemeDeviceInputPort> GenerateInputPorts(int amountOfInputs)
+        private List<SchemeDeviceInputPort> GenerateInputPorts(byte amountOfInputs)
         {
             List<SchemeDeviceInputPort> schemeDeviceInputPorts = new();
             for (int i = 0; i < amountOfInputs; i++)
@@ -50,7 +61,7 @@ namespace Schemes.Device
             return schemeDeviceInputPorts;
         }
 
-        private List<SchemeDeviceOutputPort> GenerateOutputPorts(int amountOfInputs)
+        private List<SchemeDeviceOutputPort> GenerateOutputPorts(byte amountOfInputs)
         {
             List<SchemeDeviceOutputPort> schemeDeviceOutputPorts = new();
             for (int i = 0; i < amountOfInputs; i++)

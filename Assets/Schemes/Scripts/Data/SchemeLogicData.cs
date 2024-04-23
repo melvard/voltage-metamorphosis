@@ -2,67 +2,76 @@ using System;
 using System.Collections.Generic;
 using GameLogic;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Schemes.Data
 {
-    [Serializable]
-    public class SchemeLogicData
+    public enum SchemeLogicType
     {
-        [SerializeField] private bool hasComponentSchemes;
-        [ShowIf("hasComponentSchemes")]
+        Relay,
+        OneBitUserInput,
+        OneBitOutput,
+        Composition
+    }
+
+    [Serializable]
+    public abstract class SchemeLogicData
+    {
+        
+    }
+    
+    
+    [Serializable]
+    public class UserInputLogicData : SchemeLogicData, IOutputPortSchemeLogicData
+    {
+        [field:SerializeField] public byte NumberOfOutputs { get; private set; }
+    }
+    
+    [Serializable]
+    public class OutputLogicDataData : SchemeLogicData, IInputPortSchemesLogicData
+    {
+        [field:SerializeField] public byte NumberOfInputs { get; private set; }
+    }
+
+
+    public abstract class PersistentSchemeLogicData : SchemeLogicData, IOutputPortSchemeLogicData, IInputPortSchemesLogicData
+    {
+        [field:SerializeField] public byte NumberOfOutputs { get; private set; } // Note: may need set accessor
+        [field:SerializeField] public byte NumberOfInputs { get; private set; }  // Note: may need set accessor
+    }
+    
+    
+    [Serializable]
+    public class CompositionLogicData : PersistentSchemeLogicData
+    {
         [SerializeField] private List<ComponentScheme> componentSchemes;
-        
-        [SerializeField] private byte numberOfInputs;
-        [SerializeField] private byte numberOfOutputs;
-        
-        [SerializeField] private bool isRelayRelation = true;
-        [ShowIf("@!isRelayRelation")]
         [SerializeField] private List<SchemeRelation> schemeRelations;
-
-        public int NumberOfInputs => numberOfInputs;
-        public int NumberOfOutputs => numberOfOutputs;
-    }
-
-    [Serializable]
-    public struct SchemeRelation
-    {
-        [SerializeReference]public RelationNode leftNode;
-        [SerializeReference]public RelationNode rightNode;
     }
     
     [Serializable]
-    public abstract class RelationNode
+    public class RelayLogicData : PersistentSchemeLogicData
     {
         
     }
 
+    
+
     [Serializable]
-    public class VoltageRelationNode : RelationNode
+    public class PersistentVoltageLogicData : SchemeLogicData, IOutputPortSchemeLogicData
     {
-        [SerializeField] private float voltage;
+        [field:SerializeField] public byte NumberOfOutputs { get; private set;  }
+    }
+
+    public interface IOutputPortSchemeLogicData
+    {
+        byte NumberOfOutputs { get; }
     }
     
-    [Serializable]
-    public class ComponentRelationNode : RelationNode
+    public interface IInputPortSchemesLogicData
     {
-        [SerializeField] private sbyte componentIndex = -1;
-        [SerializeField] private byte componentPortIndex = 0;
+        byte NumberOfInputs { get; }
     }
-
-    // [Serializable]
-    // public class InputRelationNode : ComponentRelationNode
-    // {
-    //     
-    // }
-    //
-    // [Serializable]
-    // public class OutputRelationNode : ComponentRelationNode
-    // {
-    //     
-    // }
-
-
 }
 
 
