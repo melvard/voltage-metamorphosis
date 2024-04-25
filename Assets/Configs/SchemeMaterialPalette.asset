@@ -16,10 +16,10 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 2100000, guid: e258b8d2f97cf40f5aef693b8b7a3f7f, type: 2}
-    - {fileID: 2100000, guid: 05fd9a8a1f3a7476d907b450c96dad51, type: 2}
-    - {fileID: 2100000, guid: 71ce0d9eb2338453693c7c18f7fcf1fd, type: 2}
     - {fileID: 2100000, guid: c85d0631ac82b46d1b2779ac6f57452d, type: 2}
+    - {fileID: 2100000, guid: 05fd9a8a1f3a7476d907b450c96dad51, type: 2}
+    - {fileID: 2100000, guid: e258b8d2f97cf40f5aef693b8b7a3f7f, type: 2}
+    - {fileID: 2100000, guid: 71ce0d9eb2338453693c7c18f7fcf1fd, type: 2}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -27,11 +27,11 @@ MonoBehaviour:
     SerializationNodes:
     - Name: paletteMaterials
       Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[Schemes.PaletteColorWrapper,
+      Data: 0|System.Collections.Generic.Dictionary`2[[Misc.PaletteColorWrapper,
         Assembly-CSharp],[UnityEngine.Material, UnityEngine.CoreModule]], mscorlib
     - Name: comparer
       Entry: 7
-      Data: 1|System.Collections.Generic.ObjectEqualityComparer`1[[Schemes.PaletteColorWrapper,
+      Data: 1|System.Collections.Generic.ObjectEqualityComparer`1[[Misc.PaletteColorWrapper,
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 8
@@ -44,7 +44,73 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 7
-      Data: Schemes.PaletteColorWrapper, Assembly-CSharp
+      Data: Misc.PaletteColorWrapper, Assembly-CSharp
+    - Name: color
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.3568441
+    - Name: 
+      Entry: 4
+      Data: 0.7556537
+    - Name: 
+      Entry: 4
+      Data: 0.9339623
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: Misc.PaletteColorWrapper, Assembly-CSharp
+    - Name: color
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 0.4669811
+    - Name: 
+      Entry: 4
+      Data: 0.4669811
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: $v
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 7
+      Data: Misc.PaletteColorWrapper, Assembly-CSharp
     - Name: color
       Entry: 7
       Data: UnityEngine.Color, UnityEngine.CoreModule
@@ -68,7 +134,7 @@ MonoBehaviour:
       Data: 
     - Name: $v
       Entry: 10
-      Data: 0
+      Data: 2
     - Name: 
       Entry: 8
       Data: 
@@ -77,40 +143,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 7
-      Data: Schemes.PaletteColorWrapper, Assembly-CSharp
-    - Name: color
-      Entry: 7
-      Data: UnityEngine.Color, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 4
-      Data: 0.4669811
-    - Name: 
-      Entry: 4
-      Data: 0.4669811
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: $v
-      Entry: 10
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 7
-      Data: Schemes.PaletteColorWrapper, Assembly-CSharp
+      Data: Misc.PaletteColorWrapper, Assembly-CSharp
     - Name: color
       Entry: 7
       Data: UnityEngine.Color, UnityEngine.CoreModule
@@ -123,39 +156,6 @@ MonoBehaviour:
     - Name: 
       Entry: 4
       Data: 0
-    - Name: 
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: $v
-      Entry: 10
-      Data: 2
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 7
-      Data: Schemes.PaletteColorWrapper, Assembly-CSharp
-    - Name: color
-      Entry: 7
-      Data: UnityEngine.Color, UnityEngine.CoreModule
-    - Name: 
-      Entry: 4
-      Data: 0.3568441
-    - Name: 
-      Entry: 4
-      Data: 0.7556537
-    - Name: 
-      Entry: 4
-      Data: 0.9339623
     - Name: 
       Entry: 4
       Data: 1
