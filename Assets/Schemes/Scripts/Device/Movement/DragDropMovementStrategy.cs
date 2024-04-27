@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Exceptions;
@@ -6,17 +8,35 @@ using UnityEngine.EventSystems;
 
 namespace Schemes.Device.Movement
 {
-    public class DragDropMovementStrategy : MonoBehaviour, IMovementStrategy, IPointerDownHandler, IPointerUpHandler
+    public class DragDropMovementStrategy : MonoBehaviour, IMovementStrategy, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler
     {
         public IMovementExecutionStrategy MovementExecutionStrategy { get; set; }
 
         private CancellationTokenSource _cancellationTokenSource;
         
         private bool _movementEnabled;
+        private List<GameObject> _mouseInteractableGameObjects;
+       
         
+        public bool ShouldTakeIntoAccountInitialDelta { get; set; }
         public void SetMovementExecutionStrategy(IMovementExecutionStrategy movementExecutionStrategy)
         {
             MovementExecutionStrategy = movementExecutionStrategy;
+        }
+
+        public void SetListOfAcceptableColliders(List<Collider> mouseInteractableColliders)
+        {
+            _mouseInteractableGameObjects = mouseInteractableColliders.Select(x => x.gameObject).ToList();
+        }
+        
+        private bool ValidatePointerEventSelectedObject(GameObject go)
+        {
+            foreach (var mouseInteractableGameObject in _mouseInteractableGameObjects)
+            {
+                if (mouseInteractableGameObject.gameObject == go) return true;
+            }
+
+            return false;
         }
 
         public void EnableMovement()
@@ -31,7 +51,9 @@ namespace Schemes.Device.Movement
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if(!_movementEnabled) return;
+            if (!_movementEnabled) return;
+            if (!ValidatePointerEventSelectedObject(eventData.pointerPressRaycast.gameObject)) return;
+            
             _cancellationTokenSource = new CancellationTokenSource();
             DragDropMovementHandler(_cancellationTokenSource.Token).Forget();
         }
@@ -39,7 +61,8 @@ namespace Schemes.Device.Movement
         public void OnPointerUp(PointerEventData eventData)
         {
             if(!_movementEnabled) return;
-            
+            if (!ValidatePointerEventSelectedObject(eventData.pointerPressRaycast.gameObject)) return;
+
             if(_cancellationTokenSource != null) _cancellationTokenSource.Cancel();
         }
 
@@ -48,7 +71,11 @@ namespace Schemes.Device.Movement
             var startMousePosition = Input.mousePosition;
             Plane planeOnWhichMoves = new Plane(transform.up, transform.position);
             Vector3 hitPosition = GetPositionOnMovementPlane(planeOnWhichMoves, startMousePosition);
-            var initialDeltaRelativeToBody = hitPosition - transform.position;
+            var initialDeltaRelativeToBody = Vector3.zero;
+            if (ShouldTakeIntoAccountInitialDelta)
+            {
+                initialDeltaRelativeToBody = hitPosition - transform.position;
+            }
             
             while (true)
             {
@@ -72,5 +99,9 @@ namespace Schemes.Device.Movement
             throw new GameLogicException("Could not hit the plane you are trying to cast on for drag drop movement. Such behaviour is not expected.");
         }
 
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            Debug.Log(eventData.selectedObject);
+        }
     }
 }

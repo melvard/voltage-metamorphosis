@@ -12,7 +12,10 @@ namespace GameCamera
         private CancellationTokenSource _camMovementTasksCancellationSource;
         public float VerticalMovementSpeed { get; set; }
         public float HorizontalMovementSpeed { get; set; }
-        
+
+        public KeyCode MovementBoostKey { get; set; }
+        public float MovementBoostMultiplier { get; set; }
+
         public void SetMovementExecutionStrategy(IMovementExecutionStrategy movementExecutionStrategy)
         {
             MovementExecutionStrategy = movementExecutionStrategy;
@@ -25,6 +28,15 @@ namespace GameCamera
                 float verticalInput = Input.GetAxis("Vertical");
                 float horizontalInput = Input.GetAxis("Horizontal");
 
+                float boostMultiplier = 1f;
+                if (Input.GetKey(MovementBoostKey))
+                {
+                    boostMultiplier = MovementBoostMultiplier; 
+                }
+
+                verticalInput *= boostMultiplier;
+                horizontalInput *= boostMultiplier;
+                
                 var currentPosition = transform.position;
                 currentPosition += (verticalInput * VerticalMovementSpeed) * Vector3.forward;
                 currentPosition += (horizontalInput * HorizontalMovementSpeed) * Vector3.right;

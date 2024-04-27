@@ -58,5 +58,42 @@ namespace Schemes.Data
         }
 
         #endregion
+
+        #region SETTERS
+
+        public void SetDisplayName(string name)
+        {
+            displayName = name;
+        }
+
+        public void SetBodySize(Vector2 size)
+        {
+            this.size = size;
+        }
+
+        public void SetMaterial(Color color)
+        {
+            deviceBodyMaterial = GameManager.Instance
+                .GetContainerOfType<SchemePaletteConfigsContainer>()
+                .SchemeMaterialPaletteSo
+                .GetSchemeMaterialWithPaletteColor(color);
+        }
+        
+        public void SetInputPositions(Vector2[] inputPoses)
+        {
+            inputPositions = inputPoses;
+        }
+
+        public void SetOutputPositions(Vector2[] outputPoses)
+        {
+            outputPositions = outputPoses;
+        }
+        
+        #endregion
+
+        public static SchemeVisualsData NewVisualsData()
+        {
+            return new SchemeVisualsData();
+        } 
     }
 }

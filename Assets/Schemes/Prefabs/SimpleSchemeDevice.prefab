@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 0.1, z: 2}
+  m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 738003363610589274}
@@ -140,7 +140,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0.053}
-  m_SizeDelta: {x: 1.6409, y: 1.077}
+  m_SizeDelta: {x: 0.7618, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &2548847370825479526
 MeshRenderer:
@@ -231,7 +231,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1.35
+  m_fontSize: 1
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -355,6 +355,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   schemeDeviceInputPortRef: {fileID: 1744670561780962049, guid: f5c9c340f53714f78a0ac23a22dc277b, type: 3}
   schemeDeviceOutputPortRef: {fileID: 8512195136517733962, guid: 33db369ebe7aa4f79bc9a76ec779468c, type: 3}
+  <InteractionColliders>k__BackingField:
+  - {fileID: 6301790870400660328}
 --- !u!114 &6846774142872607273
 MonoBehaviour:
   m_ObjectHideFlags: 0

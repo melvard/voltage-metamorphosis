@@ -1,5 +1,6 @@
 using System;
 using Schemes.Data;
+using Sirenix.OdinInspector;
 
 namespace Schemes
 {
@@ -8,7 +9,7 @@ namespace Schemes
     {
         #region PRIVATE_VARIABLES
 
-        private SchemeData _schemeData;
+        [FoldoutGroup("Data")][DisableInPlayMode][DisableInEditorMode][ShowInInspector] private SchemeData _schemeData;
         
         #endregion
 
@@ -18,9 +19,17 @@ namespace Schemes
 
         #endregion
 
+        public Scheme()
+        {
+            var schemeData = SchemeData.NewSchemeData<CompositionLogicData>();
+            _schemeData = schemeData;
+        }
+        
+        
         public Scheme(SchemeData schemeData)
         {
             _schemeData = schemeData;
         }
+        
     }
 }

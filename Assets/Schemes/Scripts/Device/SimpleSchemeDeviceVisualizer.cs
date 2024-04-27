@@ -62,9 +62,9 @@ namespace Schemes.Device
             var deviceBodyTransform = deviceBodyMr.transform;
             Vector3 deviceBodyScale = deviceBodyTransform.localScale;
             var displayNameRectTransform = displayName.transform as RectTransform;
-            deviceBodyScale.x *= bodySize.x;
-            deviceBodyScale.z *= bodySize.y;
-            displayNameRectTransform.sizeDelta *= bodySize.x;
+            deviceBodyScale.x = bodySize.x;
+            deviceBodyScale.z = bodySize.y;
+            displayNameRectTransform!.sizeDelta *= bodySize.x;
             deviceBodyTransform.localScale = deviceBodyScale;
         }
 

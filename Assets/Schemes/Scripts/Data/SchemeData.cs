@@ -16,7 +16,7 @@ namespace Schemes.Data
         
         [SerializeField] private SchemeVisualsData schemeVisualsData;
         [SerializeReference] private SchemeLogicData schemeLogicData;
-
+        
         public SchemeData(SchemeKey schemeKey)
         {
             this.schemeKey = schemeKey;
@@ -25,6 +25,7 @@ namespace Schemes.Data
             schemeVisualsData = new();
             schemeLogicData = new CompositionLogicData();
         }
+        
         
         #endregion
 
@@ -35,6 +36,18 @@ namespace Schemes.Data
         public SchemeLogicData SchemeLogicData => schemeLogicData;
 
         #endregion
+
+        public static SchemeData NewSchemeData<T>() where T: SchemeLogicData, new()
+        {
+            var schemeData = new SchemeData
+            {
+                schemeKey = SchemeKey.NewKey(),
+                schemeVisualsData = SchemeVisualsData.NewVisualsData(),
+                schemeLogicData = SchemeLogicData.NewLogicData<T>()
+            };
+            return schemeData;
+        }
+
 
     }
 }

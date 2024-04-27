@@ -22,7 +22,7 @@ MonoBehaviour:
       displayName: Relay
       deviceBodyColor: {r: 0.3568441, g: 0.7556537, b: 0.9339623, a: 1}
       deviceBodyMaterial: {fileID: 2100000, guid: c85d0631ac82b46d1b2779ac6f57452d, type: 2}
-      size: {x: 1, y: 1}
+      size: {x: 2, y: 2}
       inputPositions:
       - {x: -1, y: 0.75}
       - {x: -1, y: -0.75}
@@ -40,11 +40,11 @@ MonoBehaviour:
       displayName: 1 Bit Input
       deviceBodyColor: {r: 1, g: 0.4669811, b: 0.4669811, a: 1}
       deviceBodyMaterial: {fileID: 2100000, guid: 05fd9a8a1f3a7476d907b450c96dad51, type: 2}
-      size: {x: 0.3, y: 0.3}
+      size: {x: 1, y: 1}
       inputPositions:
       - {x: 0, y: 0}
       outputPositions:
-      - {x: 0.3, y: 0}
+      - {x: 0.5, y: 0}
     schemeLogicData:
       rid: 1853704567408558081
   - name: 1 Bit Output
@@ -56,9 +56,9 @@ MonoBehaviour:
       displayName: 1 Bit Output
       deviceBodyColor: {r: 1, g: 0.4669811, b: 0.4669811, a: 1}
       deviceBodyMaterial: {fileID: 2100000, guid: 05fd9a8a1f3a7476d907b450c96dad51, type: 2}
-      size: {x: 0.3, y: 0.3}
+      size: {x: 1, y: 1}
       inputPositions:
-      - {x: -0.3, y: 0}
+      - {x: -0.5, y: 0}
       outputPositions: []
     schemeLogicData:
       rid: 1853704567408558082
@@ -71,10 +71,10 @@ MonoBehaviour:
       displayName: V
       deviceBodyColor: {r: 0.3585183, g: 0.6886792, b: 0.1721698, a: 1}
       deviceBodyMaterial: {fileID: 2100000, guid: e258b8d2f97cf40f5aef693b8b7a3f7f, type: 2}
-      size: {x: 0.3, y: 0.3}
+      size: {x: 1, y: 1}
       inputPositions: []
       outputPositions:
-      - {x: 0.3, y: 0}
+      - {x: 0.5, y: 0}
     schemeLogicData:
       rid: 1853704567408558083
   references:

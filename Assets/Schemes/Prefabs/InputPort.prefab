@@ -103,7 +103,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8724341734888856092
 GameObject:
@@ -115,6 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2910830341481584292}
   - component: {fileID: 1744670561780962049}
+  - component: {fileID: -4974849304582552774}
   m_Layer: 0
   m_Name: InputPort
   m_TagString: Untagged
@@ -148,5 +149,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d9c7fcfd872744658571b411fae2b589, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 0
+    SerializedBytes: 0b01230000005f0073006300680065006d00650044006500760069006300650050006f007200740049006e0074006500720061006300740069006f006e00480061006e0064006c006500720000000000
+    ReferencedUnityObjects:
+    - {fileID: -4974849304582552774}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+--- !u!114 &-4974849304582552774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8724341734888856092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b58cc0b97d54487a90935cd004ede88e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -15,7 +15,6 @@ namespace Schemes
         
         #endregion
 
-       
         public static implicit operator string(SchemeKey schemeKey)
         {
             return schemeKey.myGuid;
@@ -25,7 +24,13 @@ namespace Schemes
         {
             return myGuid;
         }
-        
+
+        public static SchemeKey NewKey()
+        {
+            SchemeKey schemeKey = new SchemeKey();
+            schemeKey.myGuid = MyGuid.NewGuid();
+            return schemeKey;
+        }
     }
 
     [Serializable]
@@ -55,6 +60,13 @@ namespace Schemes
         public override string ToString()
         {
             return guidStr;
+        }
+
+        public static MyGuid NewGuid()
+        {
+            var myGuid = new MyGuid();
+            myGuid.GenerateGUID();
+            return myGuid;
         }
     }
 }

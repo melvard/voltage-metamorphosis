@@ -1,24 +1,17 @@
 using System;
 using System.Collections.Generic;
-using GameLogic;
-using Sirenix.OdinInspector;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Schemes.Data
 {
-    public enum SchemeLogicType
-    {
-        Relay,
-        OneBitUserInput,
-        OneBitOutput,
-        Composition
-    }
-
     [Serializable]
     public abstract class SchemeLogicData
     {
-        
+        // returns 0/1
+        public static T NewLogicData<T>() where T : SchemeLogicData, new()
+        {
+            return new T();
+        }
     }
     
     
@@ -33,26 +26,37 @@ namespace Schemes.Data
     {
         [field:SerializeField] public byte NumberOfInputs { get; private set; }
     }
-
-
-    public abstract class PersistentSchemeLogicData : SchemeLogicData, IOutputPortSchemeLogicData, IInputPortSchemesLogicData
+    
+    [Serializable]
+    public abstract class IOSchemeLogicData : SchemeLogicData, IOutputPortSchemeLogicData, IInputPortSchemesLogicData
     {
-        [field:SerializeField] public byte NumberOfOutputs { get; private set; } // Note: may need set accessor
-        [field:SerializeField] public byte NumberOfInputs { get; private set; }  // Note: may need set accessor
+        [field:SerializeField] public byte NumberOfOutputs { get; private set; } // Note: may need public set accessor
+        [field:SerializeField] public byte NumberOfInputs { get; private set; }  // Note: may need public set accessor
+
+        // public byte[] Inputs;
+        // [NonSerialized] public byte[] outputs;
+        // public abstract byte[] GetOutputs();
+
     }
     
     
     [Serializable]
-    public class CompositionLogicData : PersistentSchemeLogicData
+    public class CompositionLogicData : IOSchemeLogicData
     {
-        [SerializeField] private List<ComponentScheme> componentSchemes;
-        [SerializeField] private List<SchemeRelation> schemeRelations;
+        [SerializeField] protected List<ComponentScheme> componentSchemes = new();
+        [SerializeField] protected List<SchemeRelation> schemeRelations = new(); 
+
+        public List<ComponentScheme> ComponentSchemes => componentSchemes;
+        public List<SchemeRelation> SchemeRelations => schemeRelations;
     }
     
     [Serializable]
-    public class RelayLogicData : PersistentSchemeLogicData
+    public class RelayLogicData : IOSchemeLogicData
     {
-        
+        // public override byte[] GetOutputs()
+        // { 
+        //     Inputs & (2 << 0);
+        // }
     }
 
     
@@ -61,6 +65,10 @@ namespace Schemes.Data
     public class PersistentVoltageLogicData : SchemeLogicData, IOutputPortSchemeLogicData
     {
         [field:SerializeField] public byte NumberOfOutputs { get; private set;  }
+        // public override byte GetVoltage(int portIndex)
+        // {
+        //     return 1;
+        // }
     }
 
     public interface IOutputPortSchemeLogicData
