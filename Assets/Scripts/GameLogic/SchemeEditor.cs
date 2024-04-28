@@ -4,6 +4,7 @@ using Schemes.Dashboard;
 using Schemes.Data;
 using Schemes.Device;
 using Schemes.Device.Movement;
+using Schemes.Device.Ports;
 using Schemes.Device.Wire;
 using Sirenix.OdinInspector;
 using Unity.VisualScripting;
@@ -15,6 +16,7 @@ public class SchemeEditor : MonoBehaviour
     public const string ONE_BIT_USER_INPUT_KEY = "2b738a45-ac8c-4508-8385-84491fe01b62";
     public const string ONE_BIT_OUTPUT_KEY= "6c6dabff-4878-4697-8001-9ec948eed7cd";
     public const string CONSTANT_VOLTAGE_KEY = "ee5cf222-b539-4e0c-a5b6-179a9561825d";
+    
     public SchemeDevice schemeDeviceRef;
     public SchemeDeviceWire schemeDeviceWireRef;
 
@@ -22,11 +24,14 @@ public class SchemeEditor : MonoBehaviour
     private CompositionLogicData _currentCompositionLogicData;
 
     private SchemeDeviceWire _currentWire;
+    private IGridHandler _gridHandler;
     
     private void Start()
     {
         _currentScheme = new Scheme();
         _currentCompositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
+        _gridHandler = EditorDashboard.Instance;
+        
     }
     
     // hack: shortcut for SchemeDevice generation
@@ -57,7 +62,8 @@ public class SchemeEditor : MonoBehaviour
     private SchemeDevice GenerateSchemeDevice(string schemeKey)
     {
         var schemeDevice = Instantiate(schemeDeviceRef);
-        schemeDevice.transform.position = GetOnBoardPos();
+        schemeDevice.transform.position = _gridHandler.GetPositionOnGridWithMouse();
+        
         schemeDevice.Init(GameManager.Instance.GetContainerOfType<SchemesContainer>().GetSchemeByKey(schemeKey));
         schemeDevice.OnDevicePortInteracted += OnDevicePortInteractedHandler;
             
@@ -69,7 +75,7 @@ public class SchemeEditor : MonoBehaviour
         IMovementExecutionStrategy movementExecutionStrategy = gridSnapMovementExecutionStrategy;
         deviceDragDropMovementStrategy.SetMovementExecutionStrategy(movementExecutionStrategy);
         deviceDragDropMovementStrategy.SetListOfAcceptableColliders(schemeDevice.InteractionColliders);
-        deviceDragDropMovementStrategy.ShouldTakeIntoAccountInitialDelta = false;
+        deviceDragDropMovementStrategy.ShouldTakeIntoAccountInitialDelta = true;
         deviceDragDropMovementStrategy.EnableMovement();
         return schemeDevice;
     }
@@ -80,7 +86,18 @@ public class SchemeEditor : MonoBehaviour
         if (!_pendingForWireConnection)
         {
             _currentWire = Instantiate(schemeDeviceWireRef);
+            _currentWire.Init();
+            // _currentWire.SetGridHandler(_gridHandler);
+            _currentWire.SetPosition(arg0.schemeDevicePortInteractEventArgs.port.transform.position);
+            _currentWire.SetStartPort(arg0.schemeDevicePortInteractEventArgs.port);
+            _currentWire.StartWiring();
             _pendingForWireConnection = true;
+        }
+        else
+        {
+            _currentWire.StopWiring();
+            _currentWire.SetEndPort(arg0.schemeDevicePortInteractEventArgs.port);
+            DefineRelation(_currentWire.StartPort, _currentWire.EndPort);
         }
     }
 
@@ -93,17 +110,12 @@ public class SchemeEditor : MonoBehaviour
 
 
     // idk what the hell is this going to do
-    private void GenerateRelation()
+    private void DefineRelation(SchemeDevicePort a, SchemeDevicePort b)
     {
         SchemeRelation schemeRelation = new();
+        
         _currentCompositionLogicData.SchemeRelations.Add(schemeRelation);
     }
     
-    private Vector3 GetOnBoardPos()
-    {
-        Plane plane = new Plane(Vector3.up, 0f);
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        plane.Raycast(ray, out var distance);
-        return ray.GetPoint(distance);
-    }
+    
 }

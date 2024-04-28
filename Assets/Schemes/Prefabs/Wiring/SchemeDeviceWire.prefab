@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bf59cb26271408d8f9042aff23ca32c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wireBodyRef: {fileID: 0}
+  wireBodyRef: {fileID: 7015543979366745627, guid: 9bbc7186bc69e4884a8176a6480107d0, type: 3}
   wireNodeRef: {fileID: 7466946291292339237, guid: 185a19f0e0b1c480f9b4c1bc59fafa7f, type: 3}
   lineRenderer: {fileID: 5396231092742615750}
 --- !u!120 &5396231092742615750
@@ -90,20 +90,10 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 1, z: 1}
-  - {x: 0, y: 0, z: 0}
-  - {x: 1, y: 2, z: 12}
-  - {x: 1, y: 0, z: 1}
-  - {x: 0, y: 0, z: 0}
-  - {x: 4, y: 13, z: 0}
-  - {x: 14, y: 0, z: 1}
-  - {x: 0, y: 0, z: 1}
-  - {x: 1, y: 34, z: 0}
-  - {x: 0, y: 0, z: 0}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 0.1
     widthCurve:
       serializedVersion: 2
       m_Curve:

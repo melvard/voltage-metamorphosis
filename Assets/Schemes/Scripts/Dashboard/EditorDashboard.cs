@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Misc;
 using Schemes.Device.Movement;
@@ -26,7 +28,7 @@ namespace Schemes.Dashboard
             Debug_GenerateRandomObstacles(_grid);
             await UniTask.WaitUntil(()=> Input.GetKeyDown(KeyCode.C));
             
-            var path = AStarPathfinding.FindPath(_grid, 0, 0, 199, 199);
+            var path = AStarPathfinding.FindPath(_grid, 0, 0, 199, 199, true);
             foreach (var gridPathNode in path)
             {
                 var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -60,6 +62,21 @@ namespace Schemes.Dashboard
         {
             return _grid.GetAlignedPositionOnGrid(position);
         }
+
+        public Vector3 GetPositionOnGridWithMouse()
+        {
+            Plane plane = new Plane(Vector3.up, 0f);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            plane.Raycast(ray, out var distance);
+            return GetPositionOnGrid(ray.GetPoint(distance));
+        }
+
+        public List<DashboardGridElement> GetPathWithWorldPositionsOnGrid(Vector3 pos1, Vector3 pos2, bool simplified)
+        {
+            _grid.GetXY(pos1, out var startX, out var startY);
+            _grid.GetXY(pos2, out var endX, out var endY);
+            return AStarPathfinding.FindPath(_grid, startX, startY, endX, endY, simplified);
+        }
     }
 
     public class DashboardGridElement : MustInitializeGridElement<DashboardGridElement>, IGridPathNode<DashboardGridElement>
@@ -74,6 +91,7 @@ namespace Schemes.Dashboard
         public DashboardGridElement nodeCameFrom { get; set; }
         
         public bool IsWalkable =>  businessIntValDebug == 0;
+        
     }
 }
 

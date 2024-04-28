@@ -1,4 +1,5 @@
 using Misc;
+using UnityEngine;
 
 namespace Schemes.Dashboard
 {
@@ -8,6 +9,8 @@ namespace Schemes.Dashboard
         int Y { get; }
 
         SmartGrid<T> Grid { get; }
+
+        Vector3 GetPositionOnGrid();
         // static T GetBusyElement() => throw new NotImplementedException();
     }
 

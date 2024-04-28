@@ -24,11 +24,11 @@ MonoBehaviour:
       deviceBodyMaterial: {fileID: 2100000, guid: c85d0631ac82b46d1b2779ac6f57452d, type: 2}
       size: {x: 2, y: 2}
       inputPositions:
-      - {x: -1, y: 0.75}
-      - {x: -1, y: -0.75}
+      - {x: -1, y: 0.5}
+      - {x: -1, y: -0.5}
       outputPositions:
-      - {x: 1, y: 0.75}
-      - {x: 1, y: -0.75}
+      - {x: 1, y: 0.5}
+      - {x: 1, y: -0.5}
     schemeLogicData:
       rid: 1853704567408558080
   - name: 1 Bit User Input

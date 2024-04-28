@@ -81,7 +81,7 @@ namespace Misc
             }
         }
 
-        private void GetXY(Vector3 worldPosition, out int x, out int y)
+        public void GetXY(Vector3 worldPosition, out int x, out int y)
         {
             x = Mathf.RoundToInt((worldPosition.x - _originPosition.x) / _cellSize);
             y = Mathf.RoundToInt((worldPosition.z - _originPosition.z) / _cellSize);

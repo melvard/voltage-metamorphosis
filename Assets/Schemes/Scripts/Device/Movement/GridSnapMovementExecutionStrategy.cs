@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Schemes.Dashboard;
 using UnityEngine;
 
 namespace Schemes.Device.Movement
@@ -19,5 +21,14 @@ namespace Schemes.Device.Movement
     public interface IGridHandler
     {
         Vector3 GetPositionOnGrid(Vector3 position);
+        Vector3 GetPositionOnGridWithMouse();
     }
+    
+    // public interface IGridHandlerWithPathfinding<T> : IGridHandler where T : class, IGridPathNode<T> 
+    // {
+    //     Vector3 GetPositionOnGrid(Vector3 position);
+    //     Vector3 GetPositionOnGridWithMouse();
+    //     
+    //     List<T> GetPathWithWorldPositionsOnGrid
+    // }
 }

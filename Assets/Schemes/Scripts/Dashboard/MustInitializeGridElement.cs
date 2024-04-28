@@ -14,8 +14,12 @@ namespace Schemes.Dashboard
             // Debug.Log(Grid.GetHeight());
         }
 
-        public int X { get; private set; }
-        public int Y { get; private set; }
+        public int X { get; }
+        public int Y { get; }
         public SmartGrid<T> Grid { get; }
+        public Vector3 GetPositionOnGrid()
+        {
+            return Grid.GetWorldPosition(X, Y);
+        }
     }
 }

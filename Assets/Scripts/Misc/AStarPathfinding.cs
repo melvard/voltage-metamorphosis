@@ -13,12 +13,14 @@ namespace Misc
         
         // private SmartGrid<T> _grid;
         
-        public static List<T1> FindPath<T1>(SmartGrid<T1> grid, int startX, int startY, int endX, int endY) 
+        public static List<T1> FindPath<T1>(SmartGrid<T1> grid, int startX, int startY, int endX, int endY, bool simplified) 
             where T1 : class, IGridPathNode<T1>
         {
             T1 startNode = grid.GetValue(startX, startY);
             T1 endNode  = grid.GetValue(endX, endY);
 
+            if (!endNode.IsWalkable) return null;
+            
             var openList = new List<T1>();
             var closeList = new List<T1>();
             openList.Add(startNode);
@@ -42,7 +44,7 @@ namespace Misc
                 T1 currentNode = GetLowestCostNode(openList);
                 if (currentNode.Equals(endNode))
                 {
-                    return CalculatePath(currentNode);
+                    return CalculatePath(currentNode, simplified);
                 }
 
                 openList.Remove(currentNode);
@@ -114,7 +116,7 @@ namespace Misc
             return neighbourNodes;
         }
 
-        private static List<T> CalculatePath<T>(T node)
+        private static List<T> CalculatePath<T>(T node, bool simplified)
             where T : class, IGridPathNode<T>
         {
             List<T> pathNodes = new List<T>();
@@ -126,9 +128,51 @@ namespace Misc
                 pathNodes.Add(currentNode);
             }
             pathNodes.Reverse();
+            if (simplified)
+            {
+                pathNodes = SimplifyPath(pathNodes);
+            }
             return pathNodes;
+            
         }
 
+        private static List<T> SimplifyPath<T>(List<T> path) where T : class, IGridPathNode<T>
+        {
+            List<T> simplifiedPath = new();
+
+            if (path.Count == 0)
+                return simplifiedPath;
+
+            // Add the start coordinate
+            simplifiedPath.Add(path[0]);
+
+            // Iterate through the path to find turns and end coordinate
+            for (int i = 1; i < path.Count - 1; i++)
+            {
+                // Check if the current point forms a turn with the previous and next points
+                if (IsTurn(path[i - 1], path[i], path[i + 1]))
+                {
+                    simplifiedPath.Add(path[i]); // Add the turn
+                }
+            }
+
+            // Add the end coordinate
+            simplifiedPath.Add(path[path.Count - 1]);
+
+            return simplifiedPath;
+        }
+        
+        static bool IsTurn<T>(T prev, T current, T next) where T : class, IGridPathNode<T>
+        {
+            // Check if the current point forms a turn with the previous and next points
+            int dx1 = current.X - prev.X;
+            int dy1 = current.Y - prev.Y;
+            int dx2 = next.X - current.X;
+            int dy2 = next.Y - current.Y;
+
+            return dx1 * dy2 != dx2 * dy1;
+        }
+        
         private static T GetLowestCostNode<T>(List<T> listOfNodes)
             where T : class, IGridPathNode<T>
         {
@@ -153,5 +197,6 @@ namespace Misc
             return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
 
         }
+        
     }
 }
