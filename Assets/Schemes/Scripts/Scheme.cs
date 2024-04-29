@@ -1,5 +1,7 @@
 using System;
 using Schemes.Data;
+using Schemes.Data.LogicData.Composition;
+using Schemes.LogicUnit;
 using Sirenix.OdinInspector;
 
 namespace Schemes
@@ -25,11 +27,14 @@ namespace Schemes
             _schemeData = schemeData;
         }
         
-        
         public Scheme(SchemeData schemeData)
         {
             _schemeData = schemeData;
         }
-        
+
+        public SchemeLogicUnit InstantiateLogicUnit()
+        {
+            return new SchemeLogicUnit(_schemeData);
+        }
     }
 }

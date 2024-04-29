@@ -34,6 +34,15 @@ namespace Schemes
             }
             throw new KeyNotFoundException($"Scheme with key '{schemeKeyGuid}' is not found");
         }
+        
+        public Scheme GetSchemeByKey(SchemeKey schemeKeyGuid)
+        {
+            if (_schemeComponents.TryGetValue(schemeKeyGuid, out var scheme))
+            {
+                return scheme;
+            }
+            throw new KeyNotFoundException($"Scheme with key '{schemeKeyGuid}' is not found");
+        }
 
         public void ClearContainer()
         {

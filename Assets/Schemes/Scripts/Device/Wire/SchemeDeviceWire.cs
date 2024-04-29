@@ -101,17 +101,27 @@ namespace Schemes.Device.Wire
 
         public void StartWiring()
         {
-            
             _wiringCancellationTokenSource = new CancellationTokenSource();
             ActiveWiring(_wiringCancellationTokenSource.Token).Forget();
         }
         
         public void StopWiring()
         {
+            _wireNodes = _currentWireNodes;
+            MarkNodesAsBusy(_wireNodes);
+
             if (_wiringCancellationTokenSource == null) throw new Exception("");
             _wiringCancellationTokenSource.Cancel();
         }
 
+
+        private void MarkNodesAsBusy(List<WireNode> nodes)
+        {
+            foreach (var wireNode in nodes)
+            {
+                wireNode.PathNode.businessIntValDebug = 1;
+            }
+        }
        
 
         private async UniTaskVoid ActiveWiring(CancellationToken cancellationToken)
@@ -134,6 +144,7 @@ namespace Schemes.Device.Wire
                     {
                         var node = GenerateWaypointNode();
                         node.transform.position = dashboardGridElement.GetPositionOnGrid();
+                        node.SetPathNode(dashboardGridElement);
                         _currentWireNodes.Add(node);
                     }
 

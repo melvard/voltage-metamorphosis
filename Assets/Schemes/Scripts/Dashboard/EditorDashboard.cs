@@ -12,8 +12,9 @@ namespace Schemes.Dashboard
     {
         public Material debugPathMaterial;
         [SerializeField] private Transform ground;
+        [SerializeField] private SchemeEditor schemeEditor;
+        
         private SmartGrid<DashboardGridElement> _grid;
-    
         private async void Start()
         { 
             Vector3 gridOrigin = transform.position + new Vector3(-50,ground.position.y + ground.localScale.y + 0.1f, -50);
@@ -26,16 +27,16 @@ namespace Schemes.Dashboard
 
             await UniTask.WaitUntil(()=> Input.GetKeyDown(KeyCode.C));
             Debug_GenerateRandomObstacles(_grid);
-            await UniTask.WaitUntil(()=> Input.GetKeyDown(KeyCode.C));
-            
-            var path = AStarPathfinding.FindPath(_grid, 0, 0, 199, 199, true);
-            foreach (var gridPathNode in path)
-            {
-                var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                go.transform.localScale = Vector3.one * 0.5f;
-                go.GetComponent<MeshRenderer>().material = debugPathMaterial;
-                go.transform.position = _grid.GetWorldPosition(gridPathNode.X, gridPathNode.Y);
-            } 
+            // await UniTask.WaitUntil(()=> Input.GetKeyDown(KeyCode.C));
+            //
+            // var path = AStarPathfinding.FindPath(_grid, 0, 0, 199, 199, true);
+            // foreach (var gridPathNode in path)
+            // {
+            //     var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            //     go.transform.localScale = Vector3.one * 0.5f;
+            //     go.GetComponent<MeshRenderer>().material = debugPathMaterial;
+            //     go.transform.position = _grid.GetWorldPosition(gridPathNode.X, gridPathNode.Y);
+            // } 
         }
         
         private void Debug_GenerateRandomObstacles(SmartGrid<DashboardGridElement> grid)
@@ -76,6 +77,11 @@ namespace Schemes.Dashboard
             _grid.GetXY(pos1, out var startX, out var startY);
             _grid.GetXY(pos2, out var endX, out var endY);
             return AStarPathfinding.FindPath(_grid, startX, startY, endX, endY, simplified);
+        }
+
+        public void Init()
+        {
+            schemeEditor.Init();
         }
     }
 

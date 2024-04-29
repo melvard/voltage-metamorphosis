@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -971,19 +972,18 @@ namespace Misc
         }
         
         // Create Text in the World
-        public static TextMesh CreateWorldText(string text, Transform parent = null, Vector3 localPosition = default(Vector3), int fontSize = 40, Color? color = null, TextAnchor textAnchor = TextAnchor.UpperLeft, TextAlignment textAlignment = TextAlignment.Left, int sortingOrder = sortingOrderDefault) {
+        public static TextMeshPro CreateWorldText(string text, Transform parent = null, Vector3 localPosition = default(Vector3), int fontSize = 40, Color? color = null, TextAnchor textAnchor = TextAnchor.MiddleCenter, TextAlignmentOptions textAlignment = TextAlignmentOptions.Center, int sortingOrder = sortingOrderDefault) {
             if (color == null) color = Color.white;
             return CreateWorldText(parent, text, localPosition, fontSize, (Color)color, textAnchor, textAlignment, sortingOrder);
         }
         
         // Create Text in the World
-        public static TextMesh CreateWorldText(Transform parent, string text, Vector3 localPosition, int fontSize, Color color, TextAnchor textAnchor, TextAlignment textAlignment, int sortingOrder) {
-            GameObject gameObject = new GameObject("World_Text", typeof(TextMesh));
+        public static TextMeshPro CreateWorldText(Transform parent, string text, Vector3 localPosition, int fontSize, Color color, TextAnchor textAnchor, TextAlignmentOptions textAlignment, int sortingOrder) {
+            GameObject gameObject = new GameObject("World_Text", typeof(TextMeshPro));
             Transform transform = gameObject.transform;
             transform.SetParent(parent, false);
             transform.localPosition = localPosition;
-            TextMesh textMesh = gameObject.GetComponent<TextMesh>();
-            textMesh.anchor = textAnchor;
+            TextMeshPro textMesh = gameObject.GetComponent<TextMeshPro>();
             textMesh.alignment = textAlignment;
             textMesh.text = text;
             textMesh.fontSize = fontSize;

@@ -1,4 +1,5 @@
 using Schemes.Data;
+using Schemes.Data.LogicData;
 using UnityEngine;
 
 namespace Schemes.Device

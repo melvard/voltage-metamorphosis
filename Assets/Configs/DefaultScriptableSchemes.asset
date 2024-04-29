@@ -30,7 +30,7 @@ MonoBehaviour:
       - {x: 1, y: 0.5}
       - {x: 1, y: -0.5}
     schemeLogicData:
-      rid: 1853704567408558080
+      rid: 1853704678680297483
   - name: 1 Bit User Input
     description: Input from user
     schemeKey:
@@ -46,7 +46,7 @@ MonoBehaviour:
       outputPositions:
       - {x: 0.5, y: 0}
     schemeLogicData:
-      rid: 1853704567408558081
+      rid: 1853704678680297484
   - name: 1 Bit Output
     description: Output from scheme
     schemeKey:
@@ -61,7 +61,7 @@ MonoBehaviour:
       - {x: -0.5, y: 0}
       outputPositions: []
     schemeLogicData:
-      rid: 1853704567408558082
+      rid: 1853704678680297485
   - name: Constant Voltage
     description: Constant Volatage
     schemeKey:
@@ -76,24 +76,24 @@ MonoBehaviour:
       outputPositions:
       - {x: 0.5, y: 0}
     schemeLogicData:
-      rid: 1853704567408558083
+      rid: 1853704678680297486
   references:
     version: 2
     RefIds:
-    - rid: 1853704567408558080
-      type: {class: RelayLogicData, ns: Schemes.Data, asm: Assembly-CSharp}
+    - rid: 1853704678680297483
+      type: {class: RelayLogicData, ns: Schemes.Data.LogicData.Relay, asm: Assembly-CSharp}
       data:
         <NumberOfOutputs>k__BackingField: 2
         <NumberOfInputs>k__BackingField: 2
-    - rid: 1853704567408558081
-      type: {class: UserInputLogicData, ns: Schemes.Data, asm: Assembly-CSharp}
+    - rid: 1853704678680297484
+      type: {class: UserInputLogicData, ns: Schemes.Data.LogicData.UserIO, asm: Assembly-CSharp}
       data:
         <NumberOfOutputs>k__BackingField: 1
-    - rid: 1853704567408558082
-      type: {class: OutputLogicDataData, ns: Schemes.Data, asm: Assembly-CSharp}
+    - rid: 1853704678680297485
+      type: {class: UserOutputLogicDataData, ns: Schemes.Data.LogicData.UserIO, asm: Assembly-CSharp}
       data:
         <NumberOfInputs>k__BackingField: 1
-    - rid: 1853704567408558083
-      type: {class: PersistentVoltageLogicData, ns: Schemes.Data, asm: Assembly-CSharp}
+    - rid: 1853704678680297486
+      type: {class: PersistentVoltageLogicData, ns: Schemes.Data.LogicData.Voltage, asm: Assembly-CSharp}
       data:
         <NumberOfOutputs>k__BackingField: 1

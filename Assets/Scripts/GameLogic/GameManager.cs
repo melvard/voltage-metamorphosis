@@ -4,6 +4,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Misc;
 using Schemes;
+using Schemes.Dashboard;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -39,6 +40,12 @@ namespace GameLogic
         {
             InitializeContainers();
             await InitSchemesContainer();
+            InitDashboard();
+        }
+
+        private void InitDashboard()
+        {
+            EditorDashboard.Instance.Init();
         }
 
         private async UniTask InitSchemesContainer()

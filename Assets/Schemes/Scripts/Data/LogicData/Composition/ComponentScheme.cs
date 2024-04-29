@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Schemes.Data
+namespace Schemes.Data.LogicData.Composition
 {
     [Serializable]
     public struct ComponentScheme
@@ -9,6 +9,8 @@ namespace Schemes.Data
         [SerializeField] private int componentIndex;
         [SerializeField] private SchemeKey schemeKey;
 
+        public SchemeKey SchemeKey => schemeKey; 
+        public int ComponentIndex => componentIndex; 
         public ComponentScheme(int componentIndex, SchemeKey schemeKey)
         {
             this.componentIndex = componentIndex;

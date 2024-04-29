@@ -16,16 +16,20 @@ namespace Schemes.Device.Ports
         [DisableInPlayMode] [DisableInEditorMode] [ShowInInspector]
         protected byte portIndex;
 
+        private SchemeDevice _schemeDeviceBelonged;
         public event UnityAction<SchemeDevicePortInteractEventArgs> OnPortClicked;
 
+        public SchemeDevice SchemeDevice => _schemeDeviceBelonged;
+        public byte PortIndex => portIndex;
         public void Awake()
         {
             _schemeDevicePortInteractionHandler.OnPortClicked += OnPortClickedHandler;
         }
 
-        public virtual void Init(byte portIndex)
+        public virtual void Init(SchemeDevice schemeDeviceBelonged, byte portIndex)
         {
             this.portIndex = portIndex;
+            _schemeDeviceBelonged = schemeDeviceBelonged;
         }
 
         public virtual void OnPortClickedHandler(SchemeDevicePortInteractEventArgs arg0)
