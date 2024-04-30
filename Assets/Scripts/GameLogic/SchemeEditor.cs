@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GameLogic;
 using Schemes;
@@ -91,7 +92,7 @@ public class SchemeEditor : MonoBehaviour
     private SchemeDevice InstantiateSchemeDevice(string schemeKey)
     {
         var schemeDevice = Instantiate(schemeDeviceRef);
-        schemeDevice.transform.position = _gridHandler.GetPositionOnGridWithMouse();
+        schemeDevice.transform.position = _gridHandler.GetMousePositionToGrid();
         var scheme = GameManager.Instance.GetContainerOfType<SchemesContainer>().GetSchemeByKey(schemeKey);
         schemeDevice.Init(scheme, _incrementComponentIndex);
         schemeDevice.OnDevicePortInteracted += OnDevicePortInteractedHandler;
@@ -133,6 +134,7 @@ public class SchemeEditor : MonoBehaviour
         else
         {
             if (arg0.schemeDevicePortInteractEventArgs.port.SchemeDevice == _currentWire.StartPort.SchemeDevice) return;
+            if(_currentWire.StartPort.GetType() == arg0.schemeDevicePortInteractEventArgs.port.GetType()) return;
 
             _pendingForWireConnection = false;
             _currentWire.TerminateActiveWiring();
@@ -160,19 +162,23 @@ public class SchemeEditor : MonoBehaviour
     private void DefineRelation(SchemeDevicePort a, SchemeDevicePort b)
     {
         SchemeRelation schemeRelation = new();
-        
+
+        var ports =  new List<SchemeDevicePort>() { a, b };
         // right relation node
-        ComponentScheme rightComponentScheme =
-            _currentCompositionLogicData.ComponentSchemes.First(c=>c.ComponentIndex == a.SchemeDevice.DeviceIndex);
+        SchemeDevicePort outputPort = ports.First(x => x is SchemeDeviceOutputPort);
+        SchemeDevicePort inputPort = ports.First(x => x is SchemeDeviceInputPort);
         
-        schemeRelation.receiverNode = new ComponentRelationNode(rightComponentScheme.ComponentIndex,  a.PortIndex);
+        ComponentScheme receiverComponent =
+            _currentCompositionLogicData.ComponentSchemes.First(c=>c.ComponentIndex == inputPort.SchemeDevice.DeviceIndex);
+        
+        schemeRelation.receiverNode = new ComponentRelationNode(receiverComponent.ComponentIndex,  inputPort.PortIndex);
         
         // left relation node
-        ComponentScheme leftComponentScheme =
-            _currentCompositionLogicData.ComponentSchemes.First(c=>c.ComponentIndex == b.SchemeDevice.DeviceIndex);
+        ComponentScheme senderComponent =
+            _currentCompositionLogicData.ComponentSchemes.First(c=>c.ComponentIndex == outputPort.SchemeDevice.DeviceIndex);
 
         
-        schemeRelation.senderNode = new ComponentRelationNode(leftComponentScheme.ComponentIndex,  b.PortIndex);
+        schemeRelation.senderNode = new ComponentRelationNode(senderComponent.ComponentIndex,  outputPort.PortIndex);
         
         _currentCompositionLogicData.SchemeRelations.Add(schemeRelation);
     }

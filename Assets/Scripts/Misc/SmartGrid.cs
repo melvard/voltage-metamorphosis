@@ -123,6 +123,12 @@ namespace Misc
             return default;
         }
 
+        public T GetValue(Vector3 worldPosition)
+        {
+            GetXY(worldPosition, out int x, out int y);
+            return GetValue(x, y);
+        }
+
         
 
         public int GetWidth()

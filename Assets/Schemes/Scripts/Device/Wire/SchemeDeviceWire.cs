@@ -18,7 +18,8 @@ namespace Schemes.Device.Wire
         #region CONSTS
 
         private const KeyCode CANCEL_WIRING_KEY = KeyCode.Escape;
-
+        private const KeyCode WAYPOINT_GENERATION_KEY = KeyCode.Mouse0;
+        
         #endregion
         
         
@@ -149,6 +150,8 @@ namespace Schemes.Device.Wire
         private async UniTaskVoid ActiveWiring(CancellationToken cancellationToken)
         {
             _currentWireNodes.Clear();
+            List<DashboardGridElement> totalPath = new();
+            List<Vector3> waypointPositions = new List<Vector3>();
             while (true)
             {
 
@@ -157,18 +160,50 @@ namespace Schemes.Device.Wire
                     CancelWiring();
                     return;
                 }
+
+                if (Input.GetKeyDown(WAYPOINT_GENERATION_KEY))
+                {
+                    // var lastWireNode = _currentWireNodes.Last();
+                    var mousePositionToGrid = EditorDashboard.Instance.GetMousePositionToGrid();
+                    // bug: if cell position aligns with port, you have a problem baby
+                    if (EditorDashboard.Instance.IsGridCellWalkable(mousePositionToGrid))
+                    {
+                        waypointPositions.Add(mousePositionToGrid);
+                    }
+                }
+
+                Vector3 startPosition = transform.position;
                 
-                // var currentWireBody = _wireBodies.Last();
-                // var endWireNode = _wireNodes[^1];
-                var simplifiedPath = EditorDashboard.Instance.GetPathWithWorldPositionsOnGrid(
-                    transform.position, EditorDashboard.Instance.GetPositionOnGridWithMouse(), true);
-                
+                totalPath.Clear();
+                for (var i = 0; i < waypointPositions.Count; i++)
+                {
+                    var waypointPosition = waypointPositions[i];
+
+                    var simplifiedPath = EditorDashboard.Instance.GetPathWithWorldPositionsOnGrid(
+                        startPosition, waypointPosition, true);
+                    if (i != 0)
+                    {
+                        simplifiedPath.Pop(0);
+                    }
+                    
+                    if(simplifiedPath != null)  totalPath.AddRange(simplifiedPath);
+                    startPosition = waypointPosition;
+                }
+
+                var lastSimplifiedPath = EditorDashboard.Instance.GetPathWithWorldPositionsOnGrid(startPosition, EditorDashboard.Instance.GetMousePositionToGrid(), true);
+
+                if (waypointPositions.Count != 0)
+                {
+                    lastSimplifiedPath.Pop(0);
+                }
+                if(lastSimplifiedPath != null) totalPath.AddRange(lastSimplifiedPath);
+                    
                 _currentWireNodes.ForEach(x=>Destroy(x.gameObject));
                 _currentWireNodes.Clear();
 
-                if (simplifiedPath != null)
+                if (totalPath != null)
                 {
-                    foreach (var dashboardGridElement in simplifiedPath)
+                    foreach (var dashboardGridElement in totalPath)
                     {
                         var node = GenerateWaypointNode();
                         node.transform.position = dashboardGridElement.GetPositionOnGrid();
@@ -184,25 +219,14 @@ namespace Schemes.Device.Wire
                 else
                 {
                     lineRenderer.positionCount = 0;
-                    // lineRenderer.SetPositions(null);
                 }
 
-                // endWireNode.transform.position = EditorDashboard.Instance.GetPositionOnGridWithMouse();
-                // var diff = endWireNode.transform.position - startWireNode.transform.position;
-                //
-                // Transform wireTransform = currentWireBody.transform;
-                //
-                // wireTransform.rotation = Quaternion.LookRotation(diff.normalized);
-                // var bodyLength = diff.magnitude;
-                // var scale= wireTransform.localScale;
-                // scale.z = bodyLength;
-                // wireTransform.localScale = scale;
-                
                 cancellationToken.ThrowIfCancellationRequested();
                 await UniTask.Yield(cancellationToken);
             }
         }
 
+        
         private void CancelWiring()
         {
             OnWiringCanceled?.Invoke();
@@ -210,25 +234,12 @@ namespace Schemes.Device.Wire
             _currentWireNodes.Clear();
             Destroy(gameObject);
         }
-
-
-        //
-        // private void ValidateIndex(int index)
-        // {
-        //     if (index < 0 || index >= _connectingPorts.Length)
-        //     {
-        //         throw new IndexOutOfRangeException();
-        //     }
-        // }
+        
         public void SetPosition(Vector3 transformPosition)
         {
             transform.position = transformPosition;
         }
 
-        // public void SetGridHandler(IGridHandler gridHandler)
-        // {
-        //     this._gridHandler = gridHandler;
-        // }
         public void SetStartPort(SchemeDevicePort startPort)
         {
             this._startPort = startPort;

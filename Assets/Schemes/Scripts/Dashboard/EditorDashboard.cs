@@ -66,7 +66,7 @@ namespace Schemes.Dashboard
             return _grid.GetAlignedPositionOnGrid(position);
         }
 
-        public Vector3 GetPositionOnGridWithMouse()
+        public Vector3 GetMousePositionToGrid()
         {
             Plane plane = new Plane(Vector3.up, 0f);
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -84,6 +84,11 @@ namespace Schemes.Dashboard
         public void Init()
         {
             schemeEditor.Init();
+        }
+
+        public bool IsGridCellWalkable(Vector3 mousePositionToGrid)
+        {
+            return _grid.GetValue(mousePositionToGrid).IsWalkable;
         }
     }
 

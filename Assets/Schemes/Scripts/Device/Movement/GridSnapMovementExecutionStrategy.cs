@@ -21,7 +21,7 @@ namespace Schemes.Device.Movement
     public interface IGridHandler
     {
         Vector3 GetPositionOnGrid(Vector3 position);
-        Vector3 GetPositionOnGridWithMouse();
+        Vector3 GetMousePositionToGrid();
     }
     
     // public interface IGridHandlerWithPathfinding<T> : IGridHandler where T : class, IGridPathNode<T> 
