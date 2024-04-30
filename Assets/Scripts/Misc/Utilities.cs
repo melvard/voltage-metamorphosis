@@ -178,7 +178,10 @@ namespace Misc
     
         public static T Pop<T>(this List<T> myList, int index)
         {
-            if (myList == null || myList.Count < 0) throw new ArgumentException("List is either null or has length of 0."); 
+            if (myList == null || myList.Count <= 0)
+            {
+                throw new ArgumentException("List is either null or has length of 0.");
+            } 
 
             T element = myList[index];
             myList.RemoveAt(index);

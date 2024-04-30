@@ -8,6 +8,7 @@ using Schemes.Dashboard;
 using Schemes.Device.Movement;
 using Schemes.Device.Ports;
 using Sirenix.OdinInspector;
+using Sirenix.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -181,21 +182,21 @@ namespace Schemes.Device.Wire
 
                     var simplifiedPath = EditorDashboard.Instance.GetPathWithWorldPositionsOnGrid(
                         startPosition, waypointPosition, true);
-                    if (i != 0)
+                    if (i != 0 && simplifiedPath != null && simplifiedPath.Count != 0)
                     {
                         simplifiedPath.Pop(0);
                     }
-                    
-                    if(simplifiedPath != null)  totalPath.AddRange(simplifiedPath);
+                    if(simplifiedPath != null) totalPath.AddRange(simplifiedPath);
                     startPosition = waypointPosition;
                 }
 
                 var lastSimplifiedPath = EditorDashboard.Instance.GetPathWithWorldPositionsOnGrid(startPosition, EditorDashboard.Instance.GetMousePositionToGrid(), true);
 
-                if (waypointPositions.Count != 0)
+                if (!waypointPositions.IsNullOrEmpty() && lastSimplifiedPath != null && lastSimplifiedPath.Count != 0)
                 {
                     lastSimplifiedPath.Pop(0);
                 }
+                
                 if(lastSimplifiedPath != null) totalPath.AddRange(lastSimplifiedPath);
                     
                 _currentWireNodes.ForEach(x=>Destroy(x.gameObject));
