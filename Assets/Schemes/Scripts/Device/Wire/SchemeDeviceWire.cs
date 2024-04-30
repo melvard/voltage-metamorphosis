@@ -18,10 +18,7 @@ namespace Schemes.Device.Wire
         [AssetsOnly] [SerializeField] private WireNode wireNodeRef;
         [SerializeField] private LineRenderer lineRenderer;
         
-        // private SchemeDevicePort[] _connectingPorts;
         private List<WireNode> _wireNodes;
-        // private List<WireBody> _wireBodies;
-
         private CancellationTokenSource _wiringCancellationTokenSource;
         private Vector3[] _lineRendererLocalPositions;
         readonly List<WireNode> _currentWireNodes = new();
@@ -105,7 +102,7 @@ namespace Schemes.Device.Wire
             ActiveWiring(_wiringCancellationTokenSource.Token).Forget();
         }
         
-        public void StopWiring()
+        public void TerminateActiveWiring()
         {
             _wireNodes = _currentWireNodes;
             MarkNodesAsBusy(_wireNodes);
@@ -129,6 +126,12 @@ namespace Schemes.Device.Wire
             _currentWireNodes.Clear();
             while (true)
             {
+
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    CancelWiring();
+                    return;
+                }
                 
                 // var currentWireBody = _wireBodies.Last();
                 // var endWireNode = _wireNodes[^1];
@@ -173,6 +176,11 @@ namespace Schemes.Device.Wire
                 cancellationToken.ThrowIfCancellationRequested();
                 await UniTask.Yield(cancellationToken);
             }
+        }
+
+        private void CancelWiring()
+        {
+            
         }
 
 

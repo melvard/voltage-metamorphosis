@@ -32,9 +32,9 @@ namespace Schemes
             _schemeData = schemeData;
         }
 
-        public SchemeLogicUnit InstantiateLogicUnit()
+        public SchemeLogicUnit InstantiateLogicUnit(int index)
         {
-            return new SchemeLogicUnit(_schemeData);
+            return new SchemeLogicUnit(_schemeData, index);
         }
     }
 }

@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Schemes.Data.LogicData.Composition
 {
     [Serializable]
     public struct SchemeRelation
     {
-        [SerializeReference] public RelationNode rightNode;
-        [SerializeReference] public RelationNode leftNode;
+        [SerializeReference] public ComponentRelationNode senderNode;
+        [SerializeReference] public ComponentRelationNode receiverNode;
     }
 }

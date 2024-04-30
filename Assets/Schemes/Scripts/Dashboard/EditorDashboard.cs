@@ -15,6 +15,8 @@ namespace Schemes.Dashboard
         [SerializeField] private SchemeEditor schemeEditor;
         
         private SmartGrid<DashboardGridElement> _grid;
+        public SchemeEditor SchemeEditor_Debug => schemeEditor;
+
         private async void Start()
         { 
             Vector3 gridOrigin = transform.position + new Vector3(-50,ground.position.y + ground.localScale.y + 0.1f, -50);

@@ -28,18 +28,20 @@ public class SchemeEditor : MonoBehaviour
     private Scheme _currentScheme;
 
     
-    private SchemeLogicUnit _schemeLogicUnit;
+    private SchemeLogicUnit _currentSchemeLogicUnit;
     
     private CompositionLogicData _currentCompositionLogicData;
     private SchemeDeviceWire _currentWire;
     private IGridHandler _gridHandler;
     private int _incrementComponentIndex;
-    
+
+
+    public SchemeLogicUnit CurrentSchemeLogicUnit_Debug => _currentSchemeLogicUnit;
     public void Init()
     {
         _currentScheme = new Scheme();
         _currentCompositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
-        _schemeLogicUnit = _currentScheme.InstantiateLogicUnit();
+        _currentSchemeLogicUnit = _currentScheme.InstantiateLogicUnit(-1);
         
         _gridHandler = EditorDashboard.Instance;
     }
@@ -66,6 +68,22 @@ public class SchemeEditor : MonoBehaviour
         {
             AddDeviceInComposition(InstantiateSchemeDevice(CONSTANT_VOLTAGE_KEY));
         }
+
+        _currentSchemeLogicUnit.Process();
+        // if (Input.GetKeyDown(KeyCode.P))
+        // {
+        // }
+
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            SaveScheme();
+        }
+        
+    }
+
+    private void SaveScheme()
+    {
+        throw new NotImplementedException();
     }
 
 
@@ -74,8 +92,8 @@ public class SchemeEditor : MonoBehaviour
     {
         var schemeDevice = Instantiate(schemeDeviceRef);
         schemeDevice.transform.position = _gridHandler.GetPositionOnGridWithMouse();
-
-        schemeDevice.Init(GameManager.Instance.GetContainerOfType<SchemesContainer>().GetSchemeByKey(schemeKey));
+        var scheme = GameManager.Instance.GetContainerOfType<SchemesContainer>().GetSchemeByKey(schemeKey);
+        schemeDevice.Init(scheme, _incrementComponentIndex);
         schemeDevice.OnDevicePortInteracted += OnDevicePortInteractedHandler;
 
         // adding movement logic
@@ -88,7 +106,7 @@ public class SchemeEditor : MonoBehaviour
         deviceDragDropMovementStrategy.SetListOfAcceptableColliders(schemeDevice.InteractionColliders);
         deviceDragDropMovementStrategy.ShouldTakeIntoAccountInitialDelta = true;
         deviceDragDropMovementStrategy.EnableMovement();
-        _schemeLogicUnit.AddComponentLogicUnit(schemeDevice.LogicUnit);
+        _currentSchemeLogicUnit.AddComponentLogicUnit(scheme.InstantiateLogicUnit(_incrementComponentIndex));
         
         return schemeDevice;
     }
@@ -116,7 +134,7 @@ public class SchemeEditor : MonoBehaviour
             if (arg0.schemeDevicePortInteractEventArgs.port.SchemeDevice == _currentWire.StartPort.SchemeDevice) return;
 
             _pendingForWireConnection = false;
-            _currentWire.StopWiring();
+            _currentWire.TerminateActiveWiring();
             _currentWire.SetEndPort(arg0.schemeDevicePortInteractEventArgs.port);
             DefineRelation(_currentWire.StartPort, _currentWire.EndPort);
         }
@@ -124,9 +142,9 @@ public class SchemeEditor : MonoBehaviour
     private void AddDeviceInComposition(SchemeDevice schemeDevice)
     {
         ComponentScheme componentScheme = new ComponentScheme(_incrementComponentIndex, schemeDevice.UnderliningScheme.SchemeData.SchemeKey);
+        _currentCompositionLogicData.ComponentSchemes.Add(componentScheme);
         
         _incrementComponentIndex++;
-        _currentCompositionLogicData.ComponentSchemes.Add(componentScheme);
     }
 
 
@@ -137,17 +155,16 @@ public class SchemeEditor : MonoBehaviour
         
         // right relation node
         ComponentScheme rightComponentScheme =
-            _currentCompositionLogicData.ComponentSchemes.First(c =>
-                c.SchemeKey == a.SchemeDevice.UnderliningScheme.SchemeKey);
+            _currentCompositionLogicData.ComponentSchemes.First(c=>c.ComponentIndex == a.SchemeDevice.DeviceIndex);
         
-        schemeRelation.rightNode = new ComponentRelationNode(rightComponentScheme.ComponentIndex,  a.PortIndex);
+        schemeRelation.receiverNode = new ComponentRelationNode(rightComponentScheme.ComponentIndex,  a.PortIndex);
         
         // left relation node
         ComponentScheme leftComponentScheme =
-            _currentCompositionLogicData.ComponentSchemes.First(c =>
-                c.SchemeKey == b.SchemeDevice.UnderliningScheme.SchemeKey);
+            _currentCompositionLogicData.ComponentSchemes.First(c=>c.ComponentIndex == b.SchemeDevice.DeviceIndex);
+
         
-        schemeRelation.leftNode = new ComponentRelationNode(leftComponentScheme.ComponentIndex,  b.PortIndex);
+        schemeRelation.senderNode = new ComponentRelationNode(leftComponentScheme.ComponentIndex,  b.PortIndex);
         
         _currentCompositionLogicData.SchemeRelations.Add(schemeRelation);
     }

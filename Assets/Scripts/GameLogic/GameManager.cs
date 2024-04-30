@@ -21,6 +21,7 @@ namespace GameLogic
         private async void Start()
         {
             Init();
+            Application.targetFrameRate = 120;
         }
         
         

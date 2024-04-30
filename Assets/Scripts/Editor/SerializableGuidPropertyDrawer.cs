@@ -3,13 +3,13 @@ using System;
 using Misc;
 using UnityEditor;
 using UnityEngine;
-namespace Editor
+namespace EditorStuff
 {
  
 /// <summary>
 /// Property drawer for SerializableGuid
 ///
-/// Author: Searous
+/// Author: Searou
 /// </summary>
 [CustomPropertyDrawer(typeof(SerializableGuid))]
 public class SerializableGuidPropertyDrawer : PropertyDrawer {

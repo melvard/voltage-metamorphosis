@@ -61,7 +61,7 @@ MonoBehaviour:
       - {x: -0.5, y: 0}
       outputPositions: []
     schemeLogicData:
-      rid: 1853704678680297485
+      rid: 1853704714053484553
   - name: Constant Voltage
     description: Constant Volatage
     schemeKey:
@@ -89,11 +89,11 @@ MonoBehaviour:
       type: {class: UserInputLogicData, ns: Schemes.Data.LogicData.UserIO, asm: Assembly-CSharp}
       data:
         <NumberOfOutputs>k__BackingField: 1
-    - rid: 1853704678680297485
-      type: {class: UserOutputLogicDataData, ns: Schemes.Data.LogicData.UserIO, asm: Assembly-CSharp}
-      data:
-        <NumberOfInputs>k__BackingField: 1
     - rid: 1853704678680297486
       type: {class: PersistentVoltageLogicData, ns: Schemes.Data.LogicData.Voltage, asm: Assembly-CSharp}
       data:
         <NumberOfOutputs>k__BackingField: 1
+    - rid: 1853704714053484553
+      type: {class: UserOutputLogicData, ns: Schemes.Data.LogicData.UserIO, asm: Assembly-CSharp}
+      data:
+        <NumberOfInputs>k__BackingField: 1

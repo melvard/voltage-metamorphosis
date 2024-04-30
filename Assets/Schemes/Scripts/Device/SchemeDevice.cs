@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using Misc;
+using Schemes.Dashboard;
 using Schemes.Data.LogicData;
 using Schemes.Data.LogicData.UserIO;
 using Schemes.Device.Ports;
 using Schemes.LogicUnit;
 using Sirenix.OdinInspector;
 using TMPro;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -28,13 +31,16 @@ namespace Schemes.Device
 
         [ShowInInspector] [DisableInEditorMode]
         private ISchemeDeviceVisualizer _schemeDeviceVisualizer;
+        private int _deviceIndex;
         
         #endregion
 
         #region GETTERS
 
         public Scheme UnderliningScheme => _underliningScheme;
-        public SchemeLogicUnit LogicUnit => _schemeLogicUnit;
+
+        public int DeviceIndex => _deviceIndex;
+        // public SchemeLogicUnit LogicUnit => _schemeLogicUnit;
 
         #endregion
 
@@ -44,18 +50,18 @@ namespace Schemes.Device
 
         #endregion
 
-        #region PRIVATE_FIELDS
+        // #region PRIVATE_FIELDS
+        //
+        // // private SchemeLogicUnit _schemeLogicUnit;
+        //
+        // #endregion
 
-        private SchemeLogicUnit _schemeLogicUnit;
-
-        #endregion
-
-        public void Init(Scheme scheme)
+        public void Init(Scheme scheme, int deviceIndex)
         {
             _schemeDeviceVisualizer ??= GetComponent<ISchemeDeviceVisualizer>();
-            _schemeLogicUnit = scheme.InstantiateLogicUnit();
-            
             _underliningScheme = scheme;
+            _deviceIndex = deviceIndex;
+            
             List<SchemeDeviceInputPort> schemeDeviceInputPorts = null;
             List<SchemeDeviceOutputPort> schemeDeviceOutputPorts = null;
             if (scheme.SchemeData.SchemeLogicData is IInputPortSchemesLogicData inputPortSchemesLogicData)
@@ -70,7 +76,12 @@ namespace Schemes.Device
 
             if (scheme.SchemeData.SchemeLogicData is UserInputLogicData userInputLogicData)
             {
-                gameObject.AddComponent<User1BitInputInteractionHandler>().Init(userInputLogicData);
+                gameObject.AddComponent<User1BitInputInteractionHandler>().Init(userInputLogicData, deviceIndex);
+            }
+
+            if (scheme.SchemeData.SchemeLogicData is UserOutputLogicData userOutputLogicData)
+            {
+                gameObject.AddComponent<User1BitOutputIndicator>().Init(userOutputLogicData, deviceIndex);
             }
 
 
@@ -119,6 +130,7 @@ namespace Schemes.Device
         }
     }
 
+   
     public class SchemeInteractedOnPortsEventArgs : EventArgs
     {
         public SchemeDevicePortInteractEventArgs schemeDevicePortInteractEventArgs;
@@ -135,24 +147,33 @@ namespace Schemes.Device
     public class User1BitInputInteractionHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         private UserInputLogicData _userInputLogicData;
-        private byte _value;
-        private TextMeshPro _valueFromUserTextIndicator;
         
-        public void Init(UserInputLogicData userInputLogicData)
+        private bool _value;
+        private int _deviceIndex;
+        private TextMeshPro _valueFromUserTextIndicator;
+        // SchemeLogicUnit SchemeLogicUnit
+        
+        public void Init(UserInputLogicData userInputLogicData, int deviceIndex)
         {
+            _deviceIndex = deviceIndex;
             _userInputLogicData = userInputLogicData;
-            _value = 0;
+            _value = false;
             _valueFromUserTextIndicator = Utilities.CreateWorldText(_value.ToString(), transform, new Vector3(0f, 0f, 1f));
             _valueFromUserTextIndicator.transform.localEulerAngles = new Vector3(90, 0f, 0f);
-            // _valueFromUserTextIndicator.alignment = TextAlignmentOptions.Center;
-            // _valueFromUserTextIndicator.anchor = TextAnchor.MiddleCenter;
             _valueFromUserTextIndicator.fontSize = 10;
         }
         
         public void ToggleState()
         {
-            _value = (byte)(_value == 0 ? 1 : 0);
+            _value = !_value;
+            GetLogicUnit().Outputs[0] = new LogicUnitPort { Value = _value, IsDefined =  true};
             _valueFromUserTextIndicator.text = _value.ToString();
+        }
+        
+        private SchemeLogicUnit GetLogicUnit()
+        {
+            return EditorDashboard.Instance.SchemeEditor_Debug.CurrentSchemeLogicUnit_Debug.ComponentLogicUnits.First(
+                x => x.index == _deviceIndex);
         }
 
 
@@ -179,6 +200,36 @@ namespace Schemes.Device
             }
             _pendingForValueSet = false;
             
+        }
+    }
+    
+    public class User1BitOutputIndicator : MonoBehaviour
+    {
+        private UserOutputLogicData _userOutputLogicData;
+        private TextMeshPro _valueFromUserTextIndicator;
+
+        private int _deviceIndex;
+        private bool _value;
+        public void Init(UserOutputLogicData userOutputLogicData, int deviceIndex)
+        {
+            _userOutputLogicData = userOutputLogicData;
+            _deviceIndex = deviceIndex;
+            _value = false;
+            _valueFromUserTextIndicator = Utilities.CreateWorldText(_value.ToString(), transform, new Vector3(0f, 0f, 1f));
+            _valueFromUserTextIndicator.transform.localEulerAngles = new Vector3(90, 0f, 0f);
+            _valueFromUserTextIndicator.fontSize = 10;
+        }
+
+        private void Update()
+        {
+            _value = GetLogicUnit().Inputs[0].Value;
+            _valueFromUserTextIndicator.text = _value.ToString();
+        }
+
+        private SchemeLogicUnit GetLogicUnit()
+        {
+            return EditorDashboard.Instance.SchemeEditor_Debug.CurrentSchemeLogicUnit_Debug.ComponentLogicUnits.First(
+                x => x.index == _deviceIndex);
         }
     }
 }
