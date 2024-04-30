@@ -127,6 +127,7 @@ public class SchemeEditor : MonoBehaviour
             _currentWire.SetPosition(arg0.schemeDevicePortInteractEventArgs.port.transform.position);
             _currentWire.SetStartPort(arg0.schemeDevicePortInteractEventArgs.port);
             _currentWire.StartWiring();
+            _currentWire.OnWiringCanceled += OnWiringCanceledHandler;
             _pendingForWireConnection = true;
         }
         else
@@ -139,6 +140,13 @@ public class SchemeEditor : MonoBehaviour
             DefineRelation(_currentWire.StartPort, _currentWire.EndPort);
         }
     }
+
+    private void OnWiringCanceledHandler()
+    {
+        _currentWire = null;
+        _pendingForWireConnection = false;
+    }
+    
     private void AddDeviceInComposition(SchemeDevice schemeDevice)
     {
         ComponentScheme componentScheme = new ComponentScheme(_incrementComponentIndex, schemeDevice.UnderliningScheme.SchemeData.SchemeKey);

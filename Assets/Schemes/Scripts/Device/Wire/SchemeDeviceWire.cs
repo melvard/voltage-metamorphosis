@@ -9,15 +9,29 @@ using Schemes.Device.Movement;
 using Schemes.Device.Ports;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Schemes.Device.Wire
 {
     public class SchemeDeviceWire : MonoBehaviour
     {
+        #region CONSTS
+
+        private const KeyCode CANCEL_WIRING_KEY = KeyCode.Escape;
+
+        #endregion
+        
+        
+        #region SERIALIZED_FIELDS
+
         [AssetsOnly] [SerializeField] private WireBody wireBodyRef;
         [AssetsOnly] [SerializeField] private WireNode wireNodeRef;
         [SerializeField] private LineRenderer lineRenderer;
-        
+
+        #endregion
+
+        #region PRIVATE_FIELDS
+
         private List<WireNode> _wireNodes;
         private CancellationTokenSource _wiringCancellationTokenSource;
         private Vector3[] _lineRendererLocalPositions;
@@ -25,9 +39,20 @@ namespace Schemes.Device.Wire
         private SchemeDevicePort _startPort;
         private SchemeDevicePort _endPort;
 
+        #endregion
+
+        #region GETTERS
+
         public SchemeDevicePort StartPort => _startPort;
         public SchemeDevicePort EndPort => _endPort;
 
+        #endregion
+
+        #region EVENTS
+
+        public event UnityAction OnWiringCanceled;
+        
+        #endregion
         // private IGridHandler _gridHandler;
         public void Init()
         {
@@ -127,7 +152,7 @@ namespace Schemes.Device.Wire
             while (true)
             {
 
-                if (Input.GetKeyDown(KeyCode.Escape))
+                if (Input.GetKeyDown(CANCEL_WIRING_KEY))
                 {
                     CancelWiring();
                     return;
@@ -180,7 +205,10 @@ namespace Schemes.Device.Wire
 
         private void CancelWiring()
         {
-            
+            OnWiringCanceled?.Invoke();
+            _currentWireNodes.ForEach(x=>Destroy(x.gameObject));
+            _currentWireNodes.Clear();
+            Destroy(gameObject);
         }
 
 
