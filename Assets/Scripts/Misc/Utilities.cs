@@ -352,7 +352,7 @@ namespace Misc
             return materials.ToArray();
         }
 
-        public static Vector3 WorldToCanvasPosition(this Canvas canvas, Vector3 worldPosition, Camera camera = null)
+        public static Vector3 WorldToCanvasPosition(this UnityEngine.Canvas canvas, Vector3 worldPosition, Camera camera = null)
         {
             if (camera == null)
             {
@@ -362,7 +362,7 @@ namespace Misc
             return canvas.ViewportToCanvasPosition(viewportPosition);
         }
 
-        public static Vector3 ScreenToCanvasPosition(this Canvas canvas, Vector3 screenPosition)
+        public static Vector3 ScreenToCanvasPosition(this UnityEngine.Canvas canvas, Vector3 screenPosition)
         {
             var viewportPosition = new Vector3(screenPosition.x / Screen.width,
                 screenPosition.y / Screen.height,
@@ -370,7 +370,7 @@ namespace Misc
             return canvas.ViewportToCanvasPosition(viewportPosition);
         }
 
-        public static Vector3 ViewportToCanvasPosition(this Canvas canvas, Vector3 viewportPosition)
+        public static Vector3 ViewportToCanvasPosition(this UnityEngine.Canvas canvas, Vector3 viewportPosition)
         {
             var centerBasedViewPortPosition = viewportPosition - new Vector3(0.5f, 0.5f, 0);
             var canvasRect = canvas.GetComponent<RectTransform>();
@@ -1011,7 +1011,7 @@ namespace Misc
         private static Transform cachedCanvasTransform;
         public static Transform GetCanvasTransform() {
             if (cachedCanvasTransform == null) {
-                Canvas canvas = MonoBehaviour.FindObjectOfType<Canvas>();
+                UnityEngine.Canvas canvas = MonoBehaviour.FindObjectOfType<UnityEngine.Canvas>();
                 if (canvas != null) {
                     cachedCanvasTransform = canvas.transform;
                 }
@@ -1045,6 +1045,14 @@ namespace Misc
         }
 
 
+
+        public static void DestroyChildren(this Transform transform)
+        {
+            for (int i = transform.childCount-1; i >= 0; i--)
+            {
+                UnityEngine.Object.Destroy(transform.GetChild(i).gameObject);
+            }
+        }
 
     }
 }

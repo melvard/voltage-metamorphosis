@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using GameLogic;
 using Misc;
 using Schemes.Device.Movement;
 using UnityEngine;
@@ -27,7 +28,7 @@ namespace Schemes.Dashboard
                 gridOrigin, 
                 (grid, x, y) => new DashboardGridElement(grid, x, y));
 
-            await UniTask.WaitUntil(()=> Input.GetKeyDown(KeyCode.C));
+            await UniTask.WaitUntil(()=> InputsManager.GetKeyDown(KeyCode.Slash, gameObject.layer));
             Debug_GenerateRandomObstacles(_grid);
             // await UniTask.WaitUntil(()=> Input.GetKeyDown(KeyCode.C));
             //

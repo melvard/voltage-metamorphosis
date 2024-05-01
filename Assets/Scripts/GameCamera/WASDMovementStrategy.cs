@@ -1,5 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using GameLogic;
 using Schemes.Device;
 using Schemes.Device.Movement;
 using UnityEngine;
@@ -29,7 +30,7 @@ namespace GameCamera
                 float horizontalInput = Input.GetAxis("Horizontal");
 
                 float boostMultiplier = 1f;
-                if (Input.GetKey(MovementBoostKey))
+                if (InputsManager.GetKey(MovementBoostKey, gameObject.layer))
                 {
                     boostMultiplier = MovementBoostMultiplier; 
                 }

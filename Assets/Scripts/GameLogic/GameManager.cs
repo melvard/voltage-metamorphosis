@@ -29,7 +29,7 @@ namespace GameLogic
         
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown("."))
             {
                 Debug.Break();
             }

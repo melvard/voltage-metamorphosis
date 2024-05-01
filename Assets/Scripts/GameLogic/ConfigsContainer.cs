@@ -10,11 +10,7 @@ namespace GameLogic
 {
     public class ConfigsContainer : MonoContainer
     {
-        [SerializeField] private DefaultScriptableSchemesSO defaultScriptableSchemesSo;
-
-        public List<SchemeData> GetDefaultSchemes()
-        {
-            return defaultScriptableSchemesSo.DefaultSchemesDataList;
-        }
+        public DefaultScriptableSchemesSO DefaultScriptableSchemesSo;
+        public SchemeMaterialPaletteSO SchemeMaterialPaletteSo;
     }
 }

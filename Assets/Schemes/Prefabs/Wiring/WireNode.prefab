@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5698120006125587118}
   - component: {fileID: 5302633915145045277}
   - component: {fileID: 6279671843455630581}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5517547433873065777}
   - component: {fileID: 7466946291292339237}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WireNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5034350691077132143}
   - component: {fileID: 6929807456325414681}
   - component: {fileID: 5396231092742615750}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SchemeDeviceWire
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4340392011508456397}
   - component: {fileID: 8550124604919882524}
   - component: {fileID: 6301790870400660328}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 2278556231026113232}
   - component: {fileID: 2548847370825479526}
   - component: {fileID: 807208277626186474}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DisplayName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -285,7 +285,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8981273970810565340}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PortsContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -318,7 +318,7 @@ GameObject:
   - component: {fileID: 6262186071907772894}
   - component: {fileID: 233920839895216282}
   - component: {fileID: 6846774142872607273}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SimpleSchemeDevice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -381,7 +381,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 738003363610589274}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: VisualsContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

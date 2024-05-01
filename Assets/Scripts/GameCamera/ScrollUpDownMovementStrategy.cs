@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using GameLogic;
 using Schemes.Device;
 using Schemes.Device.Movement;
 
@@ -24,7 +25,7 @@ namespace GameCamera
         {
             while (true)
             {
-                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+                float scrollInput = InputsManager.GetAxis("Mouse ScrollWheel", gameObject.layer);
                 var currentPosition = transform.position;
 
                 // Calculate new Y position

@@ -3,6 +3,7 @@ using GameLogic;
 using Misc;
 using Schemes.Data;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Schemes
@@ -18,12 +19,17 @@ namespace Schemes
         {
             foreach (var scheme in schemes)
             {
-                if (_schemeComponents.TryGetValue(scheme.SchemeKey, out var schemeInDict))
-                {
-                    Debug.Log($"Scheme with name {scheme.SchemeData.Name} already added. Refreshing scheme.");
-                }
-                _schemeComponents[scheme.SchemeKey] = scheme;
+                AddScheme(scheme);
             }
+        }
+
+        public void AddScheme(Scheme scheme)
+        {
+            if (_schemeComponents.TryGetValue(scheme.SchemeKey, out var schemeInDict))
+            {
+                Debug.Log($"Scheme with name {scheme.SchemeData.Name} already added. Refreshing scheme.");
+            }
+            _schemeComponents[scheme.SchemeKey] = scheme;
         }
 
         public Scheme GetSchemeByKey(string schemeKeyGuid)

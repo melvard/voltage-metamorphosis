@@ -10,7 +10,7 @@ namespace Schemes
     {
         private static List<Scheme> GetDefaultSchemes()
         {
-           var schemeDatas =  GameManager.Instance.GetContainerOfType<ConfigsContainer>().GetDefaultSchemes();
+           var schemeDatas =  GameManager.Instance.GetContainerOfType<ConfigsContainer>().DefaultScriptableSchemesSo.DefaultSchemesDataList;
            List<Scheme> defaultSchemes = new();
            foreach (var schemeData in schemeDatas)
            {

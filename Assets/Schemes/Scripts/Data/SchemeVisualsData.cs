@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using GameLogic;
 using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,6 +14,7 @@ namespace Schemes.Data
         [SerializeField] private string displayName;
         [ValidateInput("SetMaterialWithPaletteColor", "Color should be included in SchemeMaterialPalette config (1 config expected in assets)")]
         [ColorPalette("Schemes")][SerializeField] private Color deviceBodyColor;
+
         [InfoBox("Body material comes from SchemePaletteContainer")]
         [DisableIf("@true")][ShowInInspector][SerializeField] private Material deviceBodyMaterial;
         
@@ -25,7 +28,7 @@ namespace Schemes.Data
         private bool SetMaterialWithPaletteColor(Color color)
         {
             Debug.Log("SetMaterialWithPaletteColor validator invoked");
-            var material = SchemePaletteConfigsContainer.GetSchemeMaterialPaletteConfig().GetSchemeMaterialWithPaletteColor(color);
+            var material = SchemeMaterialPaletteSO.GetSchemeMaterialPaletteConfig().GetSchemeMaterialWithPaletteColor(color);
             deviceBodyMaterial = material;
             if (material == null)
             {
@@ -74,7 +77,7 @@ namespace Schemes.Data
         public void SetMaterial(Color color)
         {
             deviceBodyMaterial = GameManager.Instance
-                .GetContainerOfType<SchemePaletteConfigsContainer>()
+                .GetContainerOfType<ConfigsContainer>()
                 .SchemeMaterialPaletteSo
                 .GetSchemeMaterialWithPaletteColor(color);
         }
@@ -94,6 +97,12 @@ namespace Schemes.Data
         public static SchemeVisualsData NewVisualsData()
         {
             return new SchemeVisualsData();
-        } 
+        }
+
+        public ColorPalette FetchColorPalette()
+        {
+             return Sirenix.OdinInspector.Editor.ColorPaletteManager.Instance.ColorPalettes
+                .First(palette => palette == null);
+        }
     }
 }
