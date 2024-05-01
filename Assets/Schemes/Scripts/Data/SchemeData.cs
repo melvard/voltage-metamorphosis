@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Schemes.Data
 {
     [Serializable]
-    public struct SchemeData
+    public class SchemeData
     {
         #region PRIVATE_VARIABLES
 
@@ -21,6 +21,12 @@ namespace Schemes.Data
         [SerializeField] private SchemeVisualsData schemeVisualsData;
         [ShowIf("isEditable")][SerializeField] private SchemeEditorData schemeEditorData;
         [SerializeReference] private SchemeLogicData schemeLogicData;
+
+        public SchemeData()
+        {
+            
+        }
+
         public SchemeData(SchemeKey schemeKey)
         {
             this.schemeKey = schemeKey;

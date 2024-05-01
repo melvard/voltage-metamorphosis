@@ -66,7 +66,9 @@ namespace Canvas
         
         private void OnColorPaletteCellClickHandler(Color color)
         {
+            if(selectedPaletteUICell.Color == color) return;
             SetSelectedColor(color);
+            OnColorChanged?.Invoke(color);
         }
 
         public void SetSelectedColor(Color color)
