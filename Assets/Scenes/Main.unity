@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
   - component: {fileID: 963194230}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -649,7 +649,7 @@ GameObject:
   - component: {fileID: 2013551795}
   - component: {fileID: 2013551794}
   - component: {fileID: 2013551793}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CameraController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -690,7 +690,7 @@ Transform:
   m_GameObject: {fileID: 2013551792}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06, y: 1, z: -0.08}
+  m_LocalPosition: {x: -0.06, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -779,6 +779,10 @@ PrefabInstance:
     - target: {fileID: 2782926800294948585, guid: 191b7ed1af5784be4825c5c37088c6f4, type: 3}
       propertyPath: m_Name
       value: Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608189865179154274, guid: 191b7ed1af5784be4825c5c37088c6f4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -20.199951
       objectReference: {fileID: 0}
     - target: {fileID: 5640391310611467769, guid: 191b7ed1af5784be4825c5c37088c6f4, type: 3}
       propertyPath: m_Pivot.x
@@ -949,7 +953,7 @@ GameObject:
   - component: {fileID: 5784681498804049050}
   - component: {fileID: 8796059455330271470}
   - component: {fileID: 8796059455330271471}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PointLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,7 +12,9 @@ namespace Schemes.Data
     public class SchemeVisualsData
     {
         [SerializeField] private string displayName;
+        #if UNITY_EDITOR
         [ValidateInput("SetMaterialWithPaletteColor", "Color should be included in SchemeMaterialPalette config (1 config expected in assets)")]
+        #endif
         [ColorPalette("Schemes")][SerializeField] private Color deviceBodyColor;
 
         [InfoBox("Body material comes from SchemePaletteContainer")]
@@ -49,6 +51,7 @@ namespace Schemes.Data
         public Vector2 Size => size;
 
         public Material DeviceBodyMaterial => deviceBodyMaterial;
+        public Color DeviceBodyColor => deviceBodyColor;
 
         public Vector2 GetInputPortPosition(int portIndex)
         {
@@ -69,13 +72,18 @@ namespace Schemes.Data
             displayName = name;
         }
 
+        public void SetBodySize(float xSize, float ySize)
+        {
+            SetBodySize(new Vector2(xSize, ySize));
+        }
         public void SetBodySize(Vector2 size)
         {
             this.size = size;
         }
-
-        public void SetMaterial(Color color)
+        
+        public void SetColor(Color color)
         {
+            deviceBodyColor = color;
             deviceBodyMaterial = GameManager.Instance
                 .GetContainerOfType<ConfigsContainer>()
                 .SchemeMaterialPaletteSo
@@ -96,7 +104,15 @@ namespace Schemes.Data
 
         public static SchemeVisualsData NewVisualsData()
         {
-            return new SchemeVisualsData();
+            var schemeVisualsData =  new SchemeVisualsData()
+            {
+                size = new Vector2(1f, 1f),
+            };
+            schemeVisualsData.SetColor(GameManager.Instance
+                .GetContainerOfType<ConfigsContainer>()
+                .SchemeMaterialPaletteSo.GetFirstColor());
+
+            return schemeVisualsData;
         }
 
         public ColorPalette FetchColorPalette()

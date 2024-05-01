@@ -34,7 +34,7 @@ namespace GameCamera
             wasdMovementStrategy.VerticalMovementSpeed = 0.1f;
             wasdMovementStrategy.HorizontalMovementSpeed = 0.1f;
             wasdMovementStrategy.MovementBoostKey = KeyCode.LeftShift;
-            wasdMovementStrategy.MovementBoostMultiplier = 2f;
+            wasdMovementStrategy.MovementBoostMultiplier = 3f;
             
             _movementStrategies.Add(wasdMovementStrategy);
         }

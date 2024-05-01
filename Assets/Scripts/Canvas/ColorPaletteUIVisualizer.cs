@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Misc;
 using Sirenix.OdinInspector.Editor;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -60,13 +61,17 @@ namespace Canvas
                 colorPaletteCell.OnCellClicked += OnColorPaletteCellClickHandler;
                 _colorPaletteUICells.Add(colorPaletteCell);
             }
-            selectedPaletteUICell.Color = _colorPaletteUICells[0].Color;
         }
 
         
         private void OnColorPaletteCellClickHandler(Color color)
         {
-            selectedPaletteUICell.Color = color;
+            SetSelectedColor(color);
+        }
+
+        public void SetSelectedColor(Color color)
+        {
+            selectedPaletteUICell.Color = color; 
         }
     }
 }

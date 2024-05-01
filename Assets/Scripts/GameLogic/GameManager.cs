@@ -17,7 +17,6 @@ namespace GameLogic
         
         [DisableInPlayMode][DisableInEditorMode][ShowInInspector] private List<IContainer> _runtimeContainers;
         
-
         private async void Start()
         {
             Init();

@@ -43,6 +43,10 @@ namespace Schemes
         
 
         #endif
-        
+
+        public Color GetFirstColor()
+        {
+            return paletteMaterials.Keys.First();
+        }
     }
 }

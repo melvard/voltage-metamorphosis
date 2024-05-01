@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
+using UnityEditor;
+using UnityEngine;
+
 
 namespace Schemes
 {
@@ -8,6 +12,9 @@ namespace Schemes
     {
         public static async UniTask<bool> SaveScheme(Scheme scheme)
         {
+            var json = JsonConvert.SerializeObject(scheme);
+            Debug.Log(json);
+            
             throw new NotImplementedException("Save scheme is not implemented");
         }
 
