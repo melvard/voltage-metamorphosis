@@ -93,7 +93,7 @@ namespace Schemes
             if (File.Exists(SavePath))
             {
                 string json = await File.ReadAllTextAsync(SavePath);
-                return JsonConvert.DeserializeObject<PlayerData>(json);
+                return JsonUtility.FromJson<PlayerData>(json);
             }
 
             Debug.LogWarning("Save file not found.");

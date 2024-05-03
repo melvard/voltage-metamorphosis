@@ -22,10 +22,7 @@ namespace Schemes.Data
         [ShowIf("isEditable")][SerializeField] private SchemeEditorData schemeEditorData;
         [SerializeReference] private SchemeLogicData schemeLogicData;
 
-        public SchemeData()
-        {
-            
-        }
+        
 
         public SchemeData(SchemeKey schemeKey)
         {
@@ -54,15 +51,14 @@ namespace Schemes.Data
 
         public static SchemeData NewSchemeData<T>() where T: SchemeLogicData, new()
         {
-            var schemeData = new SchemeData
-            {
-                name = "Scheme name",
-                description = "Scheme description",
-                schemeKey = SchemeKey.NewKey(),
-                schemeEditorData = new SchemeEditorData(),
-                schemeVisualsData = SchemeVisualsData.NewVisualsData(),
-                schemeLogicData = SchemeLogicData.NewLogicData<T>()
-            };
+            var schemeData = new SchemeData(SchemeKey.NewKey());
+
+            schemeData.name = "Scheme name";
+            schemeData.description = "Scheme description";
+            schemeData.schemeEditorData = new SchemeEditorData();
+            schemeData.schemeVisualsData = SchemeVisualsData.NewVisualsData();
+            schemeData.schemeLogicData = SchemeLogicData.NewLogicData<T>();
+            
             return schemeData;
         }
 
