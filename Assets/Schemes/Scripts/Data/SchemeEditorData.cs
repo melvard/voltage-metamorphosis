@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Schemes.Data
 {
@@ -9,6 +8,12 @@ namespace Schemes.Data
     {
         public int x;
         public int y;
+
+        public Coordinate(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
     }
     
     [Serializable]
@@ -28,17 +33,19 @@ namespace Schemes.Data
     public struct WireConnectionEditorData
     {
         public List<Coordinate> wireNodesCoordinates;
+        public int relationIndex;
 
-        public WireConnectionEditorData(List<Coordinate> wireNodesCoordinates)
+        public WireConnectionEditorData(List<Coordinate> wireNodesCoordinates, int relationIndex)
         {
             this.wireNodesCoordinates = wireNodesCoordinates;
+            this.relationIndex = relationIndex;
         }
     }
     
     [Serializable]
     public class SchemeEditorData
     {
-        public List<ComponentEditorData> componentEditorDatas;
-        public List<WireConnectionEditorData> wireConnectionEditorDatas;
+        public List<ComponentEditorData> componentEditorDatas= new();
+        public List<WireConnectionEditorData> wireConnectionEditorDatas = new();
     }
 }

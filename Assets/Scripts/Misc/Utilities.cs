@@ -96,14 +96,14 @@ namespace Misc
 
         public static int RandomExceptList(int min, int max, List<int> exceptions)
         {
-            int itereations = 0;
+            int iterations = 0;
             int randomNumber = random.Range(min, max);
 
             while (exceptions.Contains(randomNumber))
             {
-                itereations += 1;
+                iterations += 1;
                 randomNumber = random.Range(min, max);
-                if (itereations > 1000)
+                if (iterations > 1000)
                     throw new Exception(
                         "The number of iterations for finding non-matching random integer for list exceeded 1000");
             }
@@ -1046,13 +1046,28 @@ namespace Misc
 
 
 
-        public static void DestroyChildren(this Transform transform)
+        public static void DestroyChildren<T>(this T component)  where T : Component
         {
-            for (int i = transform.childCount-1; i >= 0; i--)
+            for (int i = component.transform.childCount-1; i >= 0; i--)
             {
-                UnityEngine.Object.Destroy(transform.GetChild(i).gameObject);
+                UnityEngine.Object.Destroy(component.transform.GetChild(i).gameObject);
             }
         }
+        
+        
+        public static int IndexOf<T>(this IList<T> list, Func<T, bool> predicate)
+        {
+            if (list == null)
+                throw new ArgumentNullException(nameof(list));
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
 
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (predicate(list[i]))
+                    return i;
+            }
+            return -1;
+        }
     }
 }

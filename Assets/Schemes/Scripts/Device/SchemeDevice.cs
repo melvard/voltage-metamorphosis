@@ -4,9 +4,11 @@ using System.Linq;
 using JetBrains.Annotations;
 using Misc;
 using Schemes.Dashboard;
+using Schemes.Data;
 using Schemes.Data.LogicData;
 using Schemes.Data.LogicData.UserIO;
 using Schemes.Device.Ports;
+using Schemes.Device.Wire;
 using Schemes.LogicUnit;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -28,10 +30,15 @@ namespace Schemes.Device
 
         [Title("Info")] [ShowInInspector] [DisableInEditorMode]
         private Scheme _underliningScheme;
+        #endregion
+
+        #region PRIVATE_FIELDS
 
         [ShowInInspector] [DisableInEditorMode]
         private ISchemeDeviceVisualizer _schemeDeviceVisualizer;
         private int _deviceIndex;
+        private List<SchemeDeviceInputPort> _schemeDeviceInputPorts;
+        private List<SchemeDeviceOutputPort> _schemeDeviceOutputPorts;
         
         #endregion
 
@@ -62,16 +69,14 @@ namespace Schemes.Device
             _underliningScheme = scheme;
             _deviceIndex = deviceIndex;
             
-            List<SchemeDeviceInputPort> schemeDeviceInputPorts = null;
-            List<SchemeDeviceOutputPort> schemeDeviceOutputPorts = null;
             if (scheme.SchemeData.SchemeLogicData is IInputPortSchemesLogicData inputPortSchemesLogicData)
             {
-                schemeDeviceInputPorts = GenerateInputPorts(inputPortSchemesLogicData.NumberOfInputs);
+                _schemeDeviceInputPorts = GenerateInputPorts(inputPortSchemesLogicData.NumberOfInputs);
             }
 
             if (scheme.SchemeData.SchemeLogicData is IOutputPortSchemeLogicData outputPortSchemeLogicData)
             {
-                schemeDeviceOutputPorts = GenerateOutputPorts(outputPortSchemeLogicData.NumberOfOutputs);
+                _schemeDeviceOutputPorts = GenerateOutputPorts(outputPortSchemeLogicData.NumberOfOutputs);
             }
 
             if (scheme.SchemeData.SchemeLogicData is UserInputLogicData userInputLogicData)
@@ -88,8 +93,8 @@ namespace Schemes.Device
             SchemeDeviceVisualsData schemeDeviceVisualsData = new()
             {
                 schemeVisualsData = scheme.SchemeData.SchemeVisualsData,
-                schemeDeviceInputPorts = schemeDeviceInputPorts,
-                schemeDeviceOutputPorts = schemeDeviceOutputPorts
+                schemeDeviceInputPorts = _schemeDeviceInputPorts,
+                schemeDeviceOutputPorts = _schemeDeviceOutputPorts
             };
             _schemeDeviceVisualizer.Visualise(schemeDeviceVisualsData);
 
@@ -128,9 +133,23 @@ namespace Schemes.Device
 
             return schemeDeviceOutputPorts;
         }
-    }
+        public Coordinate GetCoordinate()
+        {
+            var dashboardGridElement = EditorDashboard.Instance.GetDashboardElementOnGrid(transform.position);
+            return new Coordinate(dashboardGridElement.X, dashboardGridElement.Y);
+        }
 
-   
+        public SchemeDeviceInputPort GetInputPortByIndex(int portIndex)
+        {
+            return _schemeDeviceInputPorts.First(x => x.PortIndex == portIndex);
+        }
+
+        public SchemeDeviceOutputPort GetOutputPortByIndex(int portIndex)
+        {
+            return _schemeDeviceOutputPorts.First(x => x.PortIndex == portIndex);
+        }
+    }
+    
     public class SchemeInteractedOnPortsEventArgs : EventArgs
     {
         public SchemeDevicePortInteractEventArgs schemeDevicePortInteractEventArgs;
@@ -143,7 +162,8 @@ namespace Schemes.Device
             this.schemeDevicePortInteractEventArgs = schemeDevicePortInteractEventArgs;
         }
     }
-
+    
+    [RequireComponent(typeof(SchemeDevice))]
     public class User1BitInputInteractionHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         private UserInputLogicData _userInputLogicData;
@@ -203,6 +223,7 @@ namespace Schemes.Device
         }
     }
     
+    [RequireComponent(typeof(SchemeDevice))]
     public class User1BitOutputIndicator : MonoBehaviour
     {
         private UserOutputLogicData _userOutputLogicData;

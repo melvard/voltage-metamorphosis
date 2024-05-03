@@ -1,28 +1,38 @@
 using System;
-using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Schemes
+namespace Schemes.Data
 {
     [Serializable]
+    
     public struct SchemeKey
     {
+        #region CONSTS
+
+        // debugOnly: these consts are for fast testing purposes
+
+        public static readonly SchemeKey RELAY = new SchemeKey("d3336114-5910-42bd-b5e2-79518d3ff893");
+        public static readonly SchemeKey ONE_BIT_USER_INPUT = new SchemeKey("2b738a45-ac8c-4508-8385-84491fe01b62");
+        public static readonly SchemeKey ONE_BIT_OUTPUT = new SchemeKey("6c6dabff-4878-4697-8001-9ec948eed7cd");
+        public static readonly SchemeKey CONSTANT_VOLTAGE = new SchemeKey("ee5cf222-b539-4e0c-a5b6-179a9561825d");
+
+        #endregion
+        
         #region PRIVATE_VARIABLES
 
         [SerializeField] private MyGuid myGuid;
-        
-        #endregion
 
-        public static implicit operator string(SchemeKey schemeKey)
+        private SchemeKey(string guidString)
         {
-            return schemeKey.myGuid;
+            myGuid = new MyGuid(guidString);
         }
 
+        #endregion
+
+       
         public override string ToString()
         {
-            return myGuid;
+            return (string)myGuid;
         }
 
         public static SchemeKey NewKey()
@@ -31,42 +41,41 @@ namespace Schemes
             schemeKey.myGuid = MyGuid.NewGuid();
             return schemeKey;
         }
-    }
 
-    [Serializable]
-    public struct MyGuid
-    {
-        [DisableInPlayMode][DisableInEditorMode][ShowInInspector][SerializeField]
-        private string guidStr;
-        [ButtonGroup][Button("GenerateGUID")]
-        private void GenerateGUID()
+        #region OPERATOR_OVERRIDES
+
+        public static explicit operator string(SchemeKey schemeKey)
         {
-            guidStr = Guid.NewGuid().ToString();
+            return (string)schemeKey.myGuid;
         }
 
-        #if UNITY_EDITOR
-        [ButtonGroup][Button("Copy")]
-        private void CopyGuidToClipboard()
+        public static bool operator ==(SchemeKey a, SchemeKey b)
         {
-            EditorGUIUtility.systemCopyBuffer = guidStr;
+            return a.myGuid == b.myGuid;
         }
-        #endif
-        
-        public static implicit operator string(MyGuid myGuid)
+
+        public static bool operator !=(SchemeKey a, SchemeKey b)
         {
-            return myGuid.guidStr;
+            return !(a == b);
         }
         
-        public override string ToString()
+        public override bool Equals(object other)
         {
-            return guidStr;
+            if (other == null) return false;
+            if (other is not SchemeKey otherSchemeKey) return false;
+            return otherSchemeKey == this;
         }
 
-        public static MyGuid NewGuid()
+        public bool Equals(SchemeKey other)
         {
-            var myGuid = new MyGuid();
-            myGuid.GenerateGUID();
-            return myGuid;
+            return myGuid.Equals(other.myGuid);
         }
+
+        public override int GetHashCode()
+        {
+            return myGuid.GetHashCode();
+        }
+
+        #endregion
     }
 }

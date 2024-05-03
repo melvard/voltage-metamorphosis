@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Canvas;
+using Cysharp.Threading.Tasks;
+using Exceptions;
 using GameLogic;
+using Schemes.Data;
 using Schemes.Data.LogicData.Composition;
 using Schemes.Device;
 using Schemes.Device.Movement;
@@ -11,137 +15,186 @@ using Schemes.LogicUnit;
 using Sirenix.OdinInspector;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Schemes.Dashboard
 {
     public class SchemeEditor : MonoBehaviour
     {
-        #region CONSTS
-
-        public const string RELAY_KEY = "d3336114-5910-42bd-b5e2-79518d3ff893";
-        public const string ONE_BIT_USER_INPUT_KEY = "2b738a45-ac8c-4508-8385-84491fe01b62";
-        public const string ONE_BIT_OUTPUT_KEY = "6c6dabff-4878-4697-8001-9ec948eed7cd";
-        public const string CONSTANT_VOLTAGE_KEY = "ee5cf222-b539-4e0c-a5b6-179a9561825d";
-        
-        #endregion
-
         #region SERIALIZED_FIELDS
 
-        [SerializeField] private SchemeDevice schemeDeviceRef;
-        [SerializeField] private SchemeDeviceWire schemeDeviceWireRef;
-
+        [AssetsOnly] [SerializeField] private SchemeDevice schemeDeviceRef;
+        [AssetsOnly] [SerializeField] private SchemeDeviceWire schemeDeviceWireRef;
+        [SerializeField] private SchemeEditorUI schemeEditorUI;
         #endregion
 
         #region PRIVATE_FIELDS
 
         [DisableInPlayMode] [DisableInEditorMode] [ShowInInspector]
         private Scheme _currentScheme;
-        
+
         private SchemeLogicUnit _currentSchemeLogicUnit;
         private CompositionLogicData _currentCompositionLogicData;
         private SchemeDeviceWire _currentWire;
+
+        private List<SchemeDevice> _devices;
+        private List<SchemeDeviceWire> _wires;
         private IGridHandler _gridHandler;
         private int _incrementComponentIndex;
-        private bool _pendingForWireConnection = false;
-        #endregion
+        private int _incrementRelationIndex;
 
+        private bool _pendingForWireConnection;
+
+        #endregion
 
         #region GETTERS
 
         [Obsolete("Consider getting rid of this. This is debug only")]
         public SchemeLogicUnit CurrentSchemeLogicUnit_Debug => _currentSchemeLogicUnit;
-        
+
         [Obsolete("Consider getting rid of this. This is debug only")]
         public Scheme CurrentScheme_Debug => _currentScheme;
-        
+
+        #endregion
+
+        #region EVENTS
+
+        public event UnityAction<Scheme> OnLoadedScheme;
+
         #endregion
         
         public void Init()
         {
-            _currentScheme = new Scheme();
-            _currentCompositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
-            _currentSchemeLogicUnit = _currentScheme.InstantiateLogicUnit(-1);
-        
-            _gridHandler = EditorDashboard.Instance;
+            NewScheme();
+            schemeEditorUI.Init();
         }
 
-        // hack: shortcut for SchemeDevice generation
+        public void NewScheme()
+        {
+            ResetEditor();
+            _devices = new List<SchemeDevice>();
+            _wires = new List<SchemeDeviceWire>();
+
+            _currentScheme = Scheme.NewScheme();
+            _currentCompositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
+            _currentSchemeLogicUnit = _currentScheme.InstantiateLogicUnit(-1);
+
+            _gridHandler = EditorDashboard.Instance;
+            OnLoadedScheme?.Invoke(_currentScheme);
+        }
+
+        // debugOnly: shortcut for SchemeDevice generation
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
-                AddDeviceInComposition(InstantiateSchemeDevice(RELAY_KEY));
+                ProcessNewDevice(InstantiateSchemeDevice(SchemeKey.RELAY, _incrementComponentIndex));
             }
 
             if (Input.GetKeyDown(KeyCode.I))
             {
-                AddDeviceInComposition(InstantiateSchemeDevice(ONE_BIT_USER_INPUT_KEY));
+                ProcessNewDevice(InstantiateSchemeDevice(SchemeKey.ONE_BIT_USER_INPUT, _incrementComponentIndex));
             }
 
             if (Input.GetKeyDown(KeyCode.O))
             {
-                AddDeviceInComposition(InstantiateSchemeDevice(ONE_BIT_OUTPUT_KEY));
+                ProcessNewDevice(InstantiateSchemeDevice(SchemeKey.ONE_BIT_OUTPUT, _incrementComponentIndex));
             }
 
             if (Input.GetKeyDown(KeyCode.V))
             {
-                AddDeviceInComposition(InstantiateSchemeDevice(CONSTANT_VOLTAGE_KEY));
+                ProcessNewDevice(InstantiateSchemeDevice(SchemeKey.CONSTANT_VOLTAGE, _incrementComponentIndex));
             }
-
+            
             _currentSchemeLogicUnit.Process();
-            // if (Input.GetKeyDown(KeyCode.P))
+
+            // save current scheme
+            // if (Input.GetKeyDown(KeyCode.LeftCurlyBracket))
             // {
+            //     SaveScheme();
             // }
-
-            if (Input.GetKeyDown(KeyCode.U))
+            
+            // load current scheme
+            if (Input.GetKeyDown(KeyCode.RightCurlyBracket))
             {
-                SaveScheme();
+                // loading last 
             }
-        
         }
 
-        private void SaveScheme()
-        {
-            throw new NotImplementedException();
-        }
-
+        #region INSTANTIATION
 
         // ReSharper disable Unity.PerformanceAnalysis
-        private SchemeDevice InstantiateSchemeDevice(string schemeKey)
+        private SchemeDevice InstantiateSchemeDevice(SchemeKey schemeKey, int deviceIndex)
         {
-            var schemeDevice = Instantiate(schemeDeviceRef);
-            schemeDevice.transform.position = _gridHandler.GetMousePositionToGrid();
+            var device = Instantiate(schemeDeviceRef);
+
+            // fixme this _gridHandler is not a useful one
+            device.transform.position = _gridHandler.GetMousePositionToGrid();
             var scheme = GameManager.Instance.GetContainerOfType<SchemesContainer>().GetSchemeByKey(schemeKey);
-            schemeDevice.Init(scheme, _incrementComponentIndex);
-            schemeDevice.OnDevicePortInteracted += OnDevicePortInteractedHandler;
+            device.Init(scheme, deviceIndex);
+            device.OnDevicePortInteracted += OnDevicePortInteractedHandler;
 
             // adding movement logic
-            var deviceDragDropMovementStrategy = schemeDevice.AddComponent<DragDropMovementStrategy>();
+            var deviceDragDropMovementStrategy = device.AddComponent<DragDropMovementStrategy>();
             var gridSnapMovementExecutionStrategy = new GridSnapMovementExecutionStrategy();
             gridSnapMovementExecutionStrategy.SetGirdHandler(EditorDashboard.Instance);
 
             IMovementExecutionStrategy movementExecutionStrategy = gridSnapMovementExecutionStrategy;
             deviceDragDropMovementStrategy.SetMovementExecutionStrategy(movementExecutionStrategy);
-            deviceDragDropMovementStrategy.SetListOfAcceptableColliders(schemeDevice.InteractionColliders);
+            deviceDragDropMovementStrategy.SetListOfAcceptableColliders(device.InteractionColliders);
             deviceDragDropMovementStrategy.ShouldTakeIntoAccountInitialDelta = true;
             deviceDragDropMovementStrategy.EnableMovement();
-            _currentSchemeLogicUnit.AddComponentLogicUnit(scheme.InstantiateLogicUnit(_incrementComponentIndex));
-        
-            return schemeDevice;
+
+            _devices.Add(device);
+            _currentSchemeLogicUnit.AddComponentLogicUnit(scheme.InstantiateLogicUnit(deviceIndex));
+
+            return device;
         }
 
-        private void RemoveSchemeDevice(SchemeDevice schemeDevice)
+        private SchemeDevice InstantiateSchemeDevice(ComponentScheme componentScheme,
+            ComponentEditorData componentEditorData)
         {
-            throw new NotImplementedException();
+            var device = InstantiateSchemeDevice(componentScheme.SchemeKey, componentScheme.ComponentIndex);
+            device.transform.position =
+                EditorDashboard.Instance.GetPositionOnGrid(componentEditorData.coordinateOnGrid);
+            return device;
         }
 
-        
+
+        private SchemeDeviceWire InstantiateSchemeDeviceWire()
+        {
+            var wire = Instantiate(schemeDeviceWireRef);
+            return wire;
+        }
+
+        private SchemeDeviceWire InstantiateSchemeDeviceWire(WireConnectionEditorData wireConnectionEditorData,
+            SchemeRelation schemeRelation)
+        {
+            var wire = InstantiateSchemeDeviceWire();
+            var compositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
+            var senderDevice = _devices.First(device =>
+                device.DeviceIndex == schemeRelation.senderNode.ComponentIndexInComposition);
+
+            var receiverDevice = _devices.First(device =>
+                device.DeviceIndex == schemeRelation.receiverNode.ComponentIndexInComposition);
+
+            var startPort = senderDevice.GetInputPortByIndex(schemeRelation.senderNode.ComponentPortIndex);
+            var endPort = receiverDevice.GetOutputPortByIndex(schemeRelation.senderNode.ComponentPortIndex);
+            wire.transform.position = startPort.transform.position;
+            
+            SchemeDeviceWire.ConstructWire(wire, wireConnectionEditorData, startPort, endPort);
+
+            return wire;
+        }
+
+        #endregion
+
 
         private void OnDevicePortInteractedHandler(SchemeInteractedOnPortsEventArgs arg0)
         {
             if (!_pendingForWireConnection)
             {
-                _currentWire = Instantiate(schemeDeviceWireRef);
+                _currentWire = InstantiateSchemeDeviceWire();
                 // _currentWire.SetGridHandler(_gridHandler);
                 _currentWire.SetPosition(arg0.schemeDevicePortInteractEventArgs.port.transform.position);
                 _currentWire.SetStartPort(arg0.schemeDevicePortInteractEventArgs.port);
@@ -151,59 +204,148 @@ namespace Schemes.Dashboard
             }
             else
             {
-                if (arg0.schemeDevicePortInteractEventArgs.port.SchemeDevice == _currentWire.StartPort.SchemeDevice) return;
-                if(_currentWire.StartPort.GetType() == arg0.schemeDevicePortInteractEventArgs.port.GetType()) return;
+                if (arg0.schemeDevicePortInteractEventArgs.port.SchemeDevice ==
+                    _currentWire.StartPort.SchemeDevice) return;
+                if (_currentWire.StartPort.GetType() == arg0.schemeDevicePortInteractEventArgs.port.GetType()) return;
 
                 _pendingForWireConnection = false;
                 _currentWire.TerminateActiveWiring();
                 _currentWire.SetEndPort(arg0.schemeDevicePortInteractEventArgs.port);
-                DefineRelation(_currentWire.StartPort, _currentWire.EndPort);
+                var relationIndex = DefineRelation(_currentWire.StartPort, _currentWire.EndPort);
+                _currentWire.SetRelationIndex(relationIndex);
+
+                _wires.Add(_currentWire);
+                SaveWire(_currentWire);
             }
+        }
+
+        // ReSharper disable Unity.PerformanceAnalysis
+        private void ProcessNewDevice(SchemeDevice schemeDevice)
+        {
+            AddDeviceInComposition(schemeDevice);
+            SaveDevice(schemeDevice);
         }
 
         private void OnWiringCanceledHandler()
         {
+            Destroy(_currentWire.gameObject);
             _currentWire = null;
             _pendingForWireConnection = false;
         }
-    
+
         private void AddDeviceInComposition(SchemeDevice schemeDevice)
         {
-            ComponentScheme componentScheme = new ComponentScheme(_incrementComponentIndex, schemeDevice.UnderliningScheme.SchemeData.SchemeKey);
+            ComponentScheme componentScheme = new ComponentScheme(_incrementComponentIndex,
+                schemeDevice.UnderliningScheme.SchemeData.SchemeKey);
             _currentCompositionLogicData.ComponentSchemes.Add(componentScheme);
-        
+
             _incrementComponentIndex++;
         }
 
-
-        // idk what the hell is this going to do
-        private void DefineRelation(SchemeDevicePort a, SchemeDevicePort b)
+        private int DefineRelation(SchemeDevicePort a, SchemeDevicePort b)
         {
             SchemeRelation schemeRelation = new();
 
-            var ports =  new List<SchemeDevicePort>() { a, b };
-            // right relation node
+            var ports = new List<SchemeDevicePort> { a, b };
+
             SchemeDevicePort outputPort = ports.First(x => x is SchemeDeviceOutputPort);
             SchemeDevicePort inputPort = ports.First(x => x is SchemeDeviceInputPort);
-        
-            ComponentScheme receiverComponent =
-                _currentCompositionLogicData.ComponentSchemes.First(c=>c.ComponentIndex == inputPort.SchemeDevice.DeviceIndex);
-        
-            schemeRelation.receiverNode = new ComponentRelationNode(receiverComponent.ComponentIndex,  inputPort.PortIndex);
-        
-            // left relation node
-            ComponentScheme senderComponent =
-                _currentCompositionLogicData.ComponentSchemes.First(c=>c.ComponentIndex == outputPort.SchemeDevice.DeviceIndex);
 
-        
-            schemeRelation.senderNode = new ComponentRelationNode(senderComponent.ComponentIndex,  outputPort.PortIndex);
-        
+            // receiver relation node
+            schemeRelation.receiverNode =
+                new ComponentRelationNode(inputPort.SchemeDevice.DeviceIndex, inputPort.PortIndex);
+
+            // sender relation node
+            schemeRelation.senderNode =
+                new ComponentRelationNode(outputPort.SchemeDevice.DeviceIndex, outputPort.PortIndex);
+
             _currentCompositionLogicData.SchemeRelations.Add(schemeRelation);
+
+            return schemeRelation.relationIndex;
         }
-    
+
+        private void SaveDevice(SchemeDevice device)
+        {
+            _currentScheme.SchemeData.SchemeEditorData.componentEditorDatas.Add(
+                new ComponentEditorData(device.DeviceIndex, device.GetCoordinate()));
+        }
+
+        private void SaveWire(SchemeDeviceWire wire)
+        {
+            _currentScheme.SchemeData.SchemeEditorData.wireConnectionEditorDatas.Add(wire.GetConnectionData());
+        }
+
+        public void SaveScheme()
+        {
+            SchemesSaverLoader.SaveScheme(_currentScheme).Forget();
+        }
+
+        private void RemoveWire(SchemeDeviceWire wire)
+        {
+            throw new NotImplementedException();
+        }
+
         private void RemoveRelation(SchemeDevicePort a, SchemeDevicePort b)
         {
             throw new NotImplementedException();
+        }
+
+        private void RemoveSchemeDevice(SchemeDevice schemeDevice)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void LoadSchemeInEditor(Scheme scheme)
+        {
+            _currentScheme = scheme;
+            _currentSchemeLogicUnit = scheme.InstantiateLogicUnit(-1);
+
+            _devices ??= new List<SchemeDevice>();
+            _devices.Clear();
+
+            _wires ??= new List<SchemeDeviceWire>();
+            _wires.Clear();
+            
+            var compositionLogicData = scheme.SchemeData.SchemeLogicData as CompositionLogicData;
+            if (compositionLogicData == null)
+            {
+                throw new GameLogicException("Trying to edit scheme that is not composition.");
+            }
+
+            var schemeEditorData = scheme.SchemeData.SchemeEditorData;
+            var componentEditorDatas = schemeEditorData.componentEditorDatas;
+
+            foreach (var componentScheme in compositionLogicData.ComponentSchemes)
+            {
+                var componentEditorData =
+                    componentEditorDatas.First(x => x.componentIndex == componentScheme.ComponentIndex);
+                var device = InstantiateSchemeDevice(componentScheme, componentEditorData);
+                _devices.Add(device);
+            }
+
+            _incrementComponentIndex = compositionLogicData.ComponentSchemes.Max(x => x.ComponentIndex);
+
+            foreach (var relation in compositionLogicData.SchemeRelations)
+            {
+                var wireConnectionEditorData =
+                    schemeEditorData.wireConnectionEditorDatas.First(x => x.relationIndex == relation.relationIndex);
+                var wire = InstantiateSchemeDeviceWire(wireConnectionEditorData, relation);
+                _wires.Add(wire);
+            }
+            
+            OnLoadedScheme?.Invoke(_currentScheme);
+        }
+
+        public void ResetEditor()
+        {
+            _currentSchemeLogicUnit = null;
+            _devices?.ForEach(device=>Destroy(device.gameObject));
+            _wires?.ForEach(wire => Destroy(wire.gameObject));
+        }
+
+        public SchemeDevice GetSchemeDeviceReference()
+        {
+            return schemeDeviceRef;
         }
     }
 }

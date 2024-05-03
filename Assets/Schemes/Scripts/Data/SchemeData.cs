@@ -43,6 +43,7 @@ namespace Schemes.Data
 
         #region GETTERS
         public string Name => name;
+        public string Description => description;
         public SchemeKey SchemeKey => schemeKey;
         public SchemeVisualsData SchemeVisualsData => schemeVisualsData;
         public SchemeLogicData SchemeLogicData => schemeLogicData;

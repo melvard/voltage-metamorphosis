@@ -37,14 +37,10 @@ namespace Canvas
 
         #endregion
 
-        public void Init()
-        {
-            _colorPaletteUICells = new();
-        }
-
         public void SetColorPalette(List<Color> colors)
         {
             container.DestroyChildren();
+            _colorPaletteUICells = new();
             _colorPaletteUICells.Clear();
             
             _colorPalette = new ColorPalette()

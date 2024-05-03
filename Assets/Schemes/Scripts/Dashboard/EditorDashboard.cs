@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Canvas;
 using Cysharp.Threading.Tasks;
 using GameLogic;
 using Misc;
+using Schemes.Data;
 using Schemes.Device.Movement;
 using UnityEngine;
 
@@ -11,24 +13,42 @@ namespace Schemes.Dashboard
 {
     public class EditorDashboard : MonoSingleton<EditorDashboard>, IGridHandler
     {
+        #region SERIALIZED_FIELDS
+
         public Material debugPathMaterial;
         [SerializeField] private Transform ground;
         [SerializeField] private SchemeEditor schemeEditor;
-        
-        private SmartGrid<DashboardGridElement> _grid;
-        public SchemeEditor SchemeEditor_Debug => schemeEditor;
+        [SerializeField] private SchemeEditorUI schemeEditorUI;
 
+        #endregion
+
+        #region MyRegion
+
+        private SmartGrid<DashboardGridElement> _grid;
+
+        #endregion
+
+        #region GETTERS
+
+        public SchemeEditor SchemeEditor_Debug => schemeEditor;
+        
+        #endregion
+        
         private async void Start()
-        { 
-            Vector3 gridOrigin = transform.position + new Vector3(-50,ground.position.y + ground.localScale.y + 0.1f, -50);
+        {
+            schemeEditorUI.OnSaveSchemeCommandFromUI += schemeEditor.SaveScheme;
+            schemeEditorUI.OnClearDashboardCommandFromUI += ClearDashboardHandler;
+
+            Vector3 gridOrigin = transform.position +
+                                 new Vector3(-50, ground.position.y + ground.localScale.y + 0.1f, -50);
             _grid = new SmartGrid<DashboardGridElement>(
-                200, 
-                200, 
-                0.5f, 
-                gridOrigin, 
+                200,
+                200,
+                0.5f,
+                gridOrigin,
                 (grid, x, y) => new DashboardGridElement(grid, x, y));
 
-            await UniTask.WaitUntil(()=> InputsManager.GetKeyDown(KeyCode.Slash, gameObject.layer));
+            await UniTask.WaitUntil(() => InputsManager.GetKeyDown(KeyCode.Slash, gameObject.layer));
             Debug_GenerateRandomObstacles(_grid);
             // await UniTask.WaitUntil(()=> Input.GetKeyDown(KeyCode.C));
             //
@@ -41,30 +61,45 @@ namespace Schemes.Dashboard
             //     go.transform.position = _grid.GetWorldPosition(gridPathNode.X, gridPathNode.Y);
             // } 
         }
-        
+
+        private void ClearDashboardHandler()
+        {
+            schemeEditor.ResetEditor();
+            foreach (var dashboardGridElement in _grid)
+            {
+                dashboardGridElement.businessIntValDebug = 0;
+            } 
+            schemeEditor.NewScheme();
+        }
+
         private void Debug_GenerateRandomObstacles(SmartGrid<DashboardGridElement> grid)
         {
             UnityEngine.Random.InitState(1);
             for (int x = 0; x < grid.GetWidth(); x++)
-            for (int y = 0; y <  grid.GetHeight(); y++)
+            for (int y = 0; y < grid.GetHeight(); y++)
             {
                 if (UnityEngine.Random.value > 0.9f)
                 {
-                    var cell = grid.GetValue(x,y);
+                    var cell = grid.GetValue(x, y);
                     cell.businessIntValDebug = 1;
                     var go1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     go1.transform.localScale = Vector3.one * 0.5f;
-                    go1.transform.position = _grid.GetWorldPosition(x,y);
+                    go1.transform.position = _grid.GetWorldPosition(x, y);
                 }
             }
-            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
 
+            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
         }
-        
+
 
         public Vector3 GetPositionOnGrid(Vector3 position)
         {
             return _grid.GetAlignedPositionOnGrid(position);
+        }
+
+        public Vector3 GetPositionOnGrid(Coordinate coordinate)
+        {
+            return _grid.GetWorldPosition(coordinate);
         }
 
         public Vector3 GetMousePositionToGrid()
@@ -91,22 +126,38 @@ namespace Schemes.Dashboard
         {
             return _grid.GetValue(mousePositionToGrid).IsWalkable;
         }
+
+        public DashboardGridElement GetDashboardElementOnGrid(Vector3 position)
+        {
+            return _grid.GetValue(position);
+        }
+
+        public List<DashboardGridElement> GetGrid()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<DashboardGridElement> GetDashboardElementsOnGridWithCoordinates(
+            List<Coordinate> wireNodesCoordinates)
+        {
+            return wireNodesCoordinates.Select(wireNodesCoordinate => _grid.GetValue(wireNodesCoordinate)).ToList();
+        }
     }
 
-    public class DashboardGridElement : MustInitializeGridElement<DashboardGridElement>, IGridPathNode<DashboardGridElement>
+    public class DashboardGridElement : MustInitializeGridElement<DashboardGridElement>,
+        IGridPathNode<DashboardGridElement>
     {
-        public DashboardGridElement(SmartGrid<DashboardGridElement> grid, int x, int y) : base(grid, x, y) {}
-        
+        public DashboardGridElement(SmartGrid<DashboardGridElement> grid, int x, int y) : base(grid, x, y)
+        {
+        }
+
         public int gCost { get; set; }
         public int hCost { get; set; }
         public int fCost { get; set; }
 
         public int businessIntValDebug = 0;
         public DashboardGridElement nodeCameFrom { get; set; }
-        
-        public bool IsWalkable =>  businessIntValDebug == 0;
-        
+
+        public bool IsWalkable => businessIntValDebug == 0;
     }
 }
-
-

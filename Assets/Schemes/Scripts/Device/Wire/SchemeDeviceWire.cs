@@ -5,6 +5,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Misc;
 using Schemes.Dashboard;
+using Schemes.Data;
 using Schemes.Device.Movement;
 using Schemes.Device.Ports;
 using Sirenix.OdinInspector;
@@ -20,10 +21,9 @@ namespace Schemes.Device.Wire
 
         private const KeyCode CANCEL_WIRING_KEY = KeyCode.Escape;
         private const KeyCode WAYPOINT_GENERATION_KEY = KeyCode.Mouse0;
-        
+
         #endregion
-        
-        
+
         #region SERIALIZED_FIELDS
 
         [AssetsOnly] [SerializeField] private WireBody wireBodyRef;
@@ -40,6 +40,7 @@ namespace Schemes.Device.Wire
         readonly List<WireNode> _currentWireNodes = new();
         private SchemeDevicePort _startPort;
         private SchemeDevicePort _endPort;
+        private int _relationIndex;
 
         #endregion
 
@@ -53,54 +54,8 @@ namespace Schemes.Device.Wire
         #region EVENTS
 
         public event UnityAction OnWiringCanceled;
-        
+
         #endregion
-        // private IGridHandler _gridHandler;
-        public void Init()
-        {
-            // _numberOfPositions = 2;
-            // _wireBodies = new();
-            // _lineRendererLocalPositions = new Vector3[2];
-            // lineRenderer.SetPositions(_lineRendererLocalPositions);
-        }
-
-        private void UpdateLineRenderer()
-        {
-        }
-
-        private void UpdateLineRendererLastPosition(Vector3 localPosition)
-        {
-        }
-        // private WireNode FirstNode => _wireNodes[0];
-        // private WireNode LastNode => _wireNodes[1];
-
-        // public SchemeDevicePort this[int index]
-        // {
-        //     get
-        //     {
-        //         ValidateIndex(index);
-        //         return _connectingPorts[index];
-        //
-        //     }
-        //     set
-        //     {
-        //         ValidateIndex(index);
-        //         _connectingPorts[index] = value;
-        //         GenerateNode(value);
-        //     }
-        // }
-
-        // public void GenerateFirstNode(SchemeDevicePort schemeDevicePort)
-        // {
-        //     var node = GenerateNode(schemeDevicePort);
-        //     _wireNodes.Add(node);
-        // }
-        //
-        // public void GenerateLastNode(SchemeDevicePort schemeDevicePort)
-        // {
-        //     var node = GenerateNode(schemeDevicePort);
-        //     _wireNodes.Add(node);
-        // }
 
         public WireNode GenerateWaypointNode()
         {
@@ -128,7 +83,7 @@ namespace Schemes.Device.Wire
             _wiringCancellationTokenSource = new CancellationTokenSource();
             ActiveWiring(_wiringCancellationTokenSource.Token).Forget();
         }
-        
+
         public void TerminateActiveWiring()
         {
             _wireNodes = _currentWireNodes;
@@ -146,7 +101,7 @@ namespace Schemes.Device.Wire
                 wireNode.PathNode.businessIntValDebug = 1;
             }
         }
-       
+
 
         private async UniTaskVoid ActiveWiring(CancellationToken cancellationToken)
         {
@@ -155,7 +110,6 @@ namespace Schemes.Device.Wire
             List<Vector3> waypointPositions = new List<Vector3>();
             while (true)
             {
-
                 if (Input.GetKeyDown(CANCEL_WIRING_KEY))
                 {
                     CancelWiring();
@@ -174,7 +128,7 @@ namespace Schemes.Device.Wire
                 }
 
                 Vector3 startPosition = transform.position;
-                
+
                 totalPath.Clear();
                 for (var i = 0; i < waypointPositions.Count; i++)
                 {
@@ -186,56 +140,40 @@ namespace Schemes.Device.Wire
                     {
                         simplifiedPath.Pop(0);
                     }
-                    if(simplifiedPath != null) totalPath.AddRange(simplifiedPath);
+
+                    if (simplifiedPath != null) totalPath.AddRange(simplifiedPath);
                     startPosition = waypointPosition;
                 }
 
-                var lastSimplifiedPath = EditorDashboard.Instance.GetPathWithWorldPositionsOnGrid(startPosition, EditorDashboard.Instance.GetMousePositionToGrid(), true);
+                var lastSimplifiedPath = EditorDashboard.Instance.GetPathWithWorldPositionsOnGrid(startPosition,
+                    EditorDashboard.Instance.GetMousePositionToGrid(), true);
 
                 if (!waypointPositions.IsNullOrEmpty() && lastSimplifiedPath != null && lastSimplifiedPath.Count != 0)
                 {
                     lastSimplifiedPath.Pop(0);
                 }
-                
-                if(lastSimplifiedPath != null) totalPath.AddRange(lastSimplifiedPath);
-                    
-                _currentWireNodes.ForEach(x=>Destroy(x.gameObject));
+
+                if (lastSimplifiedPath != null) totalPath.AddRange(lastSimplifiedPath);
+
+                _currentWireNodes.ForEach(x => Destroy(x.gameObject));
                 _currentWireNodes.Clear();
 
-                if (totalPath != null)
-                {
-                    foreach (var dashboardGridElement in totalPath)
-                    {
-                        var node = GenerateWaypointNode();
-                        node.transform.position = dashboardGridElement.GetPositionOnGrid();
-                        node.SetPathNode(dashboardGridElement);
-                        _currentWireNodes.Add(node);
-                    }
-
-                    var positions = _currentWireNodes.Select(x => x.transform.position);
-                    var lineRendererPositions = positions.ToArray();
-                    lineRenderer.positionCount = lineRendererPositions.Length;
-                    lineRenderer.SetPositions(lineRendererPositions);
-                }
-                else
-                {
-                    lineRenderer.positionCount = 0;
-                }
+                GenerateWireVisuals(totalPath);
 
                 cancellationToken.ThrowIfCancellationRequested();
                 await UniTask.Yield(cancellationToken);
             }
         }
 
-        
+
         private void CancelWiring()
         {
             OnWiringCanceled?.Invoke();
-            _currentWireNodes.ForEach(x=>Destroy(x.gameObject));
+            _currentWireNodes.ForEach(x => Destroy(x.gameObject));
             _currentWireNodes.Clear();
             Destroy(gameObject);
         }
-        
+
         public void SetPosition(Vector3 transformPosition)
         {
             transform.position = transformPosition;
@@ -244,12 +182,58 @@ namespace Schemes.Device.Wire
         public void SetStartPort(SchemeDevicePort startPort)
         {
             this._startPort = startPort;
-
         }
+
         public void SetEndPort(SchemeDevicePort endPort)
         {
             this._endPort = endPort;
         }
-        
+
+        public void SetRelationIndex(int index)
+        {
+            this._relationIndex = index;
+        }
+
+        public WireConnectionEditorData GetConnectionData()
+        {
+            var coordinatesOfNodes = _wireNodes
+                .Select(wireNode => new Coordinate(wireNode.PathNode.X, wireNode.PathNode.Y)).ToList();
+            var wireConnectionEditorData = new WireConnectionEditorData(coordinatesOfNodes, _relationIndex);
+
+            return wireConnectionEditorData;
+        }
+
+        public static void ConstructWire(SchemeDeviceWire wire, WireConnectionEditorData wireConnectionEditorData,
+            SchemeDevicePort startPort, SchemeDevicePort endPort)
+        {
+            wire.SetStartPort(startPort);
+            wire.SetEndPort(endPort);
+            wire.SetRelationIndex(wireConnectionEditorData.relationIndex);
+            
+            wire.GenerateWireVisuals(EditorDashboard.Instance.GetDashboardElementsOnGridWithCoordinates(wireConnectionEditorData.wireNodesCoordinates));
+        }
+
+        private void GenerateWireVisuals(List<DashboardGridElement> dashboardGridElements)
+        {
+            if (dashboardGridElements != null)
+            {
+                foreach (var dashboardGridElement in dashboardGridElements)
+                {
+                    var node = GenerateWaypointNode();
+                    node.transform.position = dashboardGridElement.GetPositionOnGrid();
+                    node.SetPathNode(dashboardGridElement);
+                    _currentWireNodes.Add(node);
+                }
+
+                var positions = _currentWireNodes.Select(x => x.transform.position);
+                var lineRendererPositions = positions.ToArray();
+                lineRenderer.positionCount = lineRendererPositions.Length;
+                lineRenderer.SetPositions(lineRendererPositions);
+            }
+            else
+            {
+                lineRenderer.positionCount = 0;
+            }
+        }
     }
 }

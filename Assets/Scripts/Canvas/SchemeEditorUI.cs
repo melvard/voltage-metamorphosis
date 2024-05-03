@@ -2,14 +2,13 @@ using System;
 using System.Globalization;
 using Cysharp.Threading.Tasks;
 using GameLogic;
-using JetBrains.Annotations;
 using Schemes;
 using Schemes.Dashboard;
-using Schemes.Data;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace Canvas
 {
@@ -64,28 +63,60 @@ namespace Canvas
         [Title("Visuals")]
         [SerializeField] private ColorPaletteUIVisualizer schemeColorPaletteUIVisualizer;
 
-        [Header("Size")] 
+        [Title("Size")] 
         [SerializeField] private TMP_InputField xSizeInputField;
         [SerializeField] private TMP_InputField ySizeInputField;
+
+        [Title("Interaction button")] 
+        [SerializeField] private Button saveSchemeButton;
+        [SerializeField] private Button clearDashboardButton;
+
+        [Title("Scheme selection section")] 
+        [SerializeField] private SchemesSelectorUI schemesSelectorUI;
         
         #endregion
 
+
+        #region PRIVATE_FIELDS
+
         private Scheme _scheme;
         private SchemeUIData _schemeUIData;
-        public void Init()
-        {
-            schemeColorPaletteUIVisualizer.Init();
-            // xSizeInputField.on
-        }
 
+        #endregion
+
+        #region EVENTS
+
+        public event UnityAction OnSaveSchemeCommandFromUI;
+        public event UnityAction OnClearDashboardCommandFromUI;
+
+        #endregion
+        // debugOnly: internal unity Start function is used to quickly test UI interactions 
         private async void Start()
         {
             await UniTask.Yield();
+            await UniTask.Yield();
 
-            Init();
+            // Init();
+        }
+        
+        public void Init()
+        {
+            SubscribeToButtonEvents();
+            
             SetScheme(EditorDashboard.Instance.SchemeEditor_Debug.CurrentScheme_Debug);
+            EditorDashboard.Instance.SchemeEditor_Debug.OnLoadedScheme += SetScheme;
+
+            var schemesContainer = GameManager.Instance.GetContainerOfType<SchemesContainer>();
+            schemesSelectorUI.Init(schemesContainer);
         }
 
+        
+        private void SubscribeToButtonEvents()
+        {
+            saveSchemeButton.onClick.AddListener(OnSaveSchemeCommandFromUI);
+            clearDashboardButton.onClick.AddListener(OnClearDashboardCommandFromUI);
+        }
+        
         private void SubscribeToInputEvents()
         {
             schemeNameInputField.onSubmit.AddListener(_schemeUIData.OnNameSubmitHandler);

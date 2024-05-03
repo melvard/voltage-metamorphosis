@@ -7,12 +7,13 @@ using Schemes;
 using Schemes.Dashboard;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameLogic
 {
     public class GameManager : MonoSingleton<GameManager>
     {
-
+        [SerializeField] private SchemesModelCapture schemesModelCapture;
         [SerializeField] private List<MonoContainer> monoContainers;
         
         [DisableInPlayMode][DisableInEditorMode][ShowInInspector] private List<IContainer> _runtimeContainers;
@@ -51,7 +52,9 @@ namespace GameLogic
         private async UniTask InitSchemesContainer()
         {
             // Note:  loading schemes. Will be probably moved to another method or even class 
-            var loadedSchemes = await SchemesLoader.LoadSchemes();
+            var loadedSchemes = await SchemesSaverLoader.LoadSchemes();
+            
+            schemesModelCapture.CaptureSchemesRenderTextures(loadedSchemes);
             SchemesContainer schemesContainer = new SchemesContainer();
             schemesContainer.AddSchemes(loadedSchemes);
             _runtimeContainers.Add(schemesContainer);
