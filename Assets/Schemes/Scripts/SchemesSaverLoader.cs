@@ -83,7 +83,7 @@ namespace Schemes
         private static async UniTask SavePlayerData(PlayerData data)
         {
             string json = JsonUtility.ToJson(data);
-            await File.WriteAllTextAsync(SavePath, json);
+            await File.WriteAllTextAsync(SavePath, json); // fixme where is your cancellation token
             Debug.Log(SavePath);
         }
         

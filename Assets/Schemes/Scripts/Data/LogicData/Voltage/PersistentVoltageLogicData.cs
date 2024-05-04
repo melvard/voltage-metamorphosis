@@ -6,7 +6,7 @@ namespace Schemes.Data.LogicData.Voltage
     [Serializable]
     public class PersistentVoltageLogicData : SchemeLogicData, IOutputPortSchemeLogicData
     {
-        [field:SerializeField] public byte NumberOfOutputs { get; private set;  }
+        [field:SerializeField] public byte NumberOfOutputs { get; set;  }
         // public override byte GetVoltage(int portIndex)
         // {
         //     return 1;

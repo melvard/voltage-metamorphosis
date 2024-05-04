@@ -108,6 +108,8 @@ namespace Canvas
 
             var schemesContainer = GameManager.Instance.GetContainerOfType<SchemesContainer>();
             schemesSelectorUI.Init(schemesContainer);
+            schemesSelectorUI.OnSchemeSelected += EditorDashboard.Instance.OnSchemeSelectedHandler;
+            schemesSelectorUI.OnSchemeEditCommand += EditorDashboard.Instance.OnSchemeEditHandler;
         }
 
         
@@ -123,6 +125,13 @@ namespace Canvas
             schemeDescriptionInputField.onSubmit.AddListener(_schemeUIData.OnDescriptionSubmitHandler);
             xSizeInputField.onSubmit.AddListener(_schemeUIData.OnXSizeSubmitHandler);
             ySizeInputField.onSubmit.AddListener(_schemeUIData.OnYSizeSubmitHandler);
+            
+            schemeNameInputField.onEndEdit.AddListener(_schemeUIData.OnNameSubmitHandler);
+            schemeDescriptionInputField.onEndEdit.AddListener(_schemeUIData.OnDescriptionSubmitHandler);
+            xSizeInputField.onEndEdit.AddListener(_schemeUIData.OnXSizeSubmitHandler);
+            ySizeInputField.onEndEdit.AddListener(_schemeUIData.OnYSizeSubmitHandler);
+            
+            
             schemeColorPaletteUIVisualizer.OnColorChanged += _schemeUIData.OnColorChangedHandler;
         }
 

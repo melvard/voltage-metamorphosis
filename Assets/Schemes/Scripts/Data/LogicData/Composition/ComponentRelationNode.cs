@@ -6,11 +6,20 @@ namespace Schemes.Data.LogicData.Composition
     [Serializable]
     public class ComponentRelationNode
     {
-        [SerializeField] private int componentIndexInComposition = -1;
-        [SerializeField] private byte componentPortIndex = 0;
+        #region SERIALIZED_FIELDS
 
+        [SerializeField] private int componentIndexInComposition = -1;
+        [SerializeField] private byte componentPortIndex;
+
+        #endregion
+
+        
+        #region GETTERS
+        
         public int ComponentIndexInComposition => componentIndexInComposition;
         public int ComponentPortIndex => componentPortIndex;
+
+        #endregion
         
         public ComponentRelationNode(int componentIndexInComposition, byte componentPortIndex)
         {

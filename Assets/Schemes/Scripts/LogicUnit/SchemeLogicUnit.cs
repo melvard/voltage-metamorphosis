@@ -1,20 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Misc;
 using Schemes.Data;
 using Schemes.Data.LogicData;
 using Schemes.Data.LogicData.Composition;
 using Schemes.Data.LogicData.Relay;
 using Schemes.Data.LogicData.UserIO;
 using Schemes.Data.LogicData.Voltage;
-using UnityEngine;
-using Debug = System.Diagnostics.Debug;
+
 
 namespace Schemes.LogicUnit
 {
-    /// We are going to create instances of this struct to control electricity flows,
+    /// We are going to create instances of this s̶t̶r̶u̶c̶t̶ class to control electricity flows,
     /// each component in scheme should have this instance, even component schemes that are composition of
     /// other schemes should instantiate these objects on composed components.
+    /// The vast amount of responsibility for performance lies on this class.
+    /// Consider being very careful when adding new feature and consider optimizing this class
+    /// if you encounter with any performance issues.
     [Serializable]
     public class SchemeLogicUnit
     {
@@ -23,7 +26,14 @@ namespace Schemes.LogicUnit
         public List<SchemeLogicUnit> ComponentLogicUnits;
         public List<LogicUnitPort> Outputs;
         public List<LogicUnitPort> Inputs;
+
+        #region GETTERS
+
         public SchemeLogicData LogicData => UnderliningSchemeData.SchemeLogicData;
+        public bool IsCurrentSchemeEditorLogicUnit => index == -1;
+
+        #endregion
+
 
         public SchemeLogicUnit(SchemeData underliningSchemeData, int index)
         {
@@ -32,32 +42,45 @@ namespace Schemes.LogicUnit
             Inputs = new();
             Outputs = new();
 
-            if (underliningSchemeData.SchemeLogicData is IInputPortSchemesLogicData inputPortSchemesLogicData)
+            if (!IsCurrentSchemeEditorLogicUnit)
             {
-                Inputs = new(inputPortSchemesLogicData.NumberOfInputs);
-                for (int i = 0; i < inputPortSchemesLogicData.NumberOfInputs; i++)
+                if (underliningSchemeData.SchemeLogicData is IInputPortSchemesLogicData inputPortSchemesLogicData)
                 {
-                    Inputs.Add(new LogicUnitPort());
+                    Inputs = new(inputPortSchemesLogicData.NumberOfInputs);
+                    for (int i = 0; i < inputPortSchemesLogicData.NumberOfInputs; i++)
+                    {
+                        Inputs.Add(new LogicUnitPort());
+                    }
+                }
+
+                if (underliningSchemeData.SchemeLogicData is IOutputPortSchemeLogicData outputPortSchemeLogicData)
+                {
+                    Outputs = new(outputPortSchemeLogicData.NumberOfOutputs);
+                    for (int i = 0; i < outputPortSchemeLogicData.NumberOfOutputs; i++)
+                    {
+                        Outputs.Add(new LogicUnitPort());
+                    }
                 }
             }
 
-            if (underliningSchemeData.SchemeLogicData is IOutputPortSchemeLogicData outputPortSchemeLogicData)
-            {
-                Outputs = new(outputPortSchemeLogicData.NumberOfOutputs);
-                for (int i = 0; i < outputPortSchemeLogicData.NumberOfOutputs; i++)
-                {
-                    Outputs.Add(new LogicUnitPort());
-                }
-            }
-                
-                
             if (underliningSchemeData.SchemeLogicData is CompositionLogicData compositionLogicData)
             {
-                ComponentLogicUnits = compositionLogicData.GetComponentSchemes().Select(x=>x.InstantiateLogicUnit(-1)).ToList();
+                ComponentLogicUnits = compositionLogicData.ComponentSchemes
+                    .Where(componentScheme =>
+                    {
+                        var scheme = CompositionLogicData.GetSchemeOfComponent(componentScheme);
+                        if (IsCurrentSchemeEditorLogicUnit) return true;
+                        return scheme.SchemeData.SchemeLogicData is not (UserInputLogicData or UserOutputLogicData);
+                    })
+                    .Select(componentScheme =>
+                    {
+                        var scheme = CompositionLogicData.GetSchemeOfComponent(componentScheme);
+                        return new SchemeLogicUnit(scheme.SchemeData, componentScheme.ComponentIndex);
+                    }).ToList();
             }
             else
             {
-                ComponentLogicUnits = new ();
+                ComponentLogicUnits = new();
             }
         }
 
@@ -83,56 +106,22 @@ namespace Schemes.LogicUnit
                     {
                         if (!input.IsDefined)
                         {
-                            // foreach (var outerRelation in outerRelations)
-                            // {
-                            //     if(outerRelation.receiverNode.
-                            // }
-                            // your code if is not defined
                             return;
                         }
                     }
-                
-                    if (Inputs[0].Value)
-                    {
-                        if (Inputs[1].Value)
-                        {
-                            Outputs[0] = new LogicUnitPort {Value = true, IsDefined = true};
-                            Outputs[1] = new LogicUnitPort {Value = false, IsDefined = true};
-                        }
-                        else
-                        {
-                            Outputs[0] = new LogicUnitPort {Value = false, IsDefined = true};
-                            Outputs[1] = new LogicUnitPort {Value = false, IsDefined = true};
-                        }
-                    }
-                    else
-                    {
-                        if (Inputs[1].Value)
-                        {
-                            Outputs[0] = new LogicUnitPort {Value = false, IsDefined = true};
-                            Outputs[1] = new LogicUnitPort {Value = true, IsDefined = true};
-                        }
-                        else
-                        {
-                            Outputs[0] = new LogicUnitPort {Value = false, IsDefined = true};
-                            Outputs[1] = new LogicUnitPort {Value = false, IsDefined = true};
-                        } 
-                    }
-
+                    Outputs[0].Value = Inputs[0].Value && Inputs[1].Value;
+                    Outputs[0].IsDefined = true;
+                    Outputs[1].Value = !Inputs[0].Value && Inputs[1].Value;
+                    Outputs[1].IsDefined = true;
                     break;
                 }
                 case PersistentVoltageLogicData:
-                    Outputs[0] = new LogicUnitPort() {Value = true, IsDefined = true};
+                    Outputs[0].Value = true;
+                    Outputs[0].IsDefined = true;
                     break;
-                default:
-                {
-                    if (LogicData is CompositionLogicData)
-                    {
-                        // your logic here
-                    }
-
+                case UserInputLogicData:
+                    // Outputs[0].IsDefined = true;
                     break;
-                }
             }
         }
 
@@ -140,31 +129,56 @@ namespace Schemes.LogicUnit
         {
             foreach (var logicUnit in ComponentLogicUnits)
             {
-                for (var i = 0; i < logicUnit.Inputs.Count; i++)
+                foreach (var logicUnitOutput in logicUnit.Inputs)
                 {
-                    logicUnit.Inputs[i] = new LogicUnitPort{ Value = false, IsDefined = true };
+                    if (logicUnit.LogicData is UserInputLogicData)
+                    {
+                        
+                    }
+                    logicUnitOutput.Value = false;
+                    logicUnitOutput.IsDefined = true;
                 }
+
             }
+
             foreach (var schemeRelation in compositionLogicData.SchemeRelations)
             {
-                var receiver = ComponentLogicUnits[schemeRelation.receiverNode.ComponentIndexInComposition];
-                receiver.Inputs[schemeRelation.receiverNode.ComponentPortIndex] =
-                    new LogicUnitPort() { IsDefined = false };
-
-                // ComponentLogicUnits[schemeRelation.receiverNode.ComponentIndexInComposition] = receiver;
-            } 
+                // Note: consider directly checking is relation receiver node is input for UserOutputDevice ot not
+                var senderNodeIndex = ComponentLogicUnits.IndexOf(logicUnit=>logicUnit.index == schemeRelation.senderNode.ComponentIndexInComposition);
+                var receiverNodeIndex = ComponentLogicUnits.IndexOf(logicUnit=>logicUnit.index == schemeRelation.receiverNode.ComponentIndexInComposition);
+                
+                // there is no receiver logic unit, thus this is a relation to UserOutputScheme
+                if (receiverNodeIndex == -1)
+                {
+                    // then assign Output of that port to Output of current logic unit
+                    // ComponentLogicUnits[senderNodeIndex].Outputs[schemeRelation.senderNode.ComponentPortIndex] = Outputs[outputIndexOnScheme];
+                    // ComponentLogicUnits[senderNodeIndex].Outputs[schemeRelation.senderNode.ComponentPortIndex].IsDefined == falsx    e;
+                }
+                else
+                {
+                    ComponentLogicUnits[receiverNodeIndex].Inputs[schemeRelation.receiverNode.ComponentPortIndex].IsDefined = false;
+                }
+                
+                // there is no sender logic unit, thus this is a relation from UserInputScheme
+                if (senderNodeIndex == -1)
+                {
+                    // then assign Input of that port to Input of current logic unit
+                    // ComponentLogicUnits[receiverNodeIndex].Inputs[schemeRelation.receiverNode.ComponentPortIndex] = Inputs[inputIndexOnScheme];
+                }
+            }
         }
 
-        private void ProcessRelations(CompositionLogicData compositionLogicData, List<SchemeRelation> relations, List<SchemeRelation> queuedRelations)
+        private void ProcessRelations(CompositionLogicData compositionLogicData, List<SchemeRelation> relations,
+            List<SchemeRelation> queuedRelations)
         {
             for (var i = 0; i < relations.Count; i++)
             {
                 var logicDataSchemeRelation = relations[i];
                 var senderNode = logicDataSchemeRelation.senderNode;
                 var receiverNode = logicDataSchemeRelation.receiverNode;
-
-                var senderLogicUnit = ComponentLogicUnits[senderNode.ComponentIndexInComposition];
-                var receiverLogicUnit = ComponentLogicUnits[receiverNode.ComponentIndexInComposition];
+                
+                var senderLogicUnit = ComponentLogicUnits.First(logicUnit=>logicUnit.index == senderNode.ComponentIndexInComposition);
+                var receiverLogicUnit =  ComponentLogicUnits.First(logicUnit=>logicUnit.index == receiverNode.ComponentIndexInComposition);
 
                 if (senderLogicUnit.Inputs.Count == 0 || senderLogicUnit.Inputs.All(x => x.IsDefined))
                 {
@@ -206,54 +220,13 @@ namespace Schemes.LogicUnit
                     {
                         queuedRelations.Add(logicDataSchemeRelation);
                     }
-
-                    continue;
                 }
-
-                // foreach (var ldsr in logicData.SchemeRelations)
-                // {
-                //     var ldsr_senderLogicUnit = ComponentLogicUnits[ldsr.senderNode.ComponentIndexInComposition];
-                //     if (ldsr.receiverNode == receiverNode && ldsr.senderNode != senderNode)
-                //     {
-                //         ldsr_senderLogicUnit.Process();
-                //     }
-                //     receiverLogicUnit.Inputs[ldsr.receiverNode.ComponentPortIndex] = new LogicUnitPort()
-                //     {
-                //         Value = ldsr_senderLogicUnit.Outputs[senderNode.ComponentPortIndex].Value,
-                //         IsDefined = true
-                //     };
-                // }
-                // receiverLogicUnit.Process();
             }
         }
 
-        // public bool GetOutputs(out bool wasDefined)
-        // {
-        //     wasDefined = true;
-        //     if (LogicData is RelayLogicData relayLogicData)
-        //     {
-        //         foreach (var input in Inputs)
-        //         {
-        //             if (!input.IsDefined)
-        //             {
-        //                 wasDefined = false;
-        //                 return false;
-        //             }
-        //         }
-        //
-        //         if (Inputs[0].Value)
-        //         {
-        //             if (Inputs[1].Value)
-        //             {
-        //                 // (portIndex == 0)
-        //             }
-        //         }
-        //     }
-        // }
-       
 
         #region EXTERNA_COMMUNICATION
-        
+
         public void AddComponentLogicUnit(SchemeLogicUnit schemeLogicUnit)
         {
             ComponentLogicUnits.Add(schemeLogicUnit);
@@ -263,7 +236,7 @@ namespace Schemes.LogicUnit
         {
             ComponentLogicUnits.Remove(schemeLogicUnit);
         }
-        
+
         #endregion
     }
 

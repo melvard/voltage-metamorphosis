@@ -35,16 +35,11 @@ namespace Schemes
             this.schemeData = schemeData;
         }
 
-        public SchemeLogicUnit InstantiateLogicUnit(int index)
-        {
-            return new SchemeLogicUnit(schemeData, index);
-        }
-
         #region OPERATOR_OVERRIDES
 
         public static bool operator ==(Scheme a, Scheme b)
         {
-            return b != null && a != null && a.SchemeKey == b.SchemeKey;
+            return b is not null && a is not null && a.SchemeKey == b.SchemeKey;
         }
 
         public static bool operator !=(Scheme a, Scheme b)
@@ -76,7 +71,8 @@ namespace Schemes
         public static Scheme NewScheme()
         {
             var schemeData = SchemeData.NewSchemeData<CompositionLogicData>();
-            return new Scheme(schemeData);
+            var scheme = new Scheme(schemeData);
+            return scheme;
         }
     }
 }

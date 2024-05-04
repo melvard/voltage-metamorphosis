@@ -195,8 +195,7 @@ namespace Schemes.Device
             return EditorDashboard.Instance.SchemeEditor_Debug.CurrentSchemeLogicUnit_Debug.ComponentLogicUnits.First(
                 x => x.index == _deviceIndex);
         }
-
-
+        
         private bool _pendingForValueSet;
         private Vector3 _positionOnPointerDown;
         public void OnPointerDown(PointerEventData eventData)

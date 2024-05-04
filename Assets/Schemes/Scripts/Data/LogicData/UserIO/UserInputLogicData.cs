@@ -6,7 +6,7 @@ namespace Schemes.Data.LogicData.UserIO
     [Serializable]
     public class UserInputLogicData : SchemeLogicData, IOutputPortSchemeLogicData
     {
-        [field:SerializeField] public byte NumberOfOutputs { get; private set; }
+        [field:SerializeField] public byte NumberOfOutputs { get; set; }
 
         public byte Value { get; set; }
 

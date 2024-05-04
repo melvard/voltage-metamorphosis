@@ -37,7 +37,7 @@ namespace Schemes.Dashboard
         private async void Start()
         {
             schemeEditorUI.OnSaveSchemeCommandFromUI += schemeEditor.SaveScheme;
-            schemeEditorUI.OnClearDashboardCommandFromUI += ClearDashboardHandler;
+            schemeEditorUI.OnClearDashboardCommandFromUI += OnClearDashboardHandler;
 
             Vector3 gridOrigin = transform.position +
                                  new Vector3(-50, ground.position.y + ground.localScale.y + 0.1f, -50);
@@ -62,15 +62,7 @@ namespace Schemes.Dashboard
             // } 
         }
 
-        private void ClearDashboardHandler()
-        {
-            schemeEditor.ResetEditor();
-            foreach (var dashboardGridElement in _grid)
-            {
-                dashboardGridElement.businessIntValDebug = 0;
-            } 
-            schemeEditor.NewScheme();
-        }
+        
 
         private void Debug_GenerateRandomObstacles(SmartGrid<DashboardGridElement> grid)
         {
@@ -141,6 +133,28 @@ namespace Schemes.Dashboard
             List<Coordinate> wireNodesCoordinates)
         {
             return wireNodesCoordinates.Select(wireNodesCoordinate => _grid.GetValue(wireNodesCoordinate)).ToList();
+        }
+
+        private void OnClearDashboardHandler()
+        {
+            schemeEditor.ClearComponentsAndWires();
+            foreach (var dashboardGridElement in _grid)
+            {
+                dashboardGridElement.businessIntValDebug = 0;
+            } 
+            // schemeEditor.NewScheme();
+        }
+        
+        public void OnSchemeSelectedHandler(SchemeInteractionEventArgs arg0)
+        {
+            schemeEditor.GenerateDevice(arg0.scheme);
+        }
+
+        public void OnSchemeEditHandler(SchemeInteractionEventArgs arg0)
+        {
+            if(!arg0.scheme.SchemeData.IsEditable) return;
+            schemeEditor.ResetEditor();
+            schemeEditor.LoadSchemeInEditor(arg0.scheme);
         }
     }
 

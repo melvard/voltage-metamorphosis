@@ -16,10 +16,15 @@ namespace Schemes.Data.LogicData.Composition
         public List<ComponentScheme> ComponentSchemes => componentSchemes;
         public List<SchemeRelation> SchemeRelations => schemeRelations;
         
-        public List<Scheme> GetComponentSchemes()
+        // public List<Scheme> GetComponentSchemes()
+        // {
+        //     return componentSchemes.Select(x => ).ToList();
+        // }
+
+        public static Scheme GetSchemeOfComponent(ComponentScheme componentScheme)
         {
             var schemesContainer = GameManager.Instance.GetContainerOfType<SchemesContainer>();
-            return componentSchemes.Select(x => schemesContainer.GetSchemeByKey(x.SchemeKey)).ToList();
+            return schemesContainer.GetSchemeByKey(componentScheme.SchemeKey);
         }
     }
 }

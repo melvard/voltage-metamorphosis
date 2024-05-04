@@ -264,7 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -897,7 +897,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 68c00b4c9747643dfadaa4ddeb72bfc2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0317ce93862bb4d59be51fb3b18ae5f3, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -920,7 +920,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -1007,8 +1007,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   schemeName: {fileID: 7551404060430432486}
   rawImage: {fileID: 316277659252207424}
-  editButton: {fileID: 2282700871949549756}
-  selectSchemeButton: {fileID: 3110329905549910237}
+  editButton: {fileID: 3110329905549910237}
+  selectSchemeButton: {fileID: 2282700871949549756}
   schemeDescription: {fileID: 1092213611682959025}
   schemeDescriptionHintContainer: {fileID: 1595997164253622990}
   thresholdTimeToShowHint: 1

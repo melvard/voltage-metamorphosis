@@ -6,7 +6,6 @@ using Cysharp.Threading.Tasks;
 using Misc;
 using Schemes.Dashboard;
 using Schemes.Data;
-using Schemes.Device.Movement;
 using Schemes.Device.Ports;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
@@ -209,8 +208,8 @@ namespace Schemes.Device.Wire
             wire.SetStartPort(startPort);
             wire.SetEndPort(endPort);
             wire.SetRelationIndex(wireConnectionEditorData.relationIndex);
-            
             wire.GenerateWireVisuals(EditorDashboard.Instance.GetDashboardElementsOnGridWithCoordinates(wireConnectionEditorData.wireNodesCoordinates));
+            wire._wireNodes = wire._currentWireNodes;
         }
 
         private void GenerateWireVisuals(List<DashboardGridElement> dashboardGridElements)

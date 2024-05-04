@@ -35,8 +35,8 @@ namespace Canvas
 
         #region EVENTS
 
-        public event UnityAction<Scheme> OnSchemeEditBtnClick;
-        public event UnityAction<Scheme> OnSchemeSelectBtnClick;
+        public event UnityAction<SchemeInteractionEventArgs> OnSchemeEditBtnClick;
+        public event UnityAction<SchemeInteractionEventArgs> OnSchemeSelectBtnClick;
         
         #endregion
         
@@ -107,16 +107,24 @@ namespace Canvas
             // _cancellationTokenSource = new CancellationTokenSource();
             schemeDescriptionHintContainer.gameObject.SetActive(false);
         }
-        
-        
+
         private void OnSchemeSelectButtonClickHandler()
         {
-            OnSchemeSelectBtnClick?.Invoke(_holdingScheme);
+            OnSchemeSelectBtnClick?.Invoke(new SchemeInteractionEventArgs(_holdingScheme));
         }
 
         private void OnEditSchemeButtonClickHandler()
         {
-            OnSchemeEditBtnClick?.Invoke(_holdingScheme);
+            OnSchemeEditBtnClick?.Invoke(new SchemeInteractionEventArgs(_holdingScheme));
+        }
+    }
+
+    public class SchemeInteractionEventArgs : EventArgs
+    {
+        public Scheme scheme;
+        public SchemeInteractionEventArgs(Scheme scheme)
+        {
+            this.scheme = scheme;
         }
     }
 }

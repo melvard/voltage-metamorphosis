@@ -44,8 +44,9 @@ namespace Schemes.Data
         public SchemeKey SchemeKey => schemeKey;
         public SchemeVisualsData SchemeVisualsData => schemeVisualsData;
         public SchemeLogicData SchemeLogicData => schemeLogicData;
-        
         public SchemeEditorData SchemeEditorData => schemeEditorData;
+
+        public bool IsEditable => isEditable;
 
         #endregion
 
@@ -58,7 +59,10 @@ namespace Schemes.Data
             schemeData.schemeEditorData = new SchemeEditorData();
             schemeData.schemeVisualsData = SchemeVisualsData.NewVisualsData();
             schemeData.schemeLogicData = SchemeLogicData.NewLogicData<T>();
-            
+            if (schemeData.schemeLogicData is CompositionLogicData)
+            {
+                schemeData.isEditable = true;
+            }
             return schemeData;
         }
 

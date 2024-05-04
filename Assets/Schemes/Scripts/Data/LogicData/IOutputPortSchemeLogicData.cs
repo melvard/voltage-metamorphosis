@@ -2,6 +2,6 @@ namespace Schemes.Data.LogicData
 {
     public interface IOutputPortSchemeLogicData
     {
-        byte NumberOfOutputs { get; }
+        byte NumberOfOutputs { get; set; }
     }
 }
