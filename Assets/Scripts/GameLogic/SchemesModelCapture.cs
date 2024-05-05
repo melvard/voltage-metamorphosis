@@ -8,6 +8,7 @@ namespace GameLogic
 {
     public class SchemesModelCapture : MonoBehaviour
     {
+        [SerializeField] private Texture2D placeHolderTexture;
         [SerializeField] private LayerMask schemeRenderingCaptureLayerMask;
         [SerializeField] private Camera schemeCaptureCamera;
         [SerializeField] private Transform container;
@@ -32,13 +33,13 @@ namespace GameLogic
 
                 // Create the render texture using the descriptor
                 var renderTexture = new RenderTexture(descriptor);
-        
+                
                 // Set any additional properties of the render texture as needed
                 renderTexture.filterMode = FilterMode.Bilinear; // Set the filter mode of the render texture
                 renderTexture.autoGenerateMips = false; // Disable mipmaps generation for the render texture
                 renderTexture.useMipMap = false; // Disable using mipmaps for the render texture
                 // Set any other properties as needed
-
+                Graphics.Blit(placeHolderTexture, renderTexture);
                 scheme.UIRenderTexture = renderTexture;
             } 
         }

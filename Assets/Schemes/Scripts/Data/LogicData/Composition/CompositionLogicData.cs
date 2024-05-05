@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Exceptions;
 using GameLogic;
 using Schemes.LogicUnit;
 using UnityEngine;
@@ -25,6 +26,17 @@ namespace Schemes.Data.LogicData.Composition
         {
             var schemesContainer = GameManager.Instance.GetContainerOfType<SchemesContainer>();
             return schemesContainer.GetSchemeByKey(componentScheme.SchemeKey);
+        }
+
+        public ComponentScheme ComponentByIndex(int componentIndexInComposition)
+        {
+            if (componentSchemes == null) throw new GameLogicException("Trying to get component scheme with component index, but list of components is null");
+            foreach (var componentScheme in componentSchemes)
+            {
+                if (componentScheme.ComponentIndex == componentIndexInComposition) return componentScheme;
+            }
+
+            throw new GameLogicException($"Trying to get not included component of index {componentIndexInComposition} from {nameof(CompositionLogicData)}");
         }
     }
 }

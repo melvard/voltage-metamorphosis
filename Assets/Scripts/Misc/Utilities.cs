@@ -2,9 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Quaternion = UnityEngine.Quaternion;
 using random = UnityEngine.Random;
@@ -1068,6 +1073,64 @@ namespace Misc
                     return i;
             }
             return -1;
+        }
+
+        public static async UniTask<T> LoadScene<T>(string sceneName, LoadSceneMode loadSceneMode, CancellationToken ct) where T : Component
+        {
+            // Note: don't now how to use this cancellation token
+            var asyncOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+            asyncOperation.allowSceneActivation = true;
+            await asyncOperation;
+            Scene s = SceneManager.GetSceneByName(sceneName);
+            GameObject[] sceneObjects = s.GetRootGameObjects();
+            foreach (var sceneObject in sceneObjects)
+            {
+                var component = sceneObject.GetComponentInChildren<T>();
+                if (component != null) return component;
+            }
+
+            return null;
+        }
+
+        public static async UniTask<Button> SelectButton(CancellationToken ct, params Button[] selectButtons)
+        {
+            // Ensure there are buttons to select from
+            if (selectButtons == null || selectButtons.Length == 0)
+            {
+                throw new System.ArgumentException("No buttons provided to select from.", nameof(selectButtons));
+            }
+
+            // Create a UniTaskCompletionSource to await the selection
+            var completionSource = new UniTaskCompletionSource<Button>();
+
+            // Add click event listeners to each button
+            foreach (var button in selectButtons)
+            {
+                button.onClick.AddListener(() =>
+                {
+                    // When a button is clicked, complete the UniTask with the selected button
+                    completionSource.TrySetResult(button);
+                });
+            }
+            
+            // Await the completion of the UniTask
+            return await completionSource.Task.AttachExternalCancellation(ct);
+        }
+
+        public static async UniTask PlayPopupCloseAnimation(GameObject spGameObject)
+        {
+            await spGameObject.transform.DOScale(0f, 0.3f).SetEase(Ease.InBack, 2f);
+        }
+
+        public static async UniTask PlayPopupShowAnimation(GameObject spGameObject)
+        {
+            spGameObject.transform.localScale = Vector3.zero;
+            await spGameObject.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack, 2f);
+        }
+
+        public static void LoadUnloadScene(string sceneName)
+        {
+            SceneManager.UnloadSceneAsync(sceneName);
         }
     }
 }

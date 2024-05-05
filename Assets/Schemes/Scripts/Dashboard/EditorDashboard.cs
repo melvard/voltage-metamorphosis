@@ -38,6 +38,7 @@ namespace Schemes.Dashboard
         {
             schemeEditorUI.OnSaveSchemeCommandFromUI += schemeEditor.SaveScheme;
             schemeEditorUI.OnClearDashboardCommandFromUI += OnClearDashboardHandler;
+            schemeEditorUI.OnNewSchemeCommandFromUI += OnNewSchemeHandler;
 
             Vector3 gridOrigin = transform.position +
                                  new Vector3(-50, ground.position.y + ground.localScale.y + 0.1f, -50);
@@ -61,8 +62,8 @@ namespace Schemes.Dashboard
             //     go.transform.position = _grid.GetWorldPosition(gridPathNode.X, gridPathNode.Y);
             // } 
         }
-
         
+
 
         private void Debug_GenerateRandomObstacles(SmartGrid<DashboardGridElement> grid)
         {
@@ -142,10 +143,9 @@ namespace Schemes.Dashboard
             {
                 dashboardGridElement.businessIntValDebug = 0;
             } 
-            // schemeEditor.NewScheme();
         }
         
-        public void OnSchemeSelectedHandler(SchemeInteractionEventArgs arg0)
+        public void OnSchemeSelectCommandHandler(SchemeInteractionEventArgs arg0)
         {
             schemeEditor.GenerateDevice(arg0.scheme);
         }
@@ -156,6 +156,16 @@ namespace Schemes.Dashboard
             schemeEditor.ResetEditor();
             schemeEditor.LoadSchemeInEditor(arg0.scheme);
         }
+        
+        private void OnNewSchemeHandler()
+        {
+            schemeEditor.NewScheme();
+            foreach (var dashboardGridElement in _grid)
+            {
+                dashboardGridElement.businessIntValDebug = 0;
+            } 
+        }
+        
     }
 
     public class DashboardGridElement : MustInitializeGridElement<DashboardGridElement>,

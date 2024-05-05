@@ -84,6 +84,7 @@ namespace Schemes.Data
         private void OnDataChangedFromUIHandler(SchemeUIData schemeUIData)
         {
             name = schemeUIData.name;
+            schemeVisualsData.SetDisplayName(name);
             description = schemeUIData.description;
             schemeVisualsData.SetBodySize(schemeUIData.xSize, schemeUIData.ySize);
             schemeVisualsData.SetColor(schemeUIData.color);

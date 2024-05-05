@@ -41,11 +41,26 @@ namespace Schemes.Data
             this.relationIndex = relationIndex;
         }
     }
+
+    [Serializable]
+    public struct IOEditorData
+    {
+        public int componentIndexInComposition;
+        public int numberOfIOForScheme;
+
+        public IOEditorData(int componentIndexInComposition, int numberOfIOForScheme)
+        {
+            this.componentIndexInComposition = componentIndexInComposition;
+            this.numberOfIOForScheme = numberOfIOForScheme;
+        }
+    }
     
     [Serializable]
     public class SchemeEditorData
     {
         public List<ComponentEditorData> componentEditorDatas= new();
         public List<WireConnectionEditorData> wireConnectionEditorDatas = new();
+        public List<IOEditorData> inputEditorDatas = new();
+        public List<IOEditorData> outputEditorDatas = new();
     }
 }

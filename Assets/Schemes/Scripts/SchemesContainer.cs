@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Canvas;
 using GameLogic;
 using Misc;
 using Schemes;
@@ -15,6 +16,19 @@ public class SchemesContainer : IContainer
     public SchemesContainer()
     {
         _schemeComponents = new();
+        SchemesSaverLoader.OnSchemeAdded += OnSchemeAddedHandler;
+        SchemesSaverLoader.OnSchemeRemoved += OnSchemeRemovedHandler;
+    }
+
+    private void OnSchemeRemovedHandler(SchemeInteractionEventArgs arg0)
+    {
+        RemoveScheme(arg0.scheme);
+    }
+    
+
+    private void OnSchemeAddedHandler(SchemeInteractionEventArgs arg0)
+    {
+        AddScheme(arg0.scheme);
     }
 
     //Note: should be tested against performance issues 
@@ -37,6 +51,15 @@ public class SchemesContainer : IContainer
         }
         _schemeComponents[scheme.SchemeKey] = scheme;
     }
+    
+    private void RemoveScheme(Scheme scheme)
+    {
+        if (_schemeComponents.ContainsKey(scheme.SchemeKey))
+        {
+            _schemeComponents.Remove(scheme.SchemeKey);
+        }
+    }
+    
     public Scheme GetSchemeByKey(SchemeKey schemeKey)
     {
         if (_schemeComponents.TryGetValue(schemeKey, out var scheme))

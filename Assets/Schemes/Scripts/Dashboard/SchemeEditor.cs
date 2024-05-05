@@ -8,6 +8,7 @@ using GameLogic;
 using Schemes.Data;
 using Schemes.Data.LogicData;
 using Schemes.Data.LogicData.Composition;
+using Schemes.Data.LogicData.UserIO;
 using Schemes.Device;
 using Schemes.Device.Movement;
 using Schemes.Device.Ports;
@@ -39,7 +40,9 @@ namespace Schemes.Dashboard
         private CompositionLogicData _currentCompositionLogicData;
         private SchemeDeviceWire _currentWire;
 
+        [DisableInPlayMode] [DisableInEditorMode] [ShowInInspector]
         private List<SchemeDevice> _devices;
+        [DisableInPlayMode] [DisableInEditorMode] [ShowInInspector]
         private List<SchemeDeviceWire> _wires;
         private IGridHandler _gridHandler;
         private int _incrementComponentIndex;
@@ -80,34 +83,14 @@ namespace Schemes.Dashboard
             _currentScheme = Scheme.NewScheme();
             _currentCompositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
             _currentSchemeLogicUnit = new SchemeLogicUnit(_currentScheme.SchemeData, -1);
-
+            _currentSchemeLogicUnit.AlignInputsAndOutputsOnComponents();
+            
             _gridHandler = EditorDashboard.Instance;
             OnLoadedScheme?.Invoke(_currentScheme);
         }
 
-        // debugOnly: shortcut for SchemeDevice generation
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                ProcessNewDevice(InstantiateSchemeDevice(SchemeKey.RELAY, _incrementComponentIndex));
-            }
-
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                ProcessNewDevice(InstantiateSchemeDevice(SchemeKey.ONE_BIT_USER_INPUT, _incrementComponentIndex));
-            }
-
-            if (Input.GetKeyDown(KeyCode.O))
-            {
-                ProcessNewDevice(InstantiateSchemeDevice(SchemeKey.ONE_BIT_OUTPUT, _incrementComponentIndex));
-            }
-
-            if (Input.GetKeyDown(KeyCode.V))
-            {
-                ProcessNewDevice(InstantiateSchemeDevice(SchemeKey.CONSTANT_VOLTAGE, _incrementComponentIndex));
-            }
-
             _currentSchemeLogicUnit.Process();
         }
 
@@ -134,9 +117,7 @@ namespace Schemes.Dashboard
             deviceDragDropMovementStrategy.SetListOfAcceptableColliders(device.InteractionColliders);
             deviceDragDropMovementStrategy.ShouldTakeIntoAccountInitialDelta = true;
             deviceDragDropMovementStrategy.EnableMovement();
-
-            _devices.Add(device);
-
+            
             return device;
         }
 
@@ -212,9 +193,12 @@ namespace Schemes.Dashboard
         // ReSharper disable Unity.PerformanceAnalysis
         private void ProcessNewDevice(SchemeDevice schemeDevice)
         {
-            _currentSchemeLogicUnit.AddComponentLogicUnit(new SchemeLogicUnit(schemeDevice.UnderliningScheme.SchemeData,
-                schemeDevice.DeviceIndex));
+            _devices.Add(schemeDevice);
             AddDeviceInComposition(schemeDevice);
+            var schemeLogicUnit = new SchemeLogicUnit(schemeDevice.UnderliningScheme.SchemeData,
+                schemeDevice.DeviceIndex);
+            _currentSchemeLogicUnit.AddComponentLogicUnit(schemeLogicUnit);
+            schemeLogicUnit.AlignInputsAndOutputsOnComponents();
         }
 
         private void OnWiringCanceledHandler()
@@ -258,6 +242,8 @@ namespace Schemes.Dashboard
         {
             _currentScheme.SchemeData.SchemeEditorData.wireConnectionEditorDatas = new();
             _currentScheme.SchemeData.SchemeEditorData.componentEditorDatas = new();
+            _currentScheme.SchemeData.SchemeEditorData.inputEditorDatas = new ();
+            _currentScheme.SchemeData.SchemeEditorData.outputEditorDatas = new ();
 
             foreach (var schemeDevice in _devices)
             {
@@ -269,17 +255,44 @@ namespace Schemes.Dashboard
             {
                 _currentScheme.SchemeData.SchemeEditorData.wireConnectionEditorDatas.Add(wire.GetConnectionData());
             }
-
+            
+            // define number and order of inputs of scheme
             if (_currentScheme.SchemeData.SchemeLogicData is IInputPortSchemesLogicData inputPortSchemesLogicData)
             {
                 inputPortSchemesLogicData.NumberOfInputs =
                     (byte)_devices.Count(x => x.UnderliningScheme.SchemeKey == SchemeKey.ONE_BIT_USER_INPUT);
+                _currentScheme.SchemeData.SchemeVisualsData.ArrangeInputPositionAutomatically(inputPortSchemesLogicData.NumberOfInputs);
+                int numberOfInput = 0;
+                foreach (var device in _devices)
+                {
+                    // if current device is UserInput device then effectively add information about component index
+                    if (device.UnderliningScheme.SchemeData.SchemeLogicData is UserInputLogicData)
+                    {
+                        _currentScheme.SchemeData.SchemeEditorData.inputEditorDatas.Add(
+                            new IOEditorData(device.DeviceIndex, numberOfInput));
+                        numberOfInput++;
+                    }
+                } 
             }
 
+            // define number and order of outputs of scheme
             if (_currentScheme.SchemeData.SchemeLogicData is IOutputPortSchemeLogicData outputPortSchemeLogicData)
             {
                 outputPortSchemeLogicData.NumberOfOutputs =
                     (byte)_devices.Count(x => x.UnderliningScheme.SchemeKey == SchemeKey.ONE_BIT_OUTPUT);
+                _currentScheme.SchemeData.SchemeVisualsData.ArrangeOutputPositionAutomatically(outputPortSchemeLogicData.NumberOfOutputs);
+                
+                int numberOfOutput = 0;
+                foreach (var device in _devices)
+                {
+                    // if current device is UserOutput device then effectively add information about component index
+                    if (device.UnderliningScheme.SchemeData.SchemeLogicData is UserOutputLogicData)
+                    {
+                        _currentScheme.SchemeData.SchemeEditorData.outputEditorDatas.Add(
+                            new IOEditorData(device.DeviceIndex, (byte)numberOfOutput));
+                        numberOfOutput++;
+                    }
+                }
             }
             
             SchemesSaverLoader.SaveScheme(_currentScheme).Forget();
@@ -305,6 +318,7 @@ namespace Schemes.Dashboard
             _currentScheme = scheme;
             _currentCompositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
             _currentSchemeLogicUnit = new SchemeLogicUnit(scheme.SchemeData, -1);
+            _currentSchemeLogicUnit.AlignInputsAndOutputsOnComponents();
 
             _devices ??= new List<SchemeDevice>();
             _devices.Clear();
@@ -330,7 +344,7 @@ namespace Schemes.Dashboard
                 // _currentSchemeLogicUnit.AddComponentLogicUnit(new SchemeLogicUnit(device.UnderliningScheme.SchemeData, device.DeviceIndex));
             }
 
-            _incrementComponentIndex = compositionLogicData.ComponentSchemes.Max(x => x.ComponentIndex) + 1;
+            _incrementComponentIndex = compositionLogicData.ComponentSchemes.Count != 0 ? compositionLogicData.ComponentSchemes.Max(x => x.ComponentIndex) + 1 : 0;
 
             foreach (var relation in compositionLogicData.SchemeRelations)
             {
@@ -340,7 +354,7 @@ namespace Schemes.Dashboard
                 _wires.Add(wire);
             }
 
-            _incrementRelationIndex = compositionLogicData.SchemeRelations.Max(x => x.relationIndex) + 1;
+            _incrementRelationIndex = compositionLogicData.SchemeRelations.Count != 0 ? compositionLogicData.SchemeRelations.Max(x => x.relationIndex) + 1 : 0;
 
             OnLoadedScheme?.Invoke(_currentScheme);
         }
@@ -359,7 +373,11 @@ namespace Schemes.Dashboard
             if (_currentScheme == null)
                 throw new GameLogicException(
                     "It is not possible to clear components of scheme that is not loaded into scheme editor");
+            // todo: remove component and relation datas 
+            
             _currentSchemeLogicUnit = new SchemeLogicUnit(_currentScheme.SchemeData, -1);
+            _currentSchemeLogicUnit.AlignInputsAndOutputsOnComponents();
+            
             _devices?.ForEach(device => Destroy(device.gameObject));
             _wires?.ForEach(wire => Destroy(wire.gameObject));
 

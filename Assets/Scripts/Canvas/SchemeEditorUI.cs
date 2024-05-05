@@ -1,5 +1,7 @@
 using System;
 using System.Globalization;
+using System.Threading;
+using Canvas.Popups;
 using Cysharp.Threading.Tasks;
 using GameLogic;
 using Schemes;
@@ -70,6 +72,7 @@ namespace Canvas
         [Title("Interaction button")] 
         [SerializeField] private Button saveSchemeButton;
         [SerializeField] private Button clearDashboardButton;
+        [SerializeField] private Button newSchemeButton;
 
         [Title("Scheme selection section")] 
         [SerializeField] private SchemesSelectorUI schemesSelectorUI;
@@ -81,6 +84,7 @@ namespace Canvas
 
         private Scheme _scheme;
         private SchemeUIData _schemeUIData;
+        private CancellationTokenSource _popupCancellationSource;
 
         #endregion
 
@@ -88,6 +92,7 @@ namespace Canvas
 
         public event UnityAction OnSaveSchemeCommandFromUI;
         public event UnityAction OnClearDashboardCommandFromUI;
+        public event UnityAction OnNewSchemeCommandFromUI;
 
         #endregion
         // debugOnly: internal unity Start function is used to quickly test UI interactions 
@@ -102,22 +107,53 @@ namespace Canvas
         public void Init()
         {
             SubscribeToButtonEvents();
-            
             SetScheme(EditorDashboard.Instance.SchemeEditor_Debug.CurrentScheme_Debug);
+            
             EditorDashboard.Instance.SchemeEditor_Debug.OnLoadedScheme += SetScheme;
 
             var schemesContainer = GameManager.Instance.GetContainerOfType<SchemesContainer>();
+            
             schemesSelectorUI.Init(schemesContainer);
-            schemesSelectorUI.OnSchemeSelected += EditorDashboard.Instance.OnSchemeSelectedHandler;
+            schemesSelectorUI.OnSchemeSelectCommand += EditorDashboard.Instance.OnSchemeSelectCommandHandler;
             schemesSelectorUI.OnSchemeEditCommand += EditorDashboard.Instance.OnSchemeEditHandler;
+            schemesSelectorUI.OnSchemeRemoveCommand += SchemesSaverLoader.OnRemoveSchemeHandler;
+
+            _popupCancellationSource = new CancellationTokenSource();
         }
 
         
         private void SubscribeToButtonEvents()
         {
-            saveSchemeButton.onClick.AddListener(OnSaveSchemeCommandFromUI);
-            clearDashboardButton.onClick.AddListener(OnClearDashboardCommandFromUI);
+            saveSchemeButton.onClick.AddListener(OnSchemeSaveButtonClickHandler);
+            newSchemeButton.onClick.AddListener(OnNewSchemeButtonClickHandler);
+            clearDashboardButton.onClick.AddListener(OnClearDashboardButtonClickHandler);
         }
+
+            
+        private async void OnSchemeSaveButtonClickHandler()
+        {
+            if (await SavePopup.Spawn(_popupCancellationSource.Token))
+            {
+                OnSaveSchemeCommandFromUI?.Invoke();
+            }
+        }
+        private async void OnNewSchemeButtonClickHandler()
+        {
+            if (await NewSchemePopup.Spawn(_popupCancellationSource.Token))
+            {
+                OnNewSchemeCommandFromUI?.Invoke();
+            }
+        }
+        
+        private async void OnClearDashboardButtonClickHandler()
+        {
+            if (await ClearDashboardPopup.Spawn(_popupCancellationSource.Token))
+            {
+                OnClearDashboardCommandFromUI?.Invoke();
+            }
+        }
+        
+        
         
         private void SubscribeToInputEvents()
         {
@@ -165,6 +201,5 @@ namespace Canvas
 
             schemeColorPaletteUIVisualizer.SetSelectedColor(schemeUIData.color);
         }
-        
     }
 }

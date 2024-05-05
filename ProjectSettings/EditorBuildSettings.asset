@@ -4,5 +4,20 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Main.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/SavePopup.unity
+    guid: c2061dd8c762a471b938ca7a5ba52faf
+  - enabled: 1
+    path: Assets/Scenes/NewSchemePopup.unity
+    guid: ba502bd3c636a47b48df61b0c69b959a
+  - enabled: 1
+    path: Assets/Scenes/ClearDashboardPopup.unity
+    guid: 67862de1871b149d6ae7d790e6911d11
+  - enabled: 1
+    path: Assets/Scenes/RemoveSchemePopup.unity
+    guid: 4a8c0a48cfa54419584b99bee535272d
   m_configObjects: {}

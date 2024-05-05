@@ -120,5 +120,29 @@ namespace Schemes.Data
              return Sirenix.OdinInspector.Editor.ColorPaletteManager.Instance.ColorPalettes
                 .First(palette => palette == null);
         }
+
+        public void ArrangeInputPositionAutomatically(byte numberOfInputs)
+        {
+            inputPositions = new Vector2[numberOfInputs];
+            var xPos = -size.x / 2f;
+            var ySize=  size.y;
+            var deltaPerPosition = ySize / (numberOfInputs+1);
+            for (int i = 0; i < inputPositions.Length; i++)
+            {
+                inputPositions[i] = new Vector2(xPos, -ySize / 2f + deltaPerPosition * (i+1));
+            }
+        }
+
+        public void ArrangeOutputPositionAutomatically(byte numberOfOutputs)
+        {
+            outputPositions = new Vector2[numberOfOutputs];
+            var xPos = size.x / 2f;
+            var ySize=  size.y;
+            var deltaPerPosition = ySize / (numberOfOutputs+1);
+            for (int i = 0; i < outputPositions.Length; i++)
+            {
+                outputPositions[i] = new Vector2(xPos, -ySize / 2f + deltaPerPosition * (i+1));
+            }
+        }
     }
 }

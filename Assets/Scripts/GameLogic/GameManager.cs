@@ -59,6 +59,7 @@ namespace GameLogic
             schemesContainer.AddSchemes(loadedSchemes);
             _runtimeContainers.Add(schemesContainer);
         }
+        
         private void InitializeContainers()
         {
             _runtimeContainers = new();

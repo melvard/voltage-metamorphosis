@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Canvas;
 using Cysharp.Threading.Tasks;
 using GameLogic;
 using Misc;
 using Newtonsoft.Json;
 using Schemes.Data;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Schemes
 {
@@ -22,6 +24,14 @@ namespace Schemes
         private static readonly string SavePath = Path.Combine(Application.persistentDataPath, "PlayerData.json");
         public  static PlayerData PlayerData;
 
+
+        #region EVENTS
+
+        public static event UnityAction<SchemeInteractionEventArgs> OnSchemeRemoved; 
+        public static event UnityAction<SchemeInteractionEventArgs> OnSchemeAdded; 
+        public static event UnityAction<SchemeInteractionEventArgs> OnSchemeEdited; 
+
+        #endregion
         private static List<Scheme> GetDefaultSchemes()
         {
             var schemeDatas = GameManager.Instance.GetContainerOfType<ConfigsContainer>()
@@ -65,10 +75,12 @@ namespace Schemes
             if (previousSameSchemeIndex != -1)
             {
                 PlayerData.schemes[previousSameSchemeIndex] = scheme;
+                OnSchemeEdited?.Invoke(new SchemeInteractionEventArgs(scheme));
             }
             else
             {
                 PlayerData.schemes.Add(scheme);
+                OnSchemeAdded?.Invoke(new SchemeInteractionEventArgs(scheme));
             }
 
             await SavePlayerData(PlayerData);
@@ -100,6 +112,17 @@ namespace Schemes
             var playerData = new PlayerData();
             playerData.schemes = new List<Scheme>();
             return playerData;
+        }
+
+        public static async void OnRemoveSchemeHandler(SchemeInteractionEventArgs removeSchemeHandler)
+        {
+            var schemeToRemoveIndex = PlayerData.schemes.IndexOf(x => x == removeSchemeHandler.scheme);
+            if (schemeToRemoveIndex != -1)
+            {
+                PlayerData.schemes.RemoveAt(schemeToRemoveIndex);
+            }
+            await SavePlayerData(PlayerData);
+            OnSchemeRemoved?.Invoke(new SchemeInteractionEventArgs(removeSchemeHandler.scheme));
         }
     }
 }

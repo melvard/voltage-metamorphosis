@@ -15,7 +15,8 @@ namespace Canvas
         [AssetsOnly][SerializeField] private SchemeSelectionElement selectionElementContainerRef;
 
         public event UnityAction<SchemeInteractionEventArgs> OnSchemeEditCommand;
-        public event UnityAction<SchemeInteractionEventArgs> OnSchemeSelected;
+        public event UnityAction<SchemeInteractionEventArgs> OnSchemeSelectCommand;
+        public event UnityAction<SchemeInteractionEventArgs> OnSchemeRemoveCommand;
         public void UpdateSelector(List<Scheme> schemeInSelector)
         {
             contentContainer.DestroyChildren();
@@ -24,8 +25,9 @@ namespace Canvas
             {
                 var elementContainer = Instantiate(selectionElementContainerRef, contentContainer);
                 elementContainer.OnSchemeEditBtnClick += (arg)=> OnSchemeEditCommand?.Invoke(arg);
-                elementContainer.OnSchemeSelectBtnClick += (arg)=> OnSchemeSelected?.Invoke(arg);
-                
+                elementContainer.OnSchemeSelectBtnClick += (arg)=> OnSchemeSelectCommand?.Invoke(arg);
+                elementContainer.OnSchemeRemoveBtnClick += (arg)=> OnSchemeRemoveCommand?.Invoke(arg);
+
                 elementContainer.Init(scheme);
             } 
         }
