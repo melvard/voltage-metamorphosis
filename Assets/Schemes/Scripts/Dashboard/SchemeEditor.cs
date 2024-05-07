@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks;
 using Exceptions;
 using GameLogic;
 using Schemes.Data;
@@ -109,7 +108,8 @@ namespace Schemes.Dashboard
             var scheme = GameManager.Instance.GetContainerOfType<SchemesContainer>().GetSchemeByKey(schemeKey);
             device.Init(scheme, deviceIndex);
             device.OnDevicePortInteracted += OnDevicePortInteractedHandler;
-
+            device.OnDeviceRemoveCommand += OnDeviceRemoveCommandHandler;
+            
             // adding movement logic
             var deviceDragDropMovementStrategy = device.AddComponent<DragDropMovementStrategy>();
             var gridSnapMovementExecutionStrategy = new GridSnapMovementExecutionStrategy();
@@ -122,6 +122,11 @@ namespace Schemes.Dashboard
             deviceDragDropMovementStrategy.EnableMovement();
             
             return device;
+        }
+
+        private void OnDeviceRemoveCommandHandler(SchemeDevice device)
+        {
+            RemoveSchemeDevice(device);
         }
 
         private SchemeDevice InstantiateSchemeDevice(ComponentScheme componentScheme,
@@ -322,9 +327,52 @@ namespace Schemes.Dashboard
             throw new NotImplementedException();
         }
 
-        private void RemoveSchemeDevice(SchemeDevice schemeDevice)
+        private void RemoveSchemeDevice(SchemeDevice device)
         {
-            throw new NotImplementedException();
+            var indexOf = _devices.IndexOf(device);
+            if (indexOf == -1)
+            {
+                Destroy(device.gameObject);
+                return;
+            };
+
+            var relationsWithDevice = _currentCompositionLogicData.SchemeRelations
+                    .Where(x=>
+                    {
+                        var isDevicePort = x.senderNode.ComponentIndexInComposition == device.DeviceIndex;
+                        var isToDevicePort = x.receiverNode.ComponentIndexInComposition == device.DeviceIndex;
+
+                        return isDevicePort || isToDevicePort;
+                    }).ToList();
+
+            if (relationsWithDevice.Count != 0)
+            {
+                for (var i = 0; i < _wires.Count; i++)
+                {
+                    var schemeDeviceWire = _wires[i];
+                    if (relationsWithDevice.Any(relation => relation.relationIndex == schemeDeviceWire.GetRelationIndex()))
+                    {
+                        Destroy(_wires[i].gameObject);
+                        _wires.RemoveAt(i);
+                        i--;
+                    }
+                }
+
+                _currentCompositionLogicData.ThrowRelationsWithIndices(relationsWithDevice.Select(x=>x.relationIndex).ToArray());
+                
+            }
+
+            for (var i = 0; i < _currentCompositionLogicData.ComponentSchemes.Count; i++)
+            {
+                if (_currentCompositionLogicData.ComponentSchemes[i].ComponentIndex == device.DeviceIndex)
+                {
+                    _currentCompositionLogicData.ComponentSchemes.RemoveAt(i);
+                }
+            }
+
+            _currentSchemeLogicUnit.RemoveComponentLogicUnitWithIndex(device.DeviceIndex);
+            _devices.RemoveAt(indexOf);
+            Destroy(device.gameObject);
         }
 
         public void LoadSchemeInEditor(Scheme scheme)

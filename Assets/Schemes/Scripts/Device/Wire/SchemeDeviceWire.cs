@@ -239,5 +239,10 @@ namespace Schemes.Device.Wire
         {
             wireValueIndicator.UpdateWireValue(value);
         }
+
+        public int GetRelationIndex()
+        {
+            return _relationIndex;
+        }
     }
 }

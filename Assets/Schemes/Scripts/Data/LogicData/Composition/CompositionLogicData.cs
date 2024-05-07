@@ -38,5 +38,18 @@ namespace Schemes.Data.LogicData.Composition
 
             throw new GameLogicException($"Trying to get not included component of index {componentIndexInComposition} from {nameof(CompositionLogicData)}");
         }
+
+        public void ThrowRelationsWithIndices(params int[] relationIndices)
+        {
+            for (var i = 0; i < schemeRelations.Count; i++)
+            {
+                var schemeRelation = schemeRelations[i];
+                if (relationIndices.Any(index => index == schemeRelation.relationIndex))
+                {
+                    schemeRelations.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
     }
 }

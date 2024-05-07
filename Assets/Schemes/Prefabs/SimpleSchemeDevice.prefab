@@ -318,6 +318,7 @@ GameObject:
   - component: {fileID: 6262186071907772894}
   - component: {fileID: 233920839895216282}
   - component: {fileID: 6846774142872607273}
+  - component: {fileID: 4110662307934774913}
   m_Layer: 6
   m_Name: SimpleSchemeDevice
   m_TagString: Untagged
@@ -372,6 +373,18 @@ MonoBehaviour:
   displayName: {fileID: 807208277626186474}
   deviceBodyMr: {fileID: 8550124604919882524}
   portsContainer: {fileID: 8981273970810565340}
+--- !u!114 &4110662307934774913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6166398248096546139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a2c13a529140549469f338643020eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6370916268417300000
 GameObject:
   m_ObjectHideFlags: 0

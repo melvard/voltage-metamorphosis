@@ -30,6 +30,7 @@ namespace Schemes.Device
 
         [ShowInInspector] [DisableInEditorMode]
         private ISchemeDeviceVisualizer _schemeDeviceVisualizer;
+        private SchemeDeviceInteractionsController _schemeDeviceInteractionsController;
 
         private int _deviceIndex;
         private List<SchemeDeviceInputPort> _schemeDeviceInputPorts;
@@ -49,6 +50,7 @@ namespace Schemes.Device
         #region EVENTS
 
         [CanBeNull] public event UnityAction<SchemeInteractedOnPortsEventArgs> OnDevicePortInteracted;
+        [CanBeNull] public event UnityAction<SchemeDevice> OnDeviceRemoveCommand;
 
         #endregion
 
@@ -61,6 +63,9 @@ namespace Schemes.Device
         public void Init(Scheme scheme, int deviceIndex)
         {
             _schemeDeviceVisualizer ??= GetComponent<ISchemeDeviceVisualizer>();
+            _schemeDeviceInteractionsController ??= GetComponent<SchemeDeviceInteractionsController>();
+            _schemeDeviceInteractionsController.OnDeviceRemoveClick += () => OnDeviceRemoveCommand?.Invoke(this);
+
             _underliningScheme = scheme;
             _deviceIndex = deviceIndex;
 

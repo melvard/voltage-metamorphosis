@@ -319,6 +319,19 @@ namespace Schemes.LogicUnit
         }
 
         #endregion
+
+        public void RemoveComponentLogicUnitWithIndex(int deviceDeviceIndex)
+        {
+            for (var i = 0; i < ComponentLogicUnits.Count; i++)
+            {
+                var componentLogicUnit = ComponentLogicUnits[i];
+                if (componentLogicUnit.index == deviceDeviceIndex)
+                {
+                    ComponentLogicUnits.RemoveAt(i);
+                    break;
+                }
+            }
+        }
     }
 
     public class LogicUnitPort
