@@ -23,7 +23,8 @@ namespace Schemes.Data
         [SerializeField] private Vector2 size;
         [SerializeField] private Vector2[] inputPositions;
         [SerializeField] private Vector2[] outputPositions;
-
+        
+        [NonSerialized] private Texture2D _uITexture2D;
 
         #if UNITY_EDITOR
 
@@ -44,7 +45,7 @@ namespace Schemes.Data
         
         #endif
 
-        #region GEATTERS
+        #region GETTERS
 
         
         public string DisplayName => displayName;
@@ -63,9 +64,19 @@ namespace Schemes.Data
             return outputPositions[portIndex];
         }
 
+      
+
         #endregion
 
         #region SETTERS
+        
+        public Texture2D UITexture2D
+        {
+            get => _uITexture2D;
+            set => _uITexture2D = value;
+        }
+
+        public bool PendingForTextureCapture { get; set; }
 
         public void SetDisplayName(string name)
         {

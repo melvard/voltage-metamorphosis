@@ -14,7 +14,6 @@ namespace Schemes
         #region PRIVATE_VARIABLES
 
         [FoldoutGroup("Data")][DisableInPlayMode][DisableInEditorMode][ShowInInspector][SerializeField] private SchemeData schemeData;
-        private RenderTexture _uIRenderTexture;
         
         #endregion
 
@@ -22,12 +21,7 @@ namespace Schemes
         public SchemeData SchemeData => schemeData;
         public SchemeKey SchemeKey => schemeData.SchemeKey;
 
-        public RenderTexture UIRenderTexture
-        {
-            get => _uIRenderTexture;
-            set => _uIRenderTexture = value;
-        }
-
+       
         #endregion
 
         public Scheme(SchemeData schemeData)

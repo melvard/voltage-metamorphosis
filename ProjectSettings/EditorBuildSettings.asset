@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RemoveSchemePopup.unity
     guid: 4a8c0a48cfa54419584b99bee535272d
+  - enabled: 1
+    path: Assets/Scenes/EditSchemePopup.unity
+    guid: 6c0e0f0df2a4c4f92aca1252751e6ecc
+  - enabled: 1
+    path: Assets/Scenes/LoadingScreen.unity
+    guid: 49eedf44bc9de45aabdb2d5e40b9d287
   m_configObjects: {}

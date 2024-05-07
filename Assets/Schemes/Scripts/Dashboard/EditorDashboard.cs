@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Canvas;
 using Cysharp.Threading.Tasks;
 using GameLogic;
@@ -19,12 +20,14 @@ namespace Schemes.Dashboard
         [SerializeField] private Transform ground;
         [SerializeField] private SchemeEditor schemeEditor;
         [SerializeField] private SchemeEditorUI schemeEditorUI;
-
+        [SerializeField] private Transform schemeEditorCameraTransform;
+        
         #endregion
 
-        #region MyRegion
+        #region PRIVATE_FIELDS
 
         private SmartGrid<DashboardGridElement> _grid;
+        private CancellationTokenSource _saveRemoveSchemeTaskCancellationTokenSource;
 
         #endregion
 
@@ -36,7 +39,8 @@ namespace Schemes.Dashboard
         
         private async void Start()
         {
-            schemeEditorUI.OnSaveSchemeCommandFromUI += schemeEditor.SaveScheme;
+            _saveRemoveSchemeTaskCancellationTokenSource = new();
+            schemeEditorUI.OnSaveSchemeCommandFromUI += OnSaveSchemeHandler;
             schemeEditorUI.OnClearDashboardCommandFromUI += OnClearDashboardHandler;
             schemeEditorUI.OnNewSchemeCommandFromUI += OnNewSchemeHandler;
 
@@ -51,18 +55,7 @@ namespace Schemes.Dashboard
 
             await UniTask.WaitUntil(() => InputsManager.GetKeyDown(KeyCode.Slash, gameObject.layer));
             Debug_GenerateRandomObstacles(_grid);
-            // await UniTask.WaitUntil(()=> Input.GetKeyDown(KeyCode.C));
-            //
-            // var path = AStarPathfinding.FindPath(_grid, 0, 0, 199, 199, true);
-            // foreach (var gridPathNode in path)
-            // {
-            //     var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            //     go.transform.localScale = Vector3.one * 0.5f;
-            //     go.GetComponent<MeshRenderer>().material = debugPathMaterial;
-            //     go.transform.position = _grid.GetWorldPosition(gridPathNode.X, gridPathNode.Y);
-            // } 
         }
-        
 
 
         private void Debug_GenerateRandomObstacles(SmartGrid<DashboardGridElement> grid)
@@ -113,6 +106,8 @@ namespace Schemes.Dashboard
         public void Init()
         {
             schemeEditor.Init();
+            schemeEditorUI.Init();
+            SetEditorCamCamera(Vector3.zero);
         }
 
         public bool IsGridCellWalkable(Vector3 mousePositionToGrid)
@@ -123,11 +118,6 @@ namespace Schemes.Dashboard
         public DashboardGridElement GetDashboardElementOnGrid(Vector3 position)
         {
             return _grid.GetValue(position);
-        }
-
-        public List<DashboardGridElement> GetGrid()
-        {
-            throw new NotImplementedException();
         }
 
         public List<DashboardGridElement> GetDashboardElementsOnGridWithCoordinates(
@@ -142,7 +132,7 @@ namespace Schemes.Dashboard
             foreach (var dashboardGridElement in _grid)
             {
                 dashboardGridElement.businessIntValDebug = 0;
-            } 
+            }
         }
         
         public void OnSchemeSelectCommandHandler(SchemeInteractionEventArgs arg0)
@@ -155,17 +145,37 @@ namespace Schemes.Dashboard
             if(!arg0.scheme.SchemeData.IsEditable) return;
             schemeEditor.ResetEditor();
             schemeEditor.LoadSchemeInEditor(arg0.scheme);
+            SetEditorCamCamera(_grid.GetWorldPosition(arg0.scheme.SchemeData.SchemeEditorData.cameraPositionOnGrid));
+        }
+        
+        private async void OnSaveSchemeHandler()
+        {
+            var schemeToSave =  schemeEditor.PreapareSchemeForSave();
+            schemeToSave.SchemeData.SchemeEditorData.cameraPositionOnGrid = _grid.GetXY(schemeEditorCameraTransform.position);
+            schemeToSave.SchemeData.SchemeVisualsData.PendingForTextureCapture = true;
+            await SchemesSaverLoader.SaveScheme(schemeToSave, _saveRemoveSchemeTaskCancellationTokenSource.Token);
         }
         
         private void OnNewSchemeHandler()
         {
-            schemeEditor.NewScheme();
+            var newScheme = schemeEditor.NewScheme();
+            SetEditorCamCamera(_grid.GetWorldPosition(_grid.GetHeight()/2, _grid.GetWidth()/2));
             foreach (var dashboardGridElement in _grid)
             {
                 dashboardGridElement.businessIntValDebug = 0;
-            } 
+            }
+            
         }
-        
+
+        private void SetEditorCamCamera(Vector3 position)
+        {
+            schemeEditorCameraTransform.position = position;
+        }
+
+        public void OnRemoveSchemeHandler(SchemeInteractionEventArgs arg0)
+        {
+            SchemesSaverLoader.OnRemoveSchemeHandler(arg0, _saveRemoveSchemeTaskCancellationTokenSource.Token);
+        }
     }
 
     public class DashboardGridElement : MustInitializeGridElement<DashboardGridElement>,

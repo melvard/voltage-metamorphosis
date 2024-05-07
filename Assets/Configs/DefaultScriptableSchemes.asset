@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultSchemesDataList:
   - name: Relay
-    description: Relay has two input and 2 ouptus (needs editing)
+    description: Relay has two inputs and 2 outputs. First input turns on magnetic
+      coil. By default 2nd input is connected to 2nd output. If coil is turned on
+      2nd input (data)  flows into 1st output disabling 2nd output.
     schemeKey:
       myGuid:
         guidStr: d3336114-5910-42bd-b5e2-79518d3ff893
+    isEditable: 0
     schemeVisualsData:
       displayName: Relay
       deviceBodyColor: {r: 0.3568441, g: 0.7556537, b: 0.9339623, a: 1}
@@ -29,6 +32,14 @@ MonoBehaviour:
       outputPositions:
       - {x: 1, y: 0.5}
       - {x: 1, y: -0.5}
+    schemeEditorData:
+      componentEditorDatas: []
+      wireConnectionEditorDatas: []
+      inputEditorDatas: []
+      outputEditorDatas: []
+      cameraPositionOnGrid:
+        x: 0
+        y: 0
     schemeLogicData:
       rid: 1853704678680297483
   - name: 1 Bit User Input
@@ -36,6 +47,7 @@ MonoBehaviour:
     schemeKey:
       myGuid:
         guidStr: 2b738a45-ac8c-4508-8385-84491fe01b62
+    isEditable: 0
     schemeVisualsData:
       displayName: 1 Bit Input
       deviceBodyColor: {r: 1, g: 0.4669811, b: 0.4669811, a: 1}
@@ -45,6 +57,14 @@ MonoBehaviour:
       - {x: 0, y: 0}
       outputPositions:
       - {x: 0.5, y: 0}
+    schemeEditorData:
+      componentEditorDatas: []
+      wireConnectionEditorDatas: []
+      inputEditorDatas: []
+      outputEditorDatas: []
+      cameraPositionOnGrid:
+        x: 0
+        y: 0
     schemeLogicData:
       rid: 1853704678680297484
   - name: 1 Bit Output
@@ -52,6 +72,7 @@ MonoBehaviour:
     schemeKey:
       myGuid:
         guidStr: 6c6dabff-4878-4697-8001-9ec948eed7cd
+    isEditable: 0
     schemeVisualsData:
       displayName: 1 Bit Output
       deviceBodyColor: {r: 1, g: 0.4669811, b: 0.4669811, a: 1}
@@ -60,6 +81,14 @@ MonoBehaviour:
       inputPositions:
       - {x: -0.5, y: 0}
       outputPositions: []
+    schemeEditorData:
+      componentEditorDatas: []
+      wireConnectionEditorDatas: []
+      inputEditorDatas: []
+      outputEditorDatas: []
+      cameraPositionOnGrid:
+        x: 0
+        y: 0
     schemeLogicData:
       rid: 1853704714053484553
   - name: Constant Voltage
@@ -67,6 +96,7 @@ MonoBehaviour:
     schemeKey:
       myGuid:
         guidStr: ee5cf222-b539-4e0c-a5b6-179a9561825d
+    isEditable: 0
     schemeVisualsData:
       displayName: V
       deviceBodyColor: {r: 0.3585183, g: 0.6886792, b: 0.1721698, a: 1}
@@ -75,6 +105,14 @@ MonoBehaviour:
       inputPositions: []
       outputPositions:
       - {x: 0.5, y: 0}
+    schemeEditorData:
+      componentEditorDatas: []
+      wireConnectionEditorDatas: []
+      inputEditorDatas: []
+      outputEditorDatas: []
+      cameraPositionOnGrid:
+        x: 0
+        y: 0
     schemeLogicData:
       rid: 1853704678680297486
   references:

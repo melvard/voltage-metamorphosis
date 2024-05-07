@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Canvas;
 using Cysharp.Threading.Tasks;
 using Exceptions;
 using GameLogic;
@@ -27,7 +26,6 @@ namespace Schemes.Dashboard
 
         [AssetsOnly] [SerializeField] private SchemeDevice schemeDeviceRef;
         [AssetsOnly] [SerializeField] private SchemeDeviceWire schemeDeviceWireRef;
-        [SerializeField] private SchemeEditorUI schemeEditorUI;
 
         #endregion
 
@@ -71,10 +69,9 @@ namespace Schemes.Dashboard
         public void Init()
         {
             NewScheme();
-            schemeEditorUI.Init();
         }
 
-        public void NewScheme()
+        public Scheme NewScheme()
         {
             ResetEditor();
             _devices = new List<SchemeDevice>();
@@ -87,11 +84,17 @@ namespace Schemes.Dashboard
             
             _gridHandler = EditorDashboard.Instance;
             OnLoadedScheme?.Invoke(_currentScheme);
+            return _currentScheme;
         }
 
+        // todo: actively processing schemeLogic unit is not a good option, consider implementing edge triggered function
         private void Update()
         {
-            _currentSchemeLogicUnit.Process();
+            if (_currentSchemeLogicUnit != null)
+            {
+                _currentSchemeLogicUnit.Process();
+                UpdateWireValues();
+            }
         }
 
         #region INSTANTIATION
@@ -238,7 +241,7 @@ namespace Schemes.Dashboard
             _currentCompositionLogicData.SchemeRelations.Add(schemeRelation);
         }
         
-        public void SaveScheme()
+        public Scheme PreapareSchemeForSave()
         {
             _currentScheme.SchemeData.SchemeEditorData.wireConnectionEditorDatas = new();
             _currentScheme.SchemeData.SchemeEditorData.componentEditorDatas = new();
@@ -294,8 +297,19 @@ namespace Schemes.Dashboard
                     }
                 }
             }
-            
-            SchemesSaverLoader.SaveScheme(_currentScheme).Forget();
+
+            return _currentScheme;
+        }
+
+        private void UpdateWireValues()
+        {
+            foreach (var schemeDeviceWire in _wires)
+            {
+                var outputLogicUnit = _currentSchemeLogicUnit.ComponentLogicUnits.First(x =>
+                    x.index == schemeDeviceWire.StartPort.SchemeDevice.DeviceIndex);
+                var value = outputLogicUnit.Outputs[schemeDeviceWire.StartPort.PortIndex].Value;
+                schemeDeviceWire.UpdateWireValue(value);
+            } 
         }
 
         private void RemoveWire(SchemeDeviceWire wire)
@@ -358,7 +372,7 @@ namespace Schemes.Dashboard
 
             OnLoadedScheme?.Invoke(_currentScheme);
         }
-
+        
         public void ResetEditor()
         {
             _currentSchemeLogicUnit = null;

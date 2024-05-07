@@ -19,7 +19,7 @@ namespace Canvas.Popups
         private const string SCENE_NAME = "ClearDashboardPopup";
         public static async UniTask<bool> Spawn(CancellationToken ct)
         {
-            ClearDashboardPopup cdp = await Utilities.LoadScene<ClearDashboardPopup>(SCENE_NAME, LoadSceneMode.Additive, ct);
+            ClearDashboardPopup cdp = await Utilities.LoadPopupScene<ClearDashboardPopup>(SCENE_NAME, LoadSceneMode.Additive, ct);
             Utilities.PlayPopupShowAnimation(cdp.gameObject);
             cdp.dashboardClearedText.gameObject.SetActive(false);
             bool clearButtonClicked = false;

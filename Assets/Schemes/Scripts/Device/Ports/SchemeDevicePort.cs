@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
@@ -11,6 +12,7 @@ namespace Schemes.Device.Ports
 {
     public abstract class SchemeDevicePort : SerializedMonoBehaviour
     {
+        [OdinSerialize] private PortValueIndicator portValueIndicator;
         [OdinSerialize] private ISchemeDevicePortInteractionHandler _schemeDevicePortInteractionHandler;
 
         [DisableInPlayMode] [DisableInEditorMode] [ShowInInspector]
@@ -30,12 +32,19 @@ namespace Schemes.Device.Ports
         {
             this.portIndex = portIndex;
             _schemeDeviceBelonged = schemeDeviceBelonged;
+            portValueIndicator.Init(_schemeDeviceBelonged.DeviceIndex, portIndex);
         }
 
         public virtual void OnPortClickedHandler(SchemeDevicePortInteractEventArgs arg0)
         {
             OnPortClicked?.Invoke(arg0);
         }
+        
+        public void UpdatePortValue(bool portValue)
+        {
+            portValueIndicator.UpdatePortValue(portValue);
+        }
+        
     }
 
     public interface ISchemeDevicePortInteractionHandler : IPointerClickHandler

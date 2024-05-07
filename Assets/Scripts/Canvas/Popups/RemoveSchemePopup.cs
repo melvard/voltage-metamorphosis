@@ -13,15 +13,12 @@ namespace Canvas.Popups
         public Button removeSchemeButton;
         public Button cancelButton;
         public Button closeButton; 
-        public Transform dashboardClearedText;
 
         private const string SCENE_NAME = "RemoveSchemePopup";
         public static async UniTask<bool> Spawn(CancellationToken ct)
         {
-            RemoveSchemePopup rsp = await Utilities.LoadScene<RemoveSchemePopup>(SCENE_NAME, LoadSceneMode.Additive, ct);
+            RemoveSchemePopup rsp = await Utilities.LoadPopupScene<RemoveSchemePopup>(SCENE_NAME, LoadSceneMode.Additive, ct);
             Utilities.PlayPopupShowAnimation(rsp.gameObject);
-            rsp.dashboardClearedText.gameObject.SetActive(false);
-            bool removeSchemeButtonClicked = false;
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
             try
             {
@@ -30,18 +27,12 @@ namespace Canvas.Popups
                 // var cancelButtonTask = Utilities.SelectButton();
                 var result = await buttonTask;
                 linkedCts.Cancel();
-                removeSchemeButtonClicked = result == rsp.removeSchemeButton;
+                var removeSchemeButtonClicked = result == rsp.removeSchemeButton;
                 return removeSchemeButtonClicked;
             }
             finally
             {
                 linkedCts.Dispose();
-                if (removeSchemeButtonClicked)
-                {
-                    rsp.dashboardClearedText.gameObject.SetActive(true);
-                    await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
-                    rsp.dashboardClearedText.gameObject.SetActive(false);
-                }
                 await Utilities.PlayPopupCloseAnimation(rsp.gameObject);
                 Utilities.LoadUnloadScene(SCENE_NAME);
             }

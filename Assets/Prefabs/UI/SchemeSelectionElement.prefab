@@ -1208,7 +1208,7 @@ MonoBehaviour:
   editButton: {fileID: 3110329905549910237}
   removeSchemeButton: {fileID: 468309771563409349}
   schemeDescription: {fileID: 1092213611682959025}
-  schemeDescriptionHintContainer: {fileID: 1595997164253622990}
+  schemeDescriptionTooltipContainer: {fileID: 1595997164253622990}
   thresholdTimeToShowHint: 1
 --- !u!1 &8671940711086736047
 GameObject:

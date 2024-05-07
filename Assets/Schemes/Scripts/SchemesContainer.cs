@@ -13,6 +13,10 @@ using UnityEngine.Events;
 public class SchemesContainer : IContainer
 {
     [ShowInInspector] private readonly Dictionary<SchemeKey, Scheme> _schemeComponents;
+    
+    
+    //Note: should be tested against performance issues 
+    // public event UnityAction<List<Scheme>> OnSchemesChanged; 
     public SchemesContainer()
     {
         _schemeComponents = new();
@@ -31,8 +35,7 @@ public class SchemesContainer : IContainer
         AddScheme(arg0.scheme);
     }
 
-    //Note: should be tested against performance issues 
-    public event UnityAction<List<Scheme>> OnSchemesChanged; 
+   
 
     public void AddSchemes(List<Scheme> schemes)
     {
@@ -40,7 +43,7 @@ public class SchemesContainer : IContainer
         {
             AddScheme(scheme);
         }
-        OnSchemesChanged?.Invoke(schemes);
+        // OnSchemesChanged?.Invoke(schemes);
     }
 
     private void AddScheme(Scheme scheme)

@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 163569045}
   - component: {fileID: 163569047}
   - component: {fileID: 163569046}
+  - component: {fileID: 163569048}
   m_Layer: 5
   m_Name: PopupContainer
   m_TagString: Untagged
@@ -201,6 +202,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 163569044}
   m_CullTransparentMesh: 1
+--- !u!114 &163569048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163569044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f381328318e74db589c79e3ff466b6d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  editSchemeButton: {fileID: 1212590620}
+  cancelButton: {fileID: 1788722396}
+  closeButton: {fileID: 731852434}
 --- !u!1 &452979835
 GameObject:
   m_ObjectHideFlags: 0

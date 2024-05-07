@@ -94,6 +94,12 @@ namespace Misc
             x = Mathf.RoundToInt((worldPosition.x - _originPosition.x) / _cellSize);
             y = Mathf.RoundToInt((worldPosition.z - _originPosition.z) / _cellSize);
         }
+        public Coordinate GetXY(Vector3 worldPosition)
+        {
+            var x = Mathf.RoundToInt((worldPosition.x - _originPosition.x) / _cellSize);
+            var y = Mathf.RoundToInt((worldPosition.z - _originPosition.z) / _cellSize);
+            return new Coordinate(x, y);
+        }
 
         public Vector3 GetAlignedPositionOnGrid(Vector3 worldPosition)
         {

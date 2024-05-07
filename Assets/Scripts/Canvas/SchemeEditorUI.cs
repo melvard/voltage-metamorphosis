@@ -106,19 +106,20 @@ namespace Canvas
         
         public void Init()
         {
-            SubscribeToButtonEvents();
-            SetScheme(EditorDashboard.Instance.SchemeEditor_Debug.CurrentScheme_Debug);
-            
-            EditorDashboard.Instance.SchemeEditor_Debug.OnLoadedScheme += SetScheme;
-
             var schemesContainer = GameManager.Instance.GetContainerOfType<SchemesContainer>();
             
             schemesSelectorUI.Init(schemesContainer);
             schemesSelectorUI.OnSchemeSelectCommand += EditorDashboard.Instance.OnSchemeSelectCommandHandler;
             schemesSelectorUI.OnSchemeEditCommand += EditorDashboard.Instance.OnSchemeEditHandler;
-            schemesSelectorUI.OnSchemeRemoveCommand += SchemesSaverLoader.OnRemoveSchemeHandler;
+            schemesSelectorUI.OnSchemeRemoveCommand += EditorDashboard.Instance.OnRemoveSchemeHandler;
 
             _popupCancellationSource = new CancellationTokenSource();
+            
+            SubscribeToButtonEvents();
+            
+            SetScheme(EditorDashboard.Instance.SchemeEditor_Debug.CurrentScheme_Debug);
+            EditorDashboard.Instance.SchemeEditor_Debug.OnLoadedScheme += SetScheme;
+
         }
 
         
@@ -189,6 +190,7 @@ namespace Canvas
             var schemeColors = GameManager.Instance.GetContainerOfType<ConfigsContainer>()
                 .SchemeMaterialPaletteSo.GetColors(); 
             schemeColorPaletteUIVisualizer.SetColorPalette(schemeColors);
+            schemesSelectorUI.PreventInteractionsWithScheme(scheme);
         }
 
         private void ApplyUIData(SchemeUIData schemeUIData)

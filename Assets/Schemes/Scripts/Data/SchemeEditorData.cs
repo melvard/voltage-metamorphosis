@@ -62,5 +62,6 @@ namespace Schemes.Data
         public List<WireConnectionEditorData> wireConnectionEditorDatas = new();
         public List<IOEditorData> inputEditorDatas = new();
         public List<IOEditorData> outputEditorDatas = new();
+        public Coordinate cameraPositionOnGrid = new(0,0);
     }
 }

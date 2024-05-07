@@ -3,37 +3,36 @@ using Cysharp.Threading.Tasks;
 using Misc;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Canvas.Popups
 {
-    public class NewSchemePopup : MonoBehaviour
+    public class EditSchemePopup : MonoBehaviour
     {
-        public Button newSchemeButton;
+        public Button editSchemeButton;
         public Button cancelButton;
         public Button closeButton;
 
-        private const string SCENE_NAME = "NewSchemePopup";
+        private const string SCENE_NAME = "EditSchemePopup";
         public static async UniTask<bool> Spawn(CancellationToken ct)
         {
-            NewSchemePopup nsp = await Utilities.LoadPopupScene<NewSchemePopup>(SCENE_NAME, LoadSceneMode.Additive, ct);
-            Utilities.PlayPopupShowAnimation(nsp.gameObject);
+            EditSchemePopup esp = await Utilities.LoadPopupScene<EditSchemePopup>(SCENE_NAME, LoadSceneMode.Additive, ct);
+            Utilities.PlayPopupShowAnimation(esp.gameObject);
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
             try
             {
                 var lct = linkedCts.Token;
-                var buttonTask = Utilities.SelectButton(lct, nsp.newSchemeButton, nsp.cancelButton, nsp.closeButton);
+                var buttonTask = Utilities.SelectButton(lct, esp.editSchemeButton, esp.cancelButton, esp.closeButton);
                 // var cancelButtonTask = Utilities.SelectButton();
                 var result = await buttonTask;
                 linkedCts.Cancel();
-                return result == nsp.newSchemeButton;;
+                return result == esp.editSchemeButton;;
             }
             finally
             {
                 linkedCts.Dispose();
                
-                await Utilities.PlayPopupCloseAnimation(nsp.gameObject);
+                await Utilities.PlayPopupCloseAnimation(esp.gameObject);
                 Utilities.LoadUnloadScene(SCENE_NAME);
             }
         }

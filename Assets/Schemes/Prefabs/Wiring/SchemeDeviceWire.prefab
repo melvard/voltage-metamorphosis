@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5034350691077132143}
   - component: {fileID: 6929807456325414681}
+  - component: {fileID: 3975985330766636636}
   - component: {fileID: 5396231092742615750}
   m_Layer: 6
   m_Name: SchemeDeviceWire
@@ -47,6 +48,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wireBodyRef: {fileID: 7015543979366745627, guid: 9bbc7186bc69e4884a8176a6480107d0, type: 3}
   wireNodeRef: {fileID: 7466946291292339237, guid: 185a19f0e0b1c480f9b4c1bc59fafa7f, type: 3}
+  lineRenderer: {fileID: 5396231092742615750}
+  wireValueIndicator: {fileID: 3975985330766636636}
+--- !u!114 &3975985330766636636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8546670625749340676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccaa70d0ce5c487797e12247546efde0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enabledWireBodyMaterial: {fileID: 2100000, guid: a4807275c99db4b14b1c886d82228e76, type: 2}
+  disabledWireBodyMaterial: {fileID: 2100000, guid: 1703664670fab47298ac6371c2811657, type: 2}
   lineRenderer: {fileID: 5396231092742615750}
 --- !u!120 &5396231092742615750
 LineRenderer:

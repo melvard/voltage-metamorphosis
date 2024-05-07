@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Canvas
@@ -27,7 +28,7 @@ namespace Canvas
         
         [Space][Title("Description hint setting")]
         [SerializeField] private TextMeshProUGUI schemeDescription;
-        [SerializeField] private Transform schemeDescriptionHintContainer;
+        [SerializeField] private Transform schemeDescriptionTooltipContainer;
         [SerializeField] private float thresholdTimeToShowHint;
         
         #endregion
@@ -35,9 +36,10 @@ namespace Canvas
         #region PRIVATE_FIELDS
 
         private Scheme _holdingScheme;
-        private CancellationTokenSource _hintDescriptionTasKCancellationTokenSource;
-        private CancellationTokenSource _removeSchemeTaskCancellationTokenSource;
-
+        private CancellationTokenSource _descriptionTooltipTasKCancellationTokenSource;
+        private CancellationTokenSource _buttonTasksCancellationTokenSource;
+        private bool _interactable = false;
+        
         #endregion
 
         #region EVENTS
@@ -47,19 +49,33 @@ namespace Canvas
         public event UnityAction<SchemeInteractionEventArgs> OnSchemeRemoveBtnClick;
         
         #endregion
+
+        #region GETTERS
+
+        public Scheme HoldingScheme => _holdingScheme;
+        public bool Interactable
+        {
+            get => _interactable;
+            set
+            {
+                _interactable = value;
+                editButton.interactable = _interactable;
+                removeSchemeButton.interactable = _interactable;
+                selectSchemeButton.interactable = _interactable;
+            }
+        }
+
+        #endregion
         
         public void Init(Scheme scheme)
         {
-            _hintDescriptionTasKCancellationTokenSource = new CancellationTokenSource();
-            _removeSchemeTaskCancellationTokenSource = new CancellationTokenSource();
-            
+            Interactable = true;
+            _descriptionTooltipTasKCancellationTokenSource = new CancellationTokenSource();
+            _buttonTasksCancellationTokenSource = new CancellationTokenSource();
             _holdingScheme = scheme;
-            rawImage.texture = scheme.UIRenderTexture;
-            schemeName.text = scheme.SchemeData.Name;
-            schemeDescription.text = scheme.SchemeData.Description;
-            schemeDescriptionHintContainer.gameObject.SetActive(false);
+
+            RefreshData();
             
-            selectSchemeButton.onClick.AddListener(OnSchemeSelectButtonClickHandler);
             if (scheme.SchemeData.IsEditable)
             {
                 schemeAlteringButtonsContainer.gameObject.SetActive(true);
@@ -70,17 +86,19 @@ namespace Canvas
             {
                 schemeAlteringButtonsContainer.gameObject.SetActive(false);
             }
-
+            
+            schemeDescriptionTooltipContainer.gameObject.SetActive(false);
+            selectSchemeButton.onClick.AddListener(OnSchemeSelectButtonClickHandler);
         }
 
         // Method called when the mouse enters the UI element
         public async void OnPointerEnter(PointerEventData eventData)
         {
             // Debug.Log("Mouse is over the UI element.");
-            await ShowDescriptionHint(_hintDescriptionTasKCancellationTokenSource.Token);            
+            await ShowDescriptionTooltip(_descriptionTooltipTasKCancellationTokenSource.Token);            
         }
 
-        private async UniTask ShowDescriptionHint(CancellationToken cancellationToken)
+        private async UniTask ShowDescriptionTooltip(CancellationToken cancellationToken)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(thresholdTimeToShowHint));
 
@@ -89,9 +107,9 @@ namespace Canvas
             
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (!schemeDescriptionHintContainer.gameObject.activeSelf)
+                if (!schemeDescriptionTooltipContainer.gameObject.activeSelf)
                 {
-                    schemeDescriptionHintContainer.gameObject.SetActive(true);
+                    schemeDescriptionTooltipContainer.gameObject.SetActive(true);
                 }
                 
                 Vector3 mouseLastDelta = Input.mousePosition - mousePrevPos;
@@ -99,7 +117,7 @@ namespace Canvas
                 mousePrevPos = Input.mousePosition;
                 if (mouseLastDelta.magnitude > 20f || mouseTotalDelta.magnitude > 120f)
                 {
-                    schemeDescriptionHintContainer.gameObject.SetActive(false);
+                    schemeDescriptionTooltipContainer.gameObject.SetActive(false);
                     break;
                 }
                 await UniTask.Yield(cancellationToken);
@@ -116,13 +134,13 @@ namespace Canvas
         {
             // Debug.Log("Mouse has exited the UI element.");
             
-            _hintDescriptionTasKCancellationTokenSource.Cancel();
-            _hintDescriptionTasKCancellationTokenSource.Dispose();
-            _hintDescriptionTasKCancellationTokenSource = new CancellationTokenSource();
+            _descriptionTooltipTasKCancellationTokenSource.Cancel();
+            _descriptionTooltipTasKCancellationTokenSource.Dispose();
+            _descriptionTooltipTasKCancellationTokenSource = new CancellationTokenSource();
             
             // _cancellationTokenSource.Dispose();
             // _cancellationTokenSource = new CancellationTokenSource();
-            schemeDescriptionHintContainer.gameObject.SetActive(false);
+            schemeDescriptionTooltipContainer.gameObject.SetActive(false);
         }
 
         private void OnSchemeSelectButtonClickHandler()
@@ -130,17 +148,27 @@ namespace Canvas
             OnSchemeSelectBtnClick?.Invoke(new SchemeInteractionEventArgs(_holdingScheme));
         }
 
-        private void OnEditSchemeButtonClickHandler()
+        private async void OnEditSchemeButtonClickHandler()
         {
-            OnSchemeEditBtnClick?.Invoke(new SchemeInteractionEventArgs(_holdingScheme));
+            if (await EditSchemePopup.Spawn(_buttonTasksCancellationTokenSource.Token))
+            {
+                OnSchemeEditBtnClick?.Invoke(new SchemeInteractionEventArgs(_holdingScheme));
+            }
         }
         
         private async void OnSchemeRemoveButtonClickHandler()
         {
-            if (await RemoveSchemePopup.Spawn(_removeSchemeTaskCancellationTokenSource.Token))
+            if (await RemoveSchemePopup.Spawn(_buttonTasksCancellationTokenSource.Token))
             {
                 OnSchemeRemoveBtnClick?.Invoke(new SchemeInteractionEventArgs(_holdingScheme));
             }
+        }
+
+        public void RefreshData()
+        {
+            rawImage.texture = _holdingScheme.SchemeData.SchemeVisualsData.UITexture2D;
+            schemeName.text = _holdingScheme.SchemeData.Name;
+            schemeDescription.text = _holdingScheme.SchemeData.Description;
         }
     }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Canvas;
 using Cysharp.Threading.Tasks;
 using GameLogic;
@@ -41,35 +42,35 @@ namespace Schemes
             return schemeDatas.Select(schemeData => new Scheme(schemeData)).ToList();
         }
         
-        public static async UniTask<List<Scheme>> LoadSchemes()
+        public static async UniTask<List<Scheme>> LoadSchemes(CancellationToken ct)
         {
             var defaultSchemes = GetDefaultSchemes();
-            var playerSchemes = await GetPlayerSchemes();
+            var playerSchemes = await GetPlayerSchemes(ct);
             
             if (playerSchemes == null) return defaultSchemes;
             return defaultSchemes.Union(playerSchemes).ToList();
         }
         
-        private static async UniTask<List<Scheme>> GetPlayerSchemes()
+        private static async UniTask<List<Scheme>> GetPlayerSchemes(CancellationToken ct)
         {
-            PlayerData = await LoadPlayerData();
+            PlayerData = await LoadPlayerData(ct);
             return PlayerData.schemes;
         }
         
-        // Note: will not be used probably
-        public static async UniTask<Scheme> LoadSchemeByName()
-        {
-            // todo: deserialization from json file here 
-            throw new NotImplementedException("Load scheme by name is not implemented");
-        }
+        // // Note: will not be used probably
+        // public static async UniTask<Scheme> LoadSchemeByName()
+        // {
+        //     // todo: deserialization from json file here 
+        //     throw new NotImplementedException("Load scheme by name is not implemented");
+        // }
+        //
+        // public static async UniTask<Scheme> LoadSchemeByKey(SchemeKey guidStr)
+        // {
+        //     // todo: deserialization from json file here 
+        //     throw new NotImplementedException("Load scheme by key is not implemented");
+        // }
 
-        public static async UniTask<Scheme> LoadSchemeByKey(SchemeKey guidStr)
-        {
-            // todo: deserialization from json file here 
-            throw new NotImplementedException("Load scheme by key is not implemented");
-        }
-
-        public static async UniTask SaveScheme(Scheme scheme)
+        public static async UniTask SaveScheme(Scheme scheme, CancellationToken ct)
         {
             var previousSameSchemeIndex = PlayerData.schemes.IndexOf(x => x == scheme);
             if (previousSameSchemeIndex != -1)
@@ -83,7 +84,7 @@ namespace Schemes
                 OnSchemeAdded?.Invoke(new SchemeInteractionEventArgs(scheme));
             }
 
-            await SavePlayerData(PlayerData);
+            await SavePlayerData(PlayerData, ct);
         }
 
         // public static async UniTask<bool> SaveSchemes(List<Scheme> schemes)
@@ -92,19 +93,19 @@ namespace Schemes
         // }
 
         // Method to save game data to a JSON file
-        private static async UniTask SavePlayerData(PlayerData data)
+        private static async UniTask SavePlayerData(PlayerData data, CancellationToken ct)
         {
             string json = JsonUtility.ToJson(data);
-            await File.WriteAllTextAsync(SavePath, json); // fixme where is your cancellation token
+            await File.WriteAllTextAsync(SavePath, json, cancellationToken:ct); // fixme where is your cancellation token
             Debug.Log(SavePath);
         }
         
         // Method to load game data from a JSON file
-        private static async UniTask<PlayerData> LoadPlayerData()
+        private static async UniTask<PlayerData> LoadPlayerData(CancellationToken ct)
         {
             if (File.Exists(SavePath))
             {
-                string json = await File.ReadAllTextAsync(SavePath);
+                string json = await File.ReadAllTextAsync(SavePath, cancellationToken:ct);
                 return JsonUtility.FromJson<PlayerData>(json);
             }
 
@@ -114,14 +115,14 @@ namespace Schemes
             return playerData;
         }
 
-        public static async void OnRemoveSchemeHandler(SchemeInteractionEventArgs removeSchemeHandler)
+        public static async void OnRemoveSchemeHandler(SchemeInteractionEventArgs removeSchemeHandler, CancellationToken ct)
         {
             var schemeToRemoveIndex = PlayerData.schemes.IndexOf(x => x == removeSchemeHandler.scheme);
             if (schemeToRemoveIndex != -1)
             {
                 PlayerData.schemes.RemoveAt(schemeToRemoveIndex);
             }
-            await SavePlayerData(PlayerData);
+            await SavePlayerData(PlayerData, ct);
             OnSchemeRemoved?.Invoke(new SchemeInteractionEventArgs(removeSchemeHandler.scheme));
         }
     }

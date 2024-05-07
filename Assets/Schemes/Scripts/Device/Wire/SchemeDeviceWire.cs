@@ -28,7 +28,8 @@ namespace Schemes.Device.Wire
         [AssetsOnly] [SerializeField] private WireBody wireBodyRef;
         [AssetsOnly] [SerializeField] private WireNode wireNodeRef;
         [SerializeField] private LineRenderer lineRenderer;
-
+        [SerializeField] private WireValueIndicator wireValueIndicator;
+        
         #endregion
 
         #region PRIVATE_FIELDS
@@ -100,8 +101,7 @@ namespace Schemes.Device.Wire
                 wireNode.PathNode.businessIntValDebug = 1;
             }
         }
-
-
+        
         private async UniTaskVoid ActiveWiring(CancellationToken cancellationToken)
         {
             _currentWireNodes.Clear();
@@ -233,6 +233,11 @@ namespace Schemes.Device.Wire
             {
                 lineRenderer.positionCount = 0;
             }
+        }
+
+        public void UpdateWireValue(bool value)
+        {
+            wireValueIndicator.UpdateWireValue(value);
         }
     }
 }

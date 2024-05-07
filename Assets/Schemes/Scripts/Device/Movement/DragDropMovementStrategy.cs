@@ -11,14 +11,15 @@ namespace Schemes.Device.Movement
     public class DragDropMovementStrategy : MonoBehaviour, IMovementStrategy, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler
     {
         public IMovementExecutionStrategy MovementExecutionStrategy { get; set; }
+        public bool ShouldTakeIntoAccountInitialDelta { get; set; }
+        public float movementDeltaThreshold;
 
         private CancellationTokenSource _cancellationTokenSource;
         
+       
         private bool _movementEnabled;
         private List<GameObject> _mouseInteractableGameObjects;
-       
         
-        public bool ShouldTakeIntoAccountInitialDelta { get; set; }
         public void SetMovementExecutionStrategy(IMovementExecutionStrategy movementExecutionStrategy)
         {
             MovementExecutionStrategy = movementExecutionStrategy;
@@ -71,19 +72,30 @@ namespace Schemes.Device.Movement
             var startMousePosition = Input.mousePosition;
             Plane planeOnWhichMoves = new Plane(transform.up, transform.position);
             Vector3 hitPosition = GetPositionOnMovementPlane(planeOnWhichMoves, startMousePosition);
+            
             var initialDeltaRelativeToBody = Vector3.zero;
             if (ShouldTakeIntoAccountInitialDelta)
             {
                 initialDeltaRelativeToBody = hitPosition - transform.position;
             }
-            
+
+            bool overcameThreshold = false;
             while (true)
             {
                 var currentMousePosition = Input.mousePosition;
-                var positionOnMovementPlane = GetPositionOnMovementPlane(planeOnWhichMoves, currentMousePosition);
-                var anticipatedPosition = positionOnMovementPlane - initialDeltaRelativeToBody;
-                MovementExecutionStrategy.SetAnticipatedPosition(transform, anticipatedPosition);
-                cancellationToken.ThrowIfCancellationRequested();
+                var totalDelta = startMousePosition - currentMousePosition;
+                if (totalDelta.magnitude > movementDeltaThreshold)
+                {
+                    overcameThreshold = true;
+                }
+
+                if (overcameThreshold)
+                {
+                    var positionOnMovementPlane = GetPositionOnMovementPlane(planeOnWhichMoves, currentMousePosition);
+                    var anticipatedPosition = positionOnMovementPlane - initialDeltaRelativeToBody;
+                    MovementExecutionStrategy.SetAnticipatedPosition(transform, anticipatedPosition);
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
                 await UniTask.Yield(cancellationToken);
             }
         }   

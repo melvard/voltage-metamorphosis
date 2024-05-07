@@ -18,8 +18,6 @@ namespace GameCamera
             }
         }
         
-        
-
         public void Update()
         {
             if (Input.GetMouseButtonDown(0))

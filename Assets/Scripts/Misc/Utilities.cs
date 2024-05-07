@@ -1075,7 +1075,7 @@ namespace Misc
             return -1;
         }
 
-        public static async UniTask<T> LoadScene<T>(string sceneName, LoadSceneMode loadSceneMode, CancellationToken ct) where T : Component
+        public static async UniTask<T> LoadPopupScene<T>(string sceneName, LoadSceneMode loadSceneMode, CancellationToken ct) where T : Component
         {
             // Note: don't now how to use this cancellation token
             var asyncOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
@@ -1131,6 +1131,39 @@ namespace Misc
         public static void LoadUnloadScene(string sceneName)
         {
             SceneManager.UnloadSceneAsync(sceneName);
+        }
+        
+        public static void SetLayerRecursively(this GameObject obj, int layer)
+        {
+            obj.layer = layer;
+
+            foreach (Transform child in obj.transform)
+            {
+                child.gameObject.SetLayerRecursively(layer);
+            }
+        }
+        
+        public static void SetLayerRecursively(this GameObject obj, LayerMask layerMask)
+        {
+            int layer = FindFirstLayerInMask(layerMask);
+            obj.layer = layer;
+
+            foreach (Transform child in obj.transform)
+            {
+                child.gameObject.SetLayerRecursively(layerMask);
+            }
+        }
+
+        private static int FindFirstLayerInMask(LayerMask layerMask)
+        {
+            for (int i = 0; i < 32; i++)
+            {
+                if (layerMask == (layerMask | (1 << i)))
+                {
+                    return i;
+                }
+            }
+            return 0;
         }
     }
 }

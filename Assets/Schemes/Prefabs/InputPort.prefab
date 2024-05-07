@@ -116,6 +116,7 @@ GameObject:
   - component: {fileID: 2910830341481584292}
   - component: {fileID: 1744670561780962049}
   - component: {fileID: -4974849304582552774}
+  - component: {fileID: 8013694184280892177}
   m_Layer: 0
   m_Name: InputPort
   m_TagString: Untagged
@@ -152,15 +153,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
-    SerializedBytes: 0b01230000005f0073006300680065006d00650044006500760069006300650050006f007200740049006e0074006500720061006300740069006f006e00480061006e0064006c006500720000000000
+    SerializedFormat: 2
+    SerializedBytes: 
     ReferencedUnityObjects:
+    - {fileID: 8013694184280892177}
     - {fileID: -4974849304582552774}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: portValueIndicator
+      Entry: 10
+      Data: 0
+    - Name: _schemeDevicePortInteractionHandler
+      Entry: 10
+      Data: 1
 --- !u!114 &-4974849304582552774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,3 +181,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b58cc0b97d54487a90935cd004ede88e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8013694184280892177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8724341734888856092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef478dfac1847f1824f5d7c2dd1d46b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enabledMaterial: {fileID: 2100000, guid: b5ccb912eddb946abbd925eeaa03d284, type: 2}
+  disabledMaterial: {fileID: 2100000, guid: db75d69589a3a4975a9902897ae31a55, type: 2}
+  portMeshRenderer: {fileID: 7450449850234137795}
+  isInput: 1

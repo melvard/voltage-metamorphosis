@@ -1,27 +1,43 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Misc;
 using Schemes;
 using Schemes.Dashboard;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.SceneManagement;
 
 namespace GameLogic
 {
     public class GameManager : MonoSingleton<GameManager>
     {
+        #region CONSTS
+
+        private const string LOADING_SCENE_NAME = "LoadingScreen";
+
+        #endregion
+        
+        #region SERIALIZED_FIELDS
+
         [SerializeField] private SchemesModelCapture schemesModelCapture;
         [SerializeField] private List<MonoContainer> monoContainers;
-        
+
+        #endregion
+
+        #region PRIVATE_FIELDS
+
         [DisableInPlayMode][DisableInEditorMode][ShowInInspector] private List<IContainer> _runtimeContainers;
+        private CancellationTokenSource _initializationCancellationSource;
         
-        private async void Start()
+        #endregion
+        
+        private void Start()
         {
-            Init();
+            _initializationCancellationSource = new CancellationTokenSource();
             Application.targetFrameRate = 120;
+            Init(_initializationCancellationSource.Token);
         }
         
         
@@ -37,10 +53,10 @@ namespace GameLogic
         
         #endif
         
-        private async void Init()
+        private async void Init(CancellationToken ck)
         {
             InitializeContainers();
-            await InitSchemesContainer();
+            await InitSchemesContainer(ck);
             InitDashboard();
         }
 
@@ -49,15 +65,16 @@ namespace GameLogic
             EditorDashboard.Instance.Init();
         }
 
-        private async UniTask InitSchemesContainer()
+        private async UniTask InitSchemesContainer(CancellationToken ck)
         {
+            SceneManager.LoadScene(LOADING_SCENE_NAME, LoadSceneMode.Additive);
             // Note:  loading schemes. Will be probably moved to another method or even class 
-            var loadedSchemes = await SchemesSaverLoader.LoadSchemes();
-            
-            schemesModelCapture.CaptureSchemesRenderTextures(loadedSchemes);
+            var loadedSchemes = await SchemesSaverLoader.LoadSchemes(ck);
+            await schemesModelCapture.CaptureSchemesRenderTextures(loadedSchemes, ck);
             SchemesContainer schemesContainer = new SchemesContainer();
             schemesContainer.AddSchemes(loadedSchemes);
             _runtimeContainers.Add(schemesContainer);
+            SceneManager.UnloadSceneAsync(LOADING_SCENE_NAME);
         }
         
         private void InitializeContainers()
@@ -85,6 +102,5 @@ namespace GameLogic
 
             throw new InvalidOperationException($"Can't get container of type {typeof(T)}");
         }
-        
     }
 }
