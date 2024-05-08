@@ -1413,15 +1413,17 @@ MonoBehaviour:
     on schemes from left panel and tick on board to create scheme device
 
     - Right
-    click to remove element
+    click to remove elements
 
-    - Left click on ports to start wiring
+    - Press escape to cancel wiring
 
-    - Left
-    click and drag to move devices
+    - Left click
+    on ports to start wiring
 
-    - Use right click and left shift to set input
-    value'
+    - Left click and drag to move devices
+
+    - Use
+    right click and left shift to set input value'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
   m_sharedMaterial: {fileID: 7695387366603751775, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
