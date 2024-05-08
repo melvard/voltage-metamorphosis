@@ -377,9 +377,9 @@ namespace Schemes.Dashboard
 
         public void LoadSchemeInEditor(Scheme scheme)
         {
-            _currentScheme = scheme;
+            _currentScheme = Scheme.CopyFrom(scheme);
             _currentCompositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
-            _currentSchemeLogicUnit = new SchemeLogicUnit(scheme.SchemeData, -1);
+            _currentSchemeLogicUnit = new SchemeLogicUnit(_currentScheme.SchemeData, -1);
             _currentSchemeLogicUnit.AlignInputsAndOutputsOnComponents();
 
             _devices ??= new List<SchemeDevice>();
@@ -388,13 +388,13 @@ namespace Schemes.Dashboard
             _wires ??= new List<SchemeDeviceWire>();
             _wires.Clear();
 
-            var compositionLogicData = scheme.SchemeData.SchemeLogicData as CompositionLogicData;
+            var compositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
             if (compositionLogicData == null)
             {
                 throw new GameLogicException("Trying to edit scheme that is not composition.");
             }
 
-            var schemeEditorData = scheme.SchemeData.SchemeEditorData;
+            var schemeEditorData = _currentScheme.SchemeData.SchemeEditorData;
             var componentEditorDatas = schemeEditorData.componentEditorDatas;
 
             foreach (var componentScheme in compositionLogicData.ComponentSchemes)

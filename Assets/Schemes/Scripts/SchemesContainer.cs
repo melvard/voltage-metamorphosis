@@ -16,12 +16,17 @@ public class SchemesContainer : IContainer
     
     
     //Note: should be tested against performance issues 
-    // public event UnityAction<List<Scheme>> OnSchemesChanged; 
     public SchemesContainer()
     {
         _schemeComponents = new();
         SchemesSaverLoader.OnSchemeAdded += OnSchemeAddedHandler;
         SchemesSaverLoader.OnSchemeRemoved += OnSchemeRemovedHandler;
+        SchemesSaverLoader.OnSchemeEdited += OnSchemeEditedHandler;
+    }
+
+    private void OnSchemeEditedHandler(SchemeInteractionEventArgs arg0)
+    {
+        AddScheme(arg0.scheme);
     }
 
     private void OnSchemeRemovedHandler(SchemeInteractionEventArgs arg0)
@@ -34,8 +39,6 @@ public class SchemesContainer : IContainer
     {
         AddScheme(arg0.scheme);
     }
-
-   
 
     public void AddSchemes(List<Scheme> schemes)
     {

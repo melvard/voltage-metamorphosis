@@ -77,5 +77,11 @@ namespace Schemes.Data
         }
 
         #endregion
+
+        public static SchemeKey CopyFrom(SchemeKey schemeKey)
+        {
+            var copyKey = new SchemeKey((string)schemeKey.myGuid);
+            return copyKey;
+        }
     }
 }

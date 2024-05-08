@@ -63,5 +63,19 @@ namespace Schemes.Data
         public List<IOEditorData> inputEditorDatas = new();
         public List<IOEditorData> outputEditorDatas = new();
         public Coordinate cameraPositionOnGrid = new(0,0);
+
+        public static SchemeEditorData CopyFrom(SchemeEditorData schemeEditorData)
+        {
+            var copyData = new SchemeEditorData
+            {
+                componentEditorDatas = new (schemeEditorData.componentEditorDatas),
+                wireConnectionEditorDatas = new (schemeEditorData.wireConnectionEditorDatas),
+                inputEditorDatas = new (schemeEditorData.inputEditorDatas),
+                outputEditorDatas = new (schemeEditorData.outputEditorDatas),
+                cameraPositionOnGrid = schemeEditorData.cameraPositionOnGrid
+            };
+
+            return copyData;
+        }
     }
 }

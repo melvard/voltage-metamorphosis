@@ -68,8 +68,11 @@ namespace GameLogic
         private async UniTask InitSchemesContainer(CancellationToken ck)
         {
             SceneManager.LoadScene(LOADING_SCENE_NAME, LoadSceneMode.Additive);
-            // Note:  loading schemes. Will be probably moved to another method or even class 
+            
+            // Note:  loading schemes. Will be probably moved to another method or even class
+            SchemesSaverLoader.RemoveEventSubscriptions();;
             var loadedSchemes = await SchemesSaverLoader.LoadSchemes(ck);
+            
             await schemesModelCapture.CaptureSchemesRenderTextures(loadedSchemes, ck);
             SchemesContainer schemesContainer = new SchemesContainer();
             schemesContainer.AddSchemes(loadedSchemes);

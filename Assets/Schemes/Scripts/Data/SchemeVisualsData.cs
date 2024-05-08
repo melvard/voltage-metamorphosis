@@ -155,5 +155,24 @@ namespace Schemes.Data
                 outputPositions[i] = new Vector2(xPos, -ySize / 2f + deltaPerPosition * (i+1));
             }
         }
+
+        public static SchemeVisualsData CopyFrom(SchemeVisualsData schemeVisualsData)
+        {
+            var copyVisualsData = new SchemeVisualsData()
+            {
+                displayName =  schemeVisualsData.displayName,
+                deviceBodyColor = schemeVisualsData.deviceBodyColor,
+                deviceBodyMaterial = schemeVisualsData.deviceBodyMaterial,
+                size =  schemeVisualsData.size,
+                inputPositions = new Vector2[schemeVisualsData.inputPositions.Length],
+                outputPositions = new Vector2[schemeVisualsData.outputPositions.Length],
+                _uITexture2D = schemeVisualsData._uITexture2D,
+                PendingForTextureCapture = false
+            };
+            Array.Copy(schemeVisualsData.inputPositions, copyVisualsData.inputPositions, schemeVisualsData.inputPositions.Length);
+            Array.Copy(schemeVisualsData.outputPositions, copyVisualsData.outputPositions, schemeVisualsData.outputPositions.Length);
+
+            return copyVisualsData;
+        }
     }
 }

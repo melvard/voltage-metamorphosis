@@ -14,5 +14,10 @@ namespace Schemes.Data.LogicData.UserIO
         {
             return Value;
         }
+
+        protected override SchemeLogicData GetCopy()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

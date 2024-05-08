@@ -86,7 +86,7 @@ namespace Canvas
             var schemeSelectionElementIndex = _schemeSelectionElements.IndexOf(x => x.HoldingScheme == arg0.scheme);
             if (schemeSelectionElementIndex != -1)
             {
-                _schemeSelectionElements[schemeSelectionElementIndex].RefreshData();
+                _schemeSelectionElements[schemeSelectionElementIndex].RefreshData(arg0.scheme);
             }
         }
 

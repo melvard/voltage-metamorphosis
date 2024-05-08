@@ -9,5 +9,9 @@ namespace Schemes.Data.LogicData.Relay
         // { 
         //     Inputs & (2 << 0);
         // }
+        protected override SchemeLogicData GetCopy()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

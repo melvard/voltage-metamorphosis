@@ -11,5 +11,9 @@ namespace Schemes.Data.LogicData.Voltage
         // {
         //     return 1;
         // }
+        protected override SchemeLogicData GetCopy()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -9,8 +9,15 @@ namespace Schemes.Data.LogicData
         {
             return new T();
         }
-        
-        
+
+
+        public static SchemeLogicData CopyFrom(SchemeLogicData schemeLogicData)
+        {
+            var copy = schemeLogicData.GetCopy();
+            return copy;
+        }
+
+        protected abstract SchemeLogicData GetCopy();
     }
 }
 

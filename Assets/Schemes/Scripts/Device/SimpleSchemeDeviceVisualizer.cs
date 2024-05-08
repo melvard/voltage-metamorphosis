@@ -64,10 +64,10 @@ namespace Schemes.Device
             var displayNameRectTransform = displayName.transform as RectTransform;
             deviceBodyScale.x = bodySize.x;
             deviceBodyScale.z = bodySize.y;
-            displayNameRectTransform!.sizeDelta *= bodySize.x;
+            displayNameRectTransform!.sizeDelta *= Mathf.Min(bodySize.x, bodySize.y);
             deviceBodyTransform.localScale = deviceBodyScale;
         }
-
+        
         private void SetBodyMaterial(Material material)
         {
             deviceBodyMr.material = material;

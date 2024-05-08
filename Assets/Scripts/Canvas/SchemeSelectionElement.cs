@@ -72,9 +72,8 @@ namespace Canvas
             Interactable = true;
             _descriptionTooltipTasKCancellationTokenSource = new CancellationTokenSource();
             _buttonTasksCancellationTokenSource = new CancellationTokenSource();
-            _holdingScheme = scheme;
 
-            RefreshData();
+            RefreshData(scheme);
             
             if (scheme.SchemeData.IsEditable)
             {
@@ -164,8 +163,9 @@ namespace Canvas
             }
         }
 
-        public void RefreshData()
+        public void RefreshData(Scheme scheme)
         {
+            _holdingScheme = scheme;
             rawImage.texture = _holdingScheme.SchemeData.SchemeVisualsData.UITexture2D;
             schemeName.text = _holdingScheme.SchemeData.Name;
             schemeDescription.text = _holdingScheme.SchemeData.Description;

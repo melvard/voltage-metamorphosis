@@ -33,6 +33,13 @@ namespace Schemes
         public static event UnityAction<SchemeInteractionEventArgs> OnSchemeEdited; 
 
         #endregion
+        
+        public static void RemoveEventSubscriptions()
+        {
+            OnSchemeRemoved = null;
+            OnSchemeAdded = null;
+            OnSchemeEdited = null;
+        }
         private static List<Scheme> GetDefaultSchemes()
         {
             var schemeDatas = GameManager.Instance.GetContainerOfType<ConfigsContainer>()

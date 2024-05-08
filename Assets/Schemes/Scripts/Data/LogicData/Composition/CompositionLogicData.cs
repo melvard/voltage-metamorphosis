@@ -17,10 +17,6 @@ namespace Schemes.Data.LogicData.Composition
         public List<ComponentScheme> ComponentSchemes => componentSchemes;
         public List<SchemeRelation> SchemeRelations => schemeRelations;
         
-        // public List<Scheme> GetComponentSchemes()
-        // {
-        //     return componentSchemes.Select(x => ).ToList();
-        // }
 
         public static Scheme GetSchemeOfComponent(ComponentScheme componentScheme)
         {
@@ -50,6 +46,17 @@ namespace Schemes.Data.LogicData.Composition
                     i--;
                 }
             }
+        }
+
+        protected override SchemeLogicData GetCopy()
+        {
+            var newCompositionLogicData = new CompositionLogicData()
+            {
+                componentSchemes = new(componentSchemes),
+                schemeRelations = new(schemeRelations)
+            };
+
+            return newCompositionLogicData;
         }
     }
 }

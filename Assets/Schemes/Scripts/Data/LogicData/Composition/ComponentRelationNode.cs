@@ -12,7 +12,6 @@ namespace Schemes.Data.LogicData.Composition
         [SerializeField] private byte componentPortIndex;
 
         #endregion
-
         
         #region GETTERS
         

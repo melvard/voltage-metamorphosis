@@ -7,5 +7,9 @@ namespace Schemes.Data.LogicData.UserIO
     public class UserOutputLogicData : SchemeLogicData, IInputPortSchemesLogicData
     {
         [field:SerializeField] public byte NumberOfInputs { get; set; }
+        protected override SchemeLogicData GetCopy()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

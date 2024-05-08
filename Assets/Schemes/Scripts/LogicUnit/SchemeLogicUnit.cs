@@ -206,13 +206,13 @@ namespace Schemes.LogicUnit
             foreach (var schemeRelation in compositionLogicData.SchemeRelations)
             {
                 // Note: consider directly checking is relation receiver node is input for UserOutputDevice ot not
-                var senderNodeIndex = ComponentLogicUnits.IndexOf(logicUnit=>logicUnit.index == schemeRelation.senderNode.ComponentIndexInComposition);
-                var receiverNodeIndex = ComponentLogicUnits.IndexOf(logicUnit=>logicUnit.index == schemeRelation.receiverNode.ComponentIndexInComposition);
+                var senderLogicUnitIndex = ComponentLogicUnits.IndexOf(logicUnit=>logicUnit.index == schemeRelation.senderNode.ComponentIndexInComposition);
+                var receiverLogicUnitIndex = ComponentLogicUnits.IndexOf(logicUnit=>logicUnit.index == schemeRelation.receiverNode.ComponentIndexInComposition);
                 
                 // there is no receiver logic unit, thus this is a relation to UserOutputScheme
-                if (senderNodeIndex != -1 && receiverNodeIndex != -1)
+                if (senderLogicUnitIndex != -1 && receiverLogicUnitIndex != -1)
                 {
-                    ComponentLogicUnits[receiverNodeIndex].Inputs[schemeRelation.receiverNode.ComponentPortIndex].IsDefined = false;
+                    ComponentLogicUnits[receiverLogicUnitIndex].Inputs[schemeRelation.receiverNode.ComponentPortIndex].IsDefined = false;
 
                     // then assign Output of that port to Output of current logic unit
                     // ComponentLogicUnits[senderNodeIndex].Outputs[schemeRelation.senderNode.ComponentPortIndex] = Outputs[outputIndexOnScheme];

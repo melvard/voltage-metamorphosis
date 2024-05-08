@@ -90,5 +90,22 @@ namespace Schemes.Data
             schemeVisualsData.SetBodySize(schemeUIData.xSize, schemeUIData.ySize);
             schemeVisualsData.SetColor(schemeUIData.color);
         }
+        
+        
+
+        public static SchemeData CopyFrom(SchemeData schemeSchemeData)
+        {
+            var copyKey = Data.SchemeKey.CopyFrom(schemeSchemeData.SchemeKey);
+            var copyData = new SchemeData(copyKey)
+            {
+                name = schemeSchemeData.name,
+                description = schemeSchemeData.description,
+                isEditable = schemeSchemeData.isEditable,
+            };
+            copyData.schemeVisualsData = SchemeVisualsData.CopyFrom(schemeSchemeData.schemeVisualsData);
+            copyData.schemeLogicData = LogicData.SchemeLogicData.CopyFrom(schemeSchemeData.schemeLogicData);
+            copyData.schemeEditorData = Data.SchemeEditorData.CopyFrom(schemeSchemeData.schemeEditorData);
+            return copyData;
+        }
     }
 }

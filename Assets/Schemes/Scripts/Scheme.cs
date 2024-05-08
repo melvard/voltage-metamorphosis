@@ -68,5 +68,13 @@ namespace Schemes
             var scheme = new Scheme(schemeData);
             return scheme;
         }
+
+        public static Scheme CopyFrom(Scheme scheme)
+        {
+            var copySchemeData = SchemeData.CopyFrom(scheme.SchemeData);
+            var copyScheme = new Scheme(copySchemeData);
+            
+            return copyScheme;
+        }
     }
 }
