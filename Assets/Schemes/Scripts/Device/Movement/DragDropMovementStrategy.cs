@@ -53,6 +53,7 @@ namespace Schemes.Device.Movement
         public void OnPointerDown(PointerEventData eventData)
         {
             if (!_movementEnabled) return;
+            if(!Input.GetKeyDown(KeyCode.Mouse0)) return;
             if (!ValidatePointerEventSelectedObject(eventData.pointerPressRaycast.gameObject)) return;
             
             _cancellationTokenSource = new CancellationTokenSource();
@@ -63,6 +64,7 @@ namespace Schemes.Device.Movement
         {
             if(!_movementEnabled) return;
             if (!ValidatePointerEventSelectedObject(eventData.pointerPressRaycast.gameObject)) return;
+            if(!Input.GetKeyUp(KeyCode.Mouse0))return;
 
             if(_cancellationTokenSource != null) _cancellationTokenSource.Cancel();
         }
