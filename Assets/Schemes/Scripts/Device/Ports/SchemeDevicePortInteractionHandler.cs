@@ -18,8 +18,10 @@ namespace Schemes.Device.Ports
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            
-            OnPortClicked?.Invoke(new SchemeDevicePortInteractEventArgs(this, transform, _schemeDevicePort));
+            if (Input.GetKeyUp(KeyCode.Mouse0))
+            {
+                OnPortClicked?.Invoke(new SchemeDevicePortInteractEventArgs(this, transform, _schemeDevicePort));
+            }
         }
     }
 }
