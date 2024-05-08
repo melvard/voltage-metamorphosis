@@ -92,7 +92,7 @@ MonoBehaviour:
     schemeLogicData:
       rid: 1853704714053484553
   - name: Constant Voltage
-    description: Constant Volatage
+    description: Constant Volatage. Alwatys outputs 1
     schemeKey:
       myGuid:
         guidStr: ee5cf222-b539-4e0c-a5b6-179a9561825d

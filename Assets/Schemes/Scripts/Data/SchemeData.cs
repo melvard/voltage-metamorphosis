@@ -14,7 +14,7 @@ namespace Schemes.Data
 
         [Title("@name", bold: true)]
         [SerializeField] private string name;
-        [SerializeField] private string description;
+        [TextArea][SerializeField] private string description;
         [SerializeField] private SchemeKey schemeKey;
         [SerializeField] private bool isEditable;
         
@@ -52,13 +52,15 @@ namespace Schemes.Data
 
         public static SchemeData NewSchemeData<T>() where T: SchemeLogicData, new()
         {
-            var schemeData = new SchemeData(SchemeKey.NewKey());
+            var schemeData = new SchemeData(SchemeKey.NewKey())
+            {
+                name = "Scheme name",
+                description = "Scheme description",
+                schemeEditorData = new SchemeEditorData(),
+                schemeVisualsData = SchemeVisualsData.NewVisualsData(),
+                schemeLogicData = SchemeLogicData.NewLogicData<T>()
+            };
 
-            schemeData.name = "Scheme name";
-            schemeData.description = "Scheme description";
-            schemeData.schemeEditorData = new SchemeEditorData();
-            schemeData.schemeVisualsData = SchemeVisualsData.NewVisualsData();
-            schemeData.schemeLogicData = SchemeLogicData.NewLogicData<T>();
             if (schemeData.schemeLogicData is CompositionLogicData)
             {
                 schemeData.isEditable = true;
@@ -76,12 +78,11 @@ namespace Schemes.Data
                 xSize = schemeVisualsData.Size.x,
                 ySize = schemeVisualsData.Size.y,
             };
-            schemeUIData.OnDataChanged += OnDataChangedFromUIHandler;
             
             return schemeUIData;
         }
 
-        private void OnDataChangedFromUIHandler(SchemeUIData schemeUIData)
+        public void UpdateDataFromUI(SchemeUIData schemeUIData)
         {
             name = schemeUIData.name;
             schemeVisualsData.SetDisplayName(name);

@@ -89,20 +89,20 @@ namespace Canvas
         #endregion
 
         #region EVENTS
-
-        public event UnityAction OnSaveSchemeCommandFromUI;
+        
+        public event UnityAction<SchemeUIData> OnSaveSchemeCommandFromUI;
         public event UnityAction OnClearDashboardCommandFromUI;
         public event UnityAction OnNewSchemeCommandFromUI;
-
+        
         #endregion
         // debugOnly: internal unity Start function is used to quickly test UI interactions 
         private async void Start()
         {
             await UniTask.Yield();
             await UniTask.Yield();
-
-            // Init();
         }
+        
+        
         
         public void Init()
         {
@@ -135,7 +135,7 @@ namespace Canvas
         {
             if (await SavePopup.Spawn(_popupCancellationSource.Token))
             {
-                OnSaveSchemeCommandFromUI?.Invoke();
+                OnSaveSchemeCommandFromUI?.Invoke(_schemeUIData);
             }
         }
         private async void OnNewSchemeButtonClickHandler()
@@ -184,6 +184,7 @@ namespace Canvas
         {
             // UnsubscribeFromInputEvents();
             _schemeUIData = scheme.SchemeData.GetSchemeUIData();
+
             ApplyUIData(_schemeUIData);
             SubscribeToInputEvents();
             
@@ -191,6 +192,11 @@ namespace Canvas
                 .SchemeMaterialPaletteSo.GetColors(); 
             schemeColorPaletteUIVisualizer.SetColorPalette(schemeColors);
             schemesSelectorUI.PreventInteractionsWithScheme(scheme);
+        }
+
+        private void OnSchemeUIDataChangedHandler(SchemeUIData arg0)
+        {
+            
         }
 
         private void ApplyUIData(SchemeUIData schemeUIData)

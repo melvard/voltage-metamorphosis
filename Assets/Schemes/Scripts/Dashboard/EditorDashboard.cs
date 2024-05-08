@@ -148,9 +148,10 @@ namespace Schemes.Dashboard
             SetEditorCamCamera(_grid.GetWorldPosition(arg0.scheme.SchemeData.SchemeEditorData.cameraPositionOnGrid));
         }
         
-        private async void OnSaveSchemeHandler()
+        private async void OnSaveSchemeHandler(SchemeUIData schemeUIData)
         {
             var schemeToSave =  schemeEditor.PreapareSchemeForSave();
+            schemeToSave.SchemeData.UpdateDataFromUI(schemeUIData);
             schemeToSave.SchemeData.SchemeEditorData.cameraPositionOnGrid = _grid.GetXY(schemeEditorCameraTransform.position);
             schemeToSave.SchemeData.SchemeVisualsData.PendingForTextureCapture = true;
             await SchemesSaverLoader.SaveScheme(schemeToSave, _saveRemoveSchemeTaskCancellationTokenSource.Token);

@@ -439,10 +439,19 @@ namespace Schemes.Dashboard
             
             _currentSchemeLogicUnit = new SchemeLogicUnit(_currentScheme.SchemeData, -1);
             _currentSchemeLogicUnit.AlignInputsAndOutputsOnComponents();
-            
-            _devices?.ForEach(device => Destroy(device.gameObject));
-            _wires?.ForEach(wire => Destroy(wire.gameObject));
 
+            for (var i = 0; i < _devices.Count; i++)
+            {
+                RemoveSchemeDevice(_devices[i]);
+                i--;
+            }
+            
+            for (var i = 0; i < _wires.Count; i++)
+            {
+                RemoveWire(_wires[i]);
+                i--;
+            }
+            
             _devices?.Clear();
             _wires?.Clear();
         }

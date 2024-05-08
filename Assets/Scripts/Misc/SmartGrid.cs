@@ -93,11 +93,13 @@ namespace Misc
         {
             x = Mathf.RoundToInt((worldPosition.x - _originPosition.x) / _cellSize);
             y = Mathf.RoundToInt((worldPosition.z - _originPosition.z) / _cellSize);
+
+            x = Mathf.Clamp(x, 0, _width-1);
+            y = Math.Clamp(y, 0, _height - 1);
         }
         public Coordinate GetXY(Vector3 worldPosition)
         {
-            var x = Mathf.RoundToInt((worldPosition.x - _originPosition.x) / _cellSize);
-            var y = Mathf.RoundToInt((worldPosition.z - _originPosition.z) / _cellSize);
+            GetXY(worldPosition, out var x, out var y);
             return new Coordinate(x, y);
         }
 
