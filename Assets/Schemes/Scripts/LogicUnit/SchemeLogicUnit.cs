@@ -192,12 +192,19 @@ namespace Schemes.LogicUnit
         {
             foreach (var logicUnit in ComponentLogicUnits)
             {
-                if (logicUnit.LogicData is IInputPortSchemesLogicData)
+                if (logicUnit.LogicData is not IInputPortSchemesLogicData) continue;
+
+                for (var i = 0; i < logicUnit.Inputs.Count; i++)
                 {
-                    foreach (var logicUnitOutput in logicUnit.Inputs)
+                    var logicUnitOutput = logicUnit.Inputs[i];
+                    logicUnitOutput.IsDefined = true;
+                    if (IsCurrentSchemeEditorLogicUnit)
                     {
+                        if (!compositionLogicData.SchemeRelations.Any(x =>
+                                x.receiverNode.ComponentIndexInComposition == logicUnit.index &&
+                                x.receiverNode.ComponentPortIndex == i))
                         {
-                            logicUnitOutput.IsDefined = true;
+                            logicUnitOutput.Value = false;
                         }
                     }
                 }
