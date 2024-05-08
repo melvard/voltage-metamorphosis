@@ -29,6 +29,7 @@ namespace Schemes.Device.Wire
         [AssetsOnly] [SerializeField] private WireNode wireNodeRef;
         [SerializeField] private LineRenderer lineRenderer;
         [SerializeField] private WireValueIndicator wireValueIndicator;
+        [SerializeField] private SchemeDeviceWireInteractionController schemeDeviceWireInteractionController;
         
         #endregion
 
@@ -41,6 +42,7 @@ namespace Schemes.Device.Wire
         private SchemeDevicePort _startPort;
         private SchemeDevicePort _endPort;
         private int _relationIndex;
+        private List<BoxCollider> _interactionColliders;
 
         #endregion
 
@@ -54,21 +56,23 @@ namespace Schemes.Device.Wire
         #region EVENTS
 
         public event UnityAction OnWiringCanceled;
-
+        public event UnityAction<SchemeDeviceWire> OnWireRemoveCommand;
+        
         #endregion
 
-        public WireNode GenerateWaypointNode()
+        private WireNode GenerateWaypointNode()
         {
             var node = GenerateNode(null);
             return node;
         }
 
-        private void GenerateWireBody()
-        {
-            var wireBody = Instantiate(wireBodyRef, transform, true);
-            // _wireBodies.Add(wireBody);
-            // wireBody.SetNode();
-        }
+        //
+        // private void GenerateWireBody()
+        // {
+        //     var wireBody = Instantiate(wireBodyRef, transform, true);
+        //     // _wireBodies.Add(wireBody);
+        //     // wireBody.SetNode();
+        // }
 
         private WireNode GenerateNode(SchemeDevicePort schemeDevicePort)
         {
@@ -78,8 +82,15 @@ namespace Schemes.Device.Wire
         }
 
 
+        private void Start()
+        {
+            // todo: maybe this is not the right place for subscribing to interaction controller
+            schemeDeviceWireInteractionController.OnRemoveWireClick += () => OnWireRemoveCommand?.Invoke(this); 
+        }
+
         public void StartWiring()
         {
+            
             _wiringCancellationTokenSource = new CancellationTokenSource();
             ActiveWiring(_wiringCancellationTokenSource.Token).Forget();
         }
@@ -88,9 +99,48 @@ namespace Schemes.Device.Wire
         {
             _wireNodes = _currentWireNodes;
             MarkNodesAsBusy(_wireNodes);
-
+            _interactionColliders = GenerateInteractionColliders(lineRenderer.startWidth, _wireNodes.Select(x=>x.transform).ToList(), transform);
+            
             if (_wiringCancellationTokenSource == null) throw new Exception("");
             _wiringCancellationTokenSource.Cancel();
+        }
+
+        private List<BoxCollider> GenerateInteractionColliders(float colliderWidth, List<Transform> points, Transform parent)
+        {
+            List<BoxCollider> colliders = new List<BoxCollider>();
+
+            // Iterate over each pair of points
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                Transform startPoint = points[i];
+                if(i+1 >= points.Count) continue;
+                
+                Transform endPoint = points[i + 1];
+
+                // Calculate the size and center of the collider
+                Vector3 size = new Vector3(colliderWidth, colliderWidth, Vector3.Distance(startPoint.position, endPoint.position));
+                Vector3 center = (startPoint.position + endPoint.position) / 2f;
+
+                // Create a new GameObject for the collider
+                GameObject colliderObject = new GameObject("Collider" + i);
+                colliderObject.transform.SetParent(parent, true);
+                colliderObject.transform.position = center;
+
+                // Add a BoxCollider component to the GameObject
+                BoxCollider collider = colliderObject.AddComponent<BoxCollider>();
+
+                // Set the size and center of the collider
+                collider.size = size;
+                // collider.center = center;
+
+                // Rotate the collider to match the direction from startPoint to endPoint
+                colliderObject.transform.LookAt(endPoint);
+
+                // Add the collider to the list
+                colliders.Add(collider);
+            }
+
+            return colliders;
         }
 
 
@@ -202,14 +252,15 @@ namespace Schemes.Device.Wire
             return wireConnectionEditorData;
         }
 
-        public static void ConstructWire(SchemeDeviceWire wire, WireConnectionEditorData wireConnectionEditorData,
+        public void ConstructWire(WireConnectionEditorData wireConnectionEditorData,
             SchemeDevicePort startPort, SchemeDevicePort endPort)
         {
-            wire.SetStartPort(startPort);
-            wire.SetEndPort(endPort);
-            wire.SetRelationIndex(wireConnectionEditorData.relationIndex);
-            wire.GenerateWireVisuals(EditorDashboard.Instance.GetDashboardElementsOnGridWithCoordinates(wireConnectionEditorData.wireNodesCoordinates));
-            wire._wireNodes = wire._currentWireNodes;
+            SetStartPort(startPort);
+            SetEndPort(endPort);
+            SetRelationIndex(wireConnectionEditorData.relationIndex);
+            GenerateWireVisuals(EditorDashboard.Instance.GetDashboardElementsOnGridWithCoordinates(wireConnectionEditorData.wireNodesCoordinates));
+            _wireNodes = _currentWireNodes;
+            _interactionColliders = GenerateInteractionColliders(lineRenderer.startWidth, _wireNodes.Select(x=>x.transform).ToList(), transform);
         }
 
         private void GenerateWireVisuals(List<DashboardGridElement> dashboardGridElements)
@@ -243,6 +294,21 @@ namespace Schemes.Device.Wire
         public int GetRelationIndex()
         {
             return _relationIndex;
+        }
+
+        public void ArrangePorts()
+        {
+            if (_startPort is not SchemeDeviceOutputPort) (_startPort, _endPort) = (_endPort, _startPort);
+        }
+
+        public void DestroyCommand()
+        {
+            foreach (var currentWireNode in _currentWireNodes)
+            {
+                currentWireNode.PathNode.businessIntValDebug = 0;
+            }
+
+            Destroy(gameObject);
         }
     }
 }

@@ -67,7 +67,7 @@ namespace Schemes.Device.Movement
             if(_cancellationTokenSource != null) _cancellationTokenSource.Cancel();
         }
 
-        public async UniTask DragDropMovementHandler(CancellationToken cancellationToken)
+        private async UniTask DragDropMovementHandler(CancellationToken cancellationToken)
         {
             var startMousePosition = Input.mousePosition;
             Plane planeOnWhichMoves = new Plane(transform.up, transform.position);
@@ -102,7 +102,7 @@ namespace Schemes.Device.Movement
 
         private Vector3 GetPositionOnMovementPlane(Plane plane, Vector3 mouseInput)
         {
-            Ray ray = Camera.main.ScreenPointToRay(mouseInput);
+            var ray = Camera.main.ScreenPointToRay(mouseInput);
             if (plane.Raycast(ray, out var distance))
             {
                 return ray.GetPoint(distance);

@@ -18,6 +18,8 @@ namespace Canvas
         [SerializeField] private Transform contentContainer;
         [AssetsOnly][SerializeField] private SchemeSelectionElement selectionElementContainerRef;
 
+        [SerializeField] private CanvasGroup canvasGroup;
+
         #endregion
 
         #region EVENTS
@@ -35,6 +37,7 @@ namespace Canvas
         #endregion
         public void Init(SchemesContainer schemesContainer)
         {
+            EnableSelector();
             _schemeSelectionElements = new();
             SchemesSaverLoader.OnSchemeAdded += OnSchemeAddedHandler;
             SchemesSaverLoader.OnSchemeRemoved += OnSchemeRemovedHandler;
@@ -65,8 +68,9 @@ namespace Canvas
             schemeSelectionElement.Init(scheme);
         }
 
-        private void OnSchemeAddedHandler(SchemeInteractionEventArgs arg0)
+        private async void OnSchemeAddedHandler(SchemeInteractionEventArgs arg0)
         {
+            await UniTask.WaitUntil(() => arg0.scheme.SchemeData.SchemeVisualsData.PendingForTextureCapture == false);
             AddSchemeInSelector(arg0.scheme);
         }
 
@@ -75,7 +79,7 @@ namespace Canvas
             var schemeSelectionElementIndex = _schemeSelectionElements.IndexOf(x => x.HoldingScheme == arg0.scheme);
             if (schemeSelectionElementIndex != -1)
             {
-                Destroy(_schemeSelectionElements[schemeSelectionElementIndex].gameObject);
+                _schemeSelectionElements[schemeSelectionElementIndex].DestroyCommand();
                 _schemeSelectionElements.RemoveAt(schemeSelectionElementIndex);
             }
         }
@@ -103,6 +107,19 @@ namespace Canvas
                 _schemeSelectionElements[schemeSelectionElementIndex].Interactable = false;
             }
             
+        }
+
+        public void DisableSelector()
+        {
+            canvasGroup.alpha = 0.3f;
+            canvasGroup.blocksRaycasts = false;
+        }
+
+
+        public void EnableSelector()
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = true;
         }
     }
 }

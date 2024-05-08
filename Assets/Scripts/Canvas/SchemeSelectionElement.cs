@@ -93,6 +93,7 @@ namespace Canvas
         // Method called when the mouse enters the UI element
         public async void OnPointerEnter(PointerEventData eventData)
         {
+            if(_holdingScheme == null) return;
             // Debug.Log("Mouse is over the UI element.");
             await ShowDescriptionTooltip(_descriptionTooltipTasKCancellationTokenSource.Token);            
         }
@@ -170,6 +171,14 @@ namespace Canvas
             schemeName.text = _holdingScheme.SchemeData.Name;
             schemeDescription.text = _holdingScheme.SchemeData.Description;
         }
+
+        public void DestroyCommand()
+        {
+            _buttonTasksCancellationTokenSource.Cancel();
+            _descriptionTooltipTasKCancellationTokenSource.Cancel();
+            Destroy(gameObject);
+        }
+
     }
 
     public class SchemeInteractionEventArgs : EventArgs

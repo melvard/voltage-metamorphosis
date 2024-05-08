@@ -1409,18 +1409,19 @@ MonoBehaviour:
 
     - Scroll wheel to zoom in/out
 
-    - Drag
-    and drop schemes from left panel
+    - Tap
+    on schemes from left panel and tick on board to create scheme device
 
-    - Right click to remove element
+    - Right
+    click to remove element
 
-    -
-    Left click on ports to start wiring
+    - Left click on ports to start wiring
 
-    - Right click and drag to move devices
+    - Left
+    click and drag to move devices
 
-    -
-    Use right click and left shift to set input value'
+    - Use right click and left shift to set input
+    value'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
   m_sharedMaterial: {fileID: 7695387366603751775, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
@@ -1499,6 +1500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3183413680987416688}
   - component: {fileID: 1388578445373292717}
+  - component: {fileID: 5241662099713879677}
   m_Layer: 5
   m_Name: SchemesSelectorUI
   m_TagString: Untagged
@@ -1542,6 +1544,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contentContainer: {fileID: 3468331613972290668}
   selectionElementContainerRef: {fileID: 5794234921571176551, guid: f6034c271fd1b484a990d270328dfdff, type: 3}
+  canvasGroup: {fileID: 5241662099713879677}
+--- !u!225 &5241662099713879677
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7468390988207022794}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7847131475136249489
 GameObject:
   m_ObjectHideFlags: 0

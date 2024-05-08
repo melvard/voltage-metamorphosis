@@ -51,7 +51,18 @@ namespace Schemes.Data
         public string DisplayName => displayName;
         public Vector2 Size => size;
 
-        public Material DeviceBodyMaterial => deviceBodyMaterial;
+        public Material DeviceBodyMaterial
+        {
+            get
+            {
+                if (deviceBodyMaterial == null || deviceBodyMaterial.name == "HumanoidDefault")
+                {
+                    SetColor(deviceBodyColor);
+                }
+                return deviceBodyMaterial;
+            }
+        }
+
         public Color DeviceBodyColor => deviceBodyColor;
 
         public Vector2 GetInputPortPosition(int portIndex)
@@ -167,7 +178,7 @@ namespace Schemes.Data
                 inputPositions = new Vector2[schemeVisualsData.inputPositions.Length],
                 outputPositions = new Vector2[schemeVisualsData.outputPositions.Length],
                 _uITexture2D = schemeVisualsData._uITexture2D,
-                PendingForTextureCapture = false
+                PendingForTextureCapture = true
             };
             Array.Copy(schemeVisualsData.inputPositions, copyVisualsData.inputPositions, schemeVisualsData.inputPositions.Length);
             Array.Copy(schemeVisualsData.outputPositions, copyVisualsData.outputPositions, schemeVisualsData.outputPositions.Length);

@@ -24,16 +24,20 @@ namespace Schemes.Device
             _deviceIndex = deviceIndex;
             _userInputLogicData = userInputLogicData;
             _value = false;
-            _valueFromUserTextIndicator = Utilities.CreateWorldText(_value.ToString(), transform, new Vector3(0f, 0f, 1f));
+            _valueFromUserTextIndicator = Utilities.CreateWorldText(_value.ToString().ToUpper().ToUpper(), transform, new Vector3(0f, 0f, 0.7f));
             _valueFromUserTextIndicator.transform.localEulerAngles = new Vector3(90, 0f, 0f);
-            _valueFromUserTextIndicator.fontSize = 10;
+            _valueFromUserTextIndicator.fontSize = 3;
         }
         
         public void ToggleState()
         {
             _value = !_value;
-            GetLogicUnit().Outputs[0] = new LogicUnitPort { Value = _value, IsDefined =  true};
-            _valueFromUserTextIndicator.text = _value.ToString();
+            var a = GetLogicUnit();
+            a.Outputs[0].IsDefined = true;
+            a.Outputs[0].Value = _value;
+            _valueFromUserTextIndicator.text = _value.ToString().ToUpper();
+        
+
         }
         
         // todo: this is temporary solution to meet game requirements as soon as possible 

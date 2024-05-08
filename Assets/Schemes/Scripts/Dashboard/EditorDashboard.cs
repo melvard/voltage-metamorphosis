@@ -135,9 +135,11 @@ namespace Schemes.Dashboard
             }
         }
         
-        public void OnSchemeSelectCommandHandler(SchemeInteractionEventArgs arg0)
+        public async void OnSchemeSelectCommandHandler(SchemeInteractionEventArgs arg0)
         {
-            schemeEditor.GenerateDevice(arg0.scheme);
+            schemeEditorUI.DisableSchemeSelector();
+            await schemeEditor.GenerateDevice(arg0.scheme);
+            schemeEditorUI.EnableSchemeSelector();
         }
 
         public void OnSchemeEditHandler(SchemeInteractionEventArgs arg0)
@@ -150,8 +152,7 @@ namespace Schemes.Dashboard
         
         private async void OnSaveSchemeHandler(SchemeUIData schemeUIData)
         {
-            var schemeToSave =  schemeEditor.PreapareSchemeForSave();
-            schemeToSave.SchemeData.UpdateDataFromUI(schemeUIData);
+            var schemeToSave =  schemeEditor.PreapareSchemeForSave(schemeUIData);
             schemeToSave.SchemeData.SchemeEditorData.cameraPositionOnGrid = _grid.GetXY(schemeEditorCameraTransform.position);
             schemeToSave.SchemeData.SchemeVisualsData.PendingForTextureCapture = true;
             await SchemesSaverLoader.SaveScheme(schemeToSave, _saveRemoveSchemeTaskCancellationTokenSource.Token);

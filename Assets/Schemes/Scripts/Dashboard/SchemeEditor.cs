@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Canvas;
+using Cysharp.Threading.Tasks;
 using Exceptions;
 using GameLogic;
 using Schemes.Data;
@@ -120,13 +122,18 @@ namespace Schemes.Dashboard
             deviceDragDropMovementStrategy.SetListOfAcceptableColliders(device.InteractionColliders);
             deviceDragDropMovementStrategy.ShouldTakeIntoAccountInitialDelta = true;
             deviceDragDropMovementStrategy.EnableMovement();
-            
+
             return device;
         }
 
         private void OnDeviceRemoveCommandHandler(SchemeDevice device)
         {
             RemoveSchemeDevice(device);
+        }
+
+        private void OnWireRemoveCommandHandler(SchemeDeviceWire wire)
+        {
+            RemoveSchemeWire(wire);
         }
 
         private SchemeDevice InstantiateSchemeDevice(ComponentScheme componentScheme,
@@ -142,14 +149,15 @@ namespace Schemes.Dashboard
         private SchemeDeviceWire InstantiateSchemeDeviceWire()
         {
             var wire = Instantiate(schemeDeviceWireRef);
+            wire.OnWireRemoveCommand += OnWireRemoveCommandHandler;
             return wire;
         }
+        
 
         private SchemeDeviceWire InstantiateSchemeDeviceWire(WireConnectionEditorData wireConnectionEditorData,
             SchemeRelation schemeRelation)
         {
             var wire = InstantiateSchemeDeviceWire();
-            var compositionLogicData = _currentScheme.SchemeData.SchemeLogicData as CompositionLogicData;
             var senderDevice = _devices.First(device =>
                 device.DeviceIndex == schemeRelation.senderNode.ComponentIndexInComposition);
 
@@ -161,7 +169,7 @@ namespace Schemes.Dashboard
             
             wire.transform.position = startPort.transform.position;
 
-            SchemeDeviceWire.ConstructWire(wire, wireConnectionEditorData, startPort, endPort);
+            wire.ConstructWire(wireConnectionEditorData, startPort, endPort);
 
             return wire;
         }
@@ -190,6 +198,7 @@ namespace Schemes.Dashboard
                 _pendingForWireConnection = false;
                 _currentWire.TerminateActiveWiring();
                 _currentWire.SetEndPort(arg0.schemeDevicePortInteractEventArgs.port);
+                _currentWire.ArrangePorts();
                 DefineRelation(_currentWire.StartPort, _currentWire.EndPort, _incrementRelationIndex);
                 _currentWire.SetRelationIndex(_incrementRelationIndex);
                 _incrementRelationIndex++;
@@ -225,14 +234,9 @@ namespace Schemes.Dashboard
             _incrementComponentIndex++;
         }
 
-        private void DefineRelation(SchemeDevicePort a, SchemeDevicePort b, int relationIndex)
+        private void DefineRelation(SchemeDevicePort outputPort, SchemeDevicePort inputPort, int relationIndex)
         {
             SchemeRelation schemeRelation = new();
-
-            var ports = new List<SchemeDevicePort> { a, b };
-
-            SchemeDevicePort outputPort = ports.First(x => x is SchemeDeviceOutputPort);
-            SchemeDevicePort inputPort = ports.First(x => x is SchemeDeviceInputPort);
 
             // receiver relation node
             schemeRelation.receiverNode =
@@ -246,7 +250,7 @@ namespace Schemes.Dashboard
             _currentCompositionLogicData.SchemeRelations.Add(schemeRelation);
         }
         
-        public Scheme PreapareSchemeForSave()
+        public Scheme PreapareSchemeForSave(SchemeUIData schemeUIData)
         {
             _currentScheme.SchemeData.SchemeEditorData.wireConnectionEditorDatas = new();
             _currentScheme.SchemeData.SchemeEditorData.componentEditorDatas = new();
@@ -264,6 +268,8 @@ namespace Schemes.Dashboard
                 _currentScheme.SchemeData.SchemeEditorData.wireConnectionEditorDatas.Add(wire.GetConnectionData());
             }
             
+            _currentScheme.SchemeData.UpdateDataFromUI(schemeUIData);
+
             // define number and order of inputs of scheme
             if (_currentScheme.SchemeData.SchemeLogicData is IInputPortSchemesLogicData inputPortSchemesLogicData)
             {
@@ -316,17 +322,26 @@ namespace Schemes.Dashboard
                 schemeDeviceWire.UpdateWireValue(value);
             } 
         }
-
-        private void RemoveWire(SchemeDeviceWire wire)
+        
+        private void RemoveSchemeWire(SchemeDeviceWire wire)
         {
-            throw new NotImplementedException();
-        }
+            var relationsWithWire = _currentCompositionLogicData.SchemeRelations
+                .Where(relation=> relation.relationIndex == wire.GetRelationIndex()).ToList();
 
-        private void RemoveRelation(SchemeDevicePort a, SchemeDevicePort b)
-        {
-            throw new NotImplementedException();
-        }
+            for (var i = 0; i < _wires.Count; i++)
+            {
+                if (_wires[i].GetRelationIndex() == wire.GetRelationIndex())
+                {
+                    _wires[i].DestroyCommand();
+                    _wires.RemoveAt(i);
+                    i--;
+                }
+            }
+            
+            _currentCompositionLogicData.ThrowRelationsWithIndices(relationsWithWire.Select(x=>x.relationIndex).ToArray());
 
+        }
+        
         private void RemoveSchemeDevice(SchemeDevice device)
         {
             var indexOf = _devices.IndexOf(device);
@@ -352,7 +367,7 @@ namespace Schemes.Dashboard
                     var schemeDeviceWire = _wires[i];
                     if (relationsWithDevice.Any(relation => relation.relationIndex == schemeDeviceWire.GetRelationIndex()))
                     {
-                        Destroy(_wires[i].gameObject);
+                        _wires[i].DestroyCommand();
                         _wires.RemoveAt(i);
                         i--;
                     }
@@ -448,7 +463,7 @@ namespace Schemes.Dashboard
             
             for (var i = 0; i < _wires.Count; i++)
             {
-                RemoveWire(_wires[i]);
+                RemoveSchemeWire(_wires[i]);
                 i--;
             }
             
@@ -461,9 +476,27 @@ namespace Schemes.Dashboard
             return schemeDeviceRef;
         }
 
-        public void GenerateDevice(Scheme scheme)
+        public async UniTask GenerateDevice(Scheme scheme)
         {
-            ProcessNewDevice(InstantiateSchemeDevice(scheme.SchemeData.SchemeKey, _incrementComponentIndex));
+            var device = InstantiateSchemeDevice(scheme.SchemeData.SchemeKey, _incrementComponentIndex);
+            ProcessNewDevice(device);
+            var tapTickMovementStrategy = device.AddComponent<TapTickMovementStrategy>();
+            var gridSnapMovementExecutionStrategy = new GridSnapMovementExecutionStrategy();
+            gridSnapMovementExecutionStrategy.SetGirdHandler(EditorDashboard.Instance);
+
+            tapTickMovementStrategy.SetMovementExecutionStrategy(gridSnapMovementExecutionStrategy);
+            tapTickMovementStrategy.SetListOfAcceptableColliders(device.InteractionColliders);
+            tapTickMovementStrategy.EnableMovement();
+            tapTickMovementStrategy.Tap();
+
+            bool placedDevice = false;
+            tapTickMovementStrategy.OnTick += () =>
+            {
+                placedDevice = true;
+                Destroy(tapTickMovementStrategy);
+            };
+
+            await UniTask.WaitUntil(() => device == null || placedDevice);
         }
     }
 }

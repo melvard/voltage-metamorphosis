@@ -21,7 +21,8 @@ namespace GameLogic
         private SchemeDevice SchemeDeviceRef => EditorDashboard.Instance.SchemeEditor_Debug.GetSchemeDeviceReference();
         public async UniTask CaptureSchemesRenderTextures(List<Scheme> schemes, CancellationToken ct)
         {
-            SchemesSaverLoader.OnSchemeEdited += OnSchemeEditedHandler;
+            SchemesSaverLoader.OnSchemeAdded += OnSchemeEditedOrAddedHandler;
+            SchemesSaverLoader.OnSchemeEdited += OnSchemeEditedOrAddedHandler;
             // your code here for capturing 3d model and assigning them in render texture
             foreach (var scheme in schemes)
             {
@@ -33,12 +34,12 @@ namespace GameLogic
             } 
         }
 
-        private async void OnSchemeEditedHandler(SchemeInteractionEventArgs arg0)
+        private async void OnSchemeEditedOrAddedHandler(SchemeInteractionEventArgs arg0)
         {
             var device = Instantiate(schemeDeviceRef, container);
             device.transform.localPosition = Vector3.zero;
             device.Init(arg0.scheme, -1);
-            arg0.scheme.SchemeData.SchemeVisualsData.UITexture2D = await CaptureSingleObject(device.gameObject, false);;
+            arg0.scheme.SchemeData.SchemeVisualsData.UITexture2D = await CaptureSingleObject(device.gameObject, false);
             arg0.scheme.SchemeData.SchemeVisualsData.PendingForTextureCapture = false;
             Destroy(device.gameObject);
         }

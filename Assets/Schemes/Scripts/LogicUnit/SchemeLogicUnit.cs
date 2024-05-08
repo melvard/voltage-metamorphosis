@@ -103,9 +103,9 @@ namespace Schemes.LogicUnit
             
                 if (receiverLogicUnitPos == -1)
                 {
-                    var numberOfOutput = UnderliningSchemeData.SchemeEditorData.outputEditorDatas.First(x =>
+                    var outputEditorData = UnderliningSchemeData.SchemeEditorData.outputEditorDatas.First(x =>
                         x.componentIndexInComposition == relation.receiverNode.ComponentIndexInComposition);
-                    ComponentLogicUnits[senderLogicUnitPos].Outputs[relation.senderNode.ComponentPortIndex] = Outputs[numberOfOutput.numberOfIOForScheme];
+                    ComponentLogicUnits[senderLogicUnitPos].Outputs[relation.senderNode.ComponentPortIndex] = Outputs[outputEditorData.numberOfIOForScheme];
                     
                     // if (goUnderChild)
                     // {
@@ -115,10 +115,10 @@ namespace Schemes.LogicUnit
             
                 if (senderLogicUnitPos == -1)
                 {
-                    var numberOfInput = UnderliningSchemeData.SchemeEditorData.inputEditorDatas.First(x =>
+                    var inputEditorData = UnderliningSchemeData.SchemeEditorData.inputEditorDatas.First(x =>
                         x.componentIndexInComposition == relation.senderNode.ComponentIndexInComposition);
                         
-                    ComponentLogicUnits[receiverLogicUnitPos].Inputs[relation.receiverNode.ComponentPortIndex] = Inputs[numberOfInput.numberOfIOForScheme];
+                    ComponentLogicUnits[receiverLogicUnitPos].Inputs[relation.receiverNode.ComponentPortIndex] = Inputs[inputEditorData.numberOfIOForScheme];
                     
                     // if (goUnderChild)
                     // {
@@ -218,6 +218,7 @@ namespace Schemes.LogicUnit
                     // ComponentLogicUnits[senderNodeIndex].Outputs[schemeRelation.senderNode.ComponentPortIndex] = Outputs[outputIndexOnScheme];
                     // ComponentLogicUnits[senderNodeIndex].Outputs[schemeRelation.senderNode.ComponentPortIndex].IsDefined == falsx    e;
                 }
+
             }
         }
 
@@ -229,6 +230,7 @@ namespace Schemes.LogicUnit
                 var relation = relations[i];
                 var senderNode = relation.senderNode;
                 var receiverNode = relation.receiverNode;
+                
 
                 // Note: consider directly checking is relation receiver node is input for UserOutputDevice ot not
                 
@@ -237,51 +239,67 @@ namespace Schemes.LogicUnit
                 var receiverLogicUnitPos = ComponentLogicUnits.IndexOf(logicUnit =>
                     logicUnit.index == relation.receiverNode.ComponentIndexInComposition);
 
-                if (senderLogicUnitPos == -1 || receiverLogicUnitPos == -1) continue;
+                SchemeLogicUnit senderLogicUnit = null;
+                SchemeLogicUnit receiverLogicUnit = null;
                 
-                var senderLogicUnit = ComponentLogicUnits.First(logicUnit=>logicUnit.index == senderNode.ComponentIndexInComposition);
-                var receiverLogicUnit =  ComponentLogicUnits.First(logicUnit=>logicUnit.index == receiverNode.ComponentIndexInComposition);
-
-                
-                if (senderLogicUnit.Inputs == null || senderLogicUnit.Inputs.All(x => x.IsDefined))
+                if (senderLogicUnitPos != -1)
                 {
-                    senderLogicUnit.Process();
-                    
-                    var receivingPort = receiverLogicUnit.Inputs[receiverNode.ComponentPortIndex];
-                    receivingPort.Value = senderLogicUnit.Outputs[senderNode.ComponentPortIndex].Value;
-                    receivingPort.IsDefined = true;
+                    senderLogicUnit = ComponentLogicUnits[senderLogicUnitPos];
                 }
-                else
+
+                if (receiverLogicUnitPos != -1)
                 {
-                    // Note: does something missing? 
+                    receiverLogicUnit = ComponentLogicUnits[receiverLogicUnitPos];
+                }
 
-                    if (!queuedRelations.Contains(relation))
+                if (senderLogicUnit != null)
+                {
+                    if (senderLogicUnit.Inputs == null || senderLogicUnit.Inputs.All(x => x.IsDefined))
                     {
-                        queuedRelations.Add(relation);
-                    }
+                        senderLogicUnit.Process();
 
-                    continue;
+                        if (receiverLogicUnit != null)
+                        {
+                            var receivingPort = receiverLogicUnit.Inputs[receiverNode.ComponentPortIndex];
+                            receivingPort.Value = senderLogicUnit.Outputs[senderNode.ComponentPortIndex].Value;
+                            receivingPort.IsDefined = true;
+                        }
+                    }
+                    else if (receiverLogicUnit != null)
+                    {
+                        // Note: does something missing? 
+
+                        if (!queuedRelations.Contains(relation))
+                        {
+                            queuedRelations.Add(relation);
+                        }
+
+                        continue;
+                    }
                 }
                 
                 // continue;
-                
-                if (receiverLogicUnit.Inputs.All(x => x.IsDefined))
-                {
-                    if (queuedRelations.Contains(relation))
-                    {
-                        if (relations == queuedRelations) i--;
-                        queuedRelations.Remove(relation);
-                    }
 
-                    receiverLogicUnit.Process();
-                }
-                else
+                if (receiverLogicUnit != null)
                 {
-                    if(HasAnyNotDefinedInputPortMatchingSchemeInputPort(receiverLogicUnit)) continue;
-                    
-                    if (!queuedRelations.Contains(relation))
+                    if (receiverLogicUnit.Inputs.All(x => x.IsDefined))
                     {
-                        queuedRelations.Add(relation);
+                        if (queuedRelations.Contains(relation))
+                        {
+                            if (relations == queuedRelations) i--;
+                            queuedRelations.Remove(relation);
+                        }
+
+                        receiverLogicUnit.Process();
+                    }
+                    else
+                    {
+                        if(HasAnyNotDefinedInputPortMatchingSchemeInputPort(receiverLogicUnit)) continue;
+                        
+                        if (!queuedRelations.Contains(relation))
+                        {
+                            queuedRelations.Add(relation);
+                        }
                     }
                 }
             }

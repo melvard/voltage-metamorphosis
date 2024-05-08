@@ -209,5 +209,15 @@ namespace Canvas
 
             schemeColorPaletteUIVisualizer.SetSelectedColor(schemeUIData.color);
         }
+
+        public void DisableSchemeSelector()
+        {
+            schemesSelectorUI.DisableSelector();
+        }
+        
+        public void EnableSchemeSelector()
+        {
+            schemesSelectorUI.EnableSelector();
+        }
     }
 }
