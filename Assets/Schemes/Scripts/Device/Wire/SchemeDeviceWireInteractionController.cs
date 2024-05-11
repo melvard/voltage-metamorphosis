@@ -13,7 +13,6 @@ namespace Schemes.Device.Wire
             if (Input.GetKeyUp(KeyCode.Mouse1))
             {
                 OnRemoveWireClick?.Invoke();
-                Debug.Log("OnRemoveWireClick");
             }
         }
     }
