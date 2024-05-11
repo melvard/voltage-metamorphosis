@@ -219,7 +219,7 @@ namespace Schemes.LogicUnit
                 // there is no receiver logic unit, thus this is a relation to UserOutputScheme
                 if (senderLogicUnitIndex != -1 && receiverLogicUnitIndex != -1)
                 {
-                    ComponentLogicUnits[receiverLogicUnitIndex].Inputs[schemeRelation.receiverNode.ComponentPortIndex].IsDefined = false;
+                    // ComponentLogicUnits[receiverLogicUnitIndex].Inputs[schemeRelation.receiverNode.ComponentPortIndex].IsDefined = false;
 
                     // then assign Output of that port to Output of current logic unit
                     // ComponentLogicUnits[senderNodeIndex].Outputs[schemeRelation.senderNode.ComponentPortIndex] = Outputs[outputIndexOnScheme];
