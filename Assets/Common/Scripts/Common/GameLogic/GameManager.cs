@@ -36,7 +36,7 @@ namespace GameLogic
         private void Start()
         {
             _initializationCancellationSource = new CancellationTokenSource();
-            Application.targetFrameRate = 120;
+            Application.targetFrameRate = 60;
             Init(_initializationCancellationSource.Token);
         }
         
