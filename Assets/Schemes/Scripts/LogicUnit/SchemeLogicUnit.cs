@@ -9,6 +9,7 @@ using Schemes.Data.LogicData.Relay;
 using Schemes.Data.LogicData.UserIO;
 using Schemes.Data.LogicData.Voltage;
 using Unity.VisualScripting;
+using UnityEngine.Profiling;
 
 
 namespace Schemes.LogicUnit
@@ -138,7 +139,16 @@ namespace Schemes.LogicUnit
                 {
                     MarkNotConnectedInputsAsDefined(compositionLogicData);
                     _queuedSchemeRelations.Clear();
+                    
+#if DEVELOPMENT_BUILD || UNITY_EDITOR || PROFILING
+                    Profiler.BeginSample("CSSTT: First Relation process");
+#endif
                     ProcessRelations(compositionLogicData.SchemeRelations, _queuedSchemeRelations);
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR || PROFILING
+                    Profiler.EndSample();
+#endif
+                    
                     while (_queuedSchemeRelations.Count != 0)
                     {
                         ProcessRelations(_queuedSchemeRelations, _queuedSchemeRelations);

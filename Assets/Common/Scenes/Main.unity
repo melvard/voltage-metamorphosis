@@ -929,11 +929,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4449e866ac2b4ed491d594963fc9f84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugPathMaterial: {fileID: 2100000, guid: f3da464d1adea41f8bf27998f6923693, type: 2}
   ground: {fileID: 736615087667387856}
   schemeEditor: {fileID: 675233586}
   schemeEditorUI: {fileID: 897612772}
   schemeEditorCameraTransform: {fileID: 2013551795}
+  girdDashboardMaterial: {fileID: 2100000, guid: 6e6fd6595d3fb4be3839ddffa301e8e7, type: 2}
+  gridWidth: 200
+  gridHeight: 200
+  gridCellSize: 0.5
 --- !u!4 &1558952343
 Transform:
   m_ObjectHideFlags: 0

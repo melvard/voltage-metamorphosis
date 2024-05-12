@@ -8,6 +8,7 @@ using GameLogic;
 using Misc;
 using Schemes.Data;
 using Schemes.Device.Movement;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Schemes.Dashboard
@@ -16,11 +17,16 @@ namespace Schemes.Dashboard
     {
         #region SERIALIZED_FIELDS
 
-        public Material debugPathMaterial;
         [SerializeField] private Transform ground;
         [SerializeField] private SchemeEditor schemeEditor;
         [SerializeField] private SchemeEditorUI schemeEditorUI;
         [SerializeField] private Transform schemeEditorCameraTransform;
+
+        [Title("Grid settings")] 
+        [SerializeField] private Material girdDashboardMaterial;
+        [SerializeField] private int gridWidth = 200;
+        [SerializeField] private int gridHeight = 200;
+        [SerializeField] private float gridCellSize = 0.5f;
         
         #endregion
 
@@ -44,15 +50,25 @@ namespace Schemes.Dashboard
             schemeEditorUI.OnClearDashboardCommandFromUI += OnClearDashboardHandler;
             schemeEditorUI.OnNewSchemeCommandFromUI += OnNewSchemeHandler;
 
+            var offsetX = gridWidth / 2f * gridCellSize;
+            var offsetZ = gridHeight / 2f * gridCellSize;
+
             Vector3 gridOrigin = transform.position +
-                                 new Vector3(-50, ground.position.y + ground.localScale.y + 0.1f, -50);
+                                 new Vector3(-offsetX, ground.position.y + ground.localScale.y + 0.1f, -offsetZ);
+            var groundScale = ground.transform.localScale;
+            groundScale.x = gridWidth * gridCellSize;
+            groundScale.z = gridHeight * gridCellSize;
+
+            ground.transform.localScale = groundScale;
+            girdDashboardMaterial.mainTextureScale = new Vector2(gridWidth * gridCellSize, gridHeight * gridCellSize);
+
             _grid = new SmartGrid<DashboardGridElement>(
-                200,
-                200,
-                0.5f,
+                gridWidth,
+                gridHeight,
+                gridCellSize,
                 gridOrigin,
                 (grid, x, y) => new DashboardGridElement(grid, x, y));
-
+            
             await UniTask.WaitUntil(() => InputsManager.GetKeyDown(KeyCode.Slash, gameObject.layer));
             Debug_GenerateRandomObstacles(_grid);
         }
