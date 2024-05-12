@@ -93,8 +93,12 @@ namespace Schemes.Dashboard
         {
             if (_currentSchemeLogicUnit != null)
             {
-                _currentSchemeLogicUnit.Process();
-                UpdateWireValues();
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    _currentSchemeLogicUnit.Process();
+                    UpdateWireValues();
+                    
+                }
             }
         }
 
@@ -144,8 +148,7 @@ namespace Schemes.Dashboard
                 EditorDashboard.Instance.GetPositionOnGrid(componentEditorData.coordinateOnGrid);
             return device;
         }
-
-
+        
         private SchemeDeviceWire InstantiateSchemeDeviceWire()
         {
             var wire = Instantiate(schemeDeviceWireRef);
@@ -153,7 +156,6 @@ namespace Schemes.Dashboard
             return wire;
         }
         
-
         private SchemeDeviceWire InstantiateSchemeDeviceWire(WireConnectionEditorData wireConnectionEditorData,
             SchemeRelation schemeRelation)
         {
@@ -175,7 +177,6 @@ namespace Schemes.Dashboard
         }
 
         #endregion
-
 
         private void OnDevicePortInteractedHandler(SchemeInteractedOnPortsEventArgs arg0)
         {
@@ -207,7 +208,6 @@ namespace Schemes.Dashboard
             }
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
         private void ProcessNewDevice(SchemeDevice schemeDevice)
         {
             _devices.Add(schemeDevice);

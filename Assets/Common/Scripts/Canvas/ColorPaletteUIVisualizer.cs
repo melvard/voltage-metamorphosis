@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using Misc;
-using Sirenix.OdinInspector.Editor;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,14 +24,14 @@ namespace Canvas
 
         #region PRIVATE_FIELDS
 
-        private ColorPalette _colorPalette;
+        private List<Color> _paletteColors;
         private List<ColorPaletteUICell> _colorPaletteUICells;
 
         #endregion
 
         #region GETTERS
 
-        private List<Color> PaletteColors => _colorPalette.Colors;
+        private List<Color> PaletteColors => _paletteColors;
 
         #endregion
 
@@ -42,18 +40,14 @@ namespace Canvas
             container.DestroyChildren();
             _colorPaletteUICells = new();
             _colorPaletteUICells.Clear();
+            _paletteColors = colors;
             
-            _colorPalette = new ColorPalette()
-            {
-                Colors = colors
-            };
-            
-            var numberOfColorsInPalette = _colorPalette.Colors.Count;
+            var numberOfColorsInPalette = _paletteColors.Count;
               
             for (int i = 0; i < numberOfColorsInPalette; i++)
             {
                 var colorPaletteCell = Instantiate(colorPaletteUICellRef, container);
-                colorPaletteCell.Color = _colorPalette.Colors[i];
+                colorPaletteCell.Color = _paletteColors[i];
                 colorPaletteCell.OnCellClicked += OnColorPaletteCellClickHandler;
                 _colorPaletteUICells.Add(colorPaletteCell);
             }

@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Threading;
 using Canvas.Popups;
+using Common.Scripts.Common.Canvas.Popups;
 using Cysharp.Threading.Tasks;
 using GameLogic;
 using Schemes;
@@ -58,22 +59,30 @@ namespace Canvas
     {
         #region SERIALIZED_FIELDS
 
+        [SerializeField] private Button helpButton;
+        
+        [Space]
         [Title("General info")]
         [SerializeField] private TMP_InputField schemeNameInputField;
         [SerializeField] private TMP_InputField schemeDescriptionInputField;
-        
+
+        [Space]
         [Title("Visuals")]
         [SerializeField] private ColorPaletteUIVisualizer schemeColorPaletteUIVisualizer;
 
+        
+        [Space]
         [Title("Size")] 
         [SerializeField] private TMP_InputField xSizeInputField;
         [SerializeField] private TMP_InputField ySizeInputField;
 
+        [Space]
         [Title("Interaction button")] 
         [SerializeField] private Button saveSchemeButton;
         [SerializeField] private Button clearDashboardButton;
         [SerializeField] private Button newSchemeButton;
-
+        
+        [Space]
         [Title("Scheme selection section")] 
         [SerializeField] private SchemesSelectorUI schemesSelectorUI;
         
@@ -128,9 +137,15 @@ namespace Canvas
             saveSchemeButton.onClick.AddListener(OnSchemeSaveButtonClickHandler);
             newSchemeButton.onClick.AddListener(OnNewSchemeButtonClickHandler);
             clearDashboardButton.onClick.AddListener(OnClearDashboardButtonClickHandler);
+            helpButton.onClick.AddListener(OnHelpButtonClickHandler);
         }
 
-            
+        private void OnHelpButtonClickHandler()
+        {
+            HelpPopup.Spawn(_popupCancellationSource.Token).Forget();
+        }
+
+
         private async void OnSchemeSaveButtonClickHandler()
         {
             if (await SavePopup.Spawn(_popupCancellationSource.Token))

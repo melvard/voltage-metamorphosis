@@ -9,7 +9,7 @@ namespace GameCamera
     public class GameCameraMovementController : MonoBehaviour
     {
         private List<IMovementStrategy> _movementStrategies;
-
+        
         private void Awake()
         {
             _movementStrategies = new();

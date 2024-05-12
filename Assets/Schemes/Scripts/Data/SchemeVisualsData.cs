@@ -1,9 +1,6 @@
 using System;
-using System.Linq;
 using GameLogic;
 using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Editor;
-using UnityEditor;
 using UnityEngine;
 
 namespace Schemes.Data
@@ -137,11 +134,11 @@ namespace Schemes.Data
             return schemeVisualsData;
         }
 
-        public ColorPalette FetchColorPalette()
-        {
-             return Sirenix.OdinInspector.Editor.ColorPaletteManager.Instance.ColorPalettes
-                .First(palette => palette == null);
-        }
+        // public ColorPalette FetchColorPalette()
+        // {
+        //      return Sirenix.OdinInspector.Editor.ColorPaletteManager.Instance.ColorPalettes
+        //         .First(palette => palette == null);
+        // }
 
         public void ArrangeInputPositionAutomatically(byte numberOfInputs)
         {
