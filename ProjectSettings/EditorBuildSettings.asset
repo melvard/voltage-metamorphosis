@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Common/Scenes/RemoveSchemePopup.unity
     guid: 4a8c0a48cfa54419584b99bee535272d
   - enabled: 1
+    path: Assets/Common/Scenes/HelpPopup.unity
+    guid: e113778bd388642c6b965e0927d7630e
+  - enabled: 1
     path: Assets/Common/Scenes/EditSchemePopup.unity
     guid: 6c0e0f0df2a4c4f92aca1252751e6ecc
   - enabled: 1

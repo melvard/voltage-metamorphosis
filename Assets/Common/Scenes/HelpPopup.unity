@@ -662,25 +662,29 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '- WASD to move on board.
+  m_text: 'Welcome my friend to Voltage Metamorphosis. For minimal assistance here
+    are hint for you to control the game.
 
-    - Scroll wheel to zoom in/out
 
-    - Tap
-    on schemes from left panel and tick on board to create scheme device
+    - WASD to move on board.
 
-    - Right
-    click to remove elements
+    - Scroll
+    wheel to zoom in/out
 
-    - Press escape to cancel wiring
+    - Tap on schemes from left panel and tick on board
+    to create scheme device
+
+    - Right click to remove elements
+
+    - Press escape
+    to cancel wiring
+
+    - Left click on ports to start wiring
 
     - Left click
-    on ports to start wiring
+    and drag to move devices
 
-    - Left click and drag to move devices
-
-    - Use
-    right click and left shift to set input value'
+    - Use right click and left shift to set input value'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
   m_sharedMaterial: {fileID: 7695387366603751775, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
@@ -707,7 +711,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.05
+  m_fontSize: 16.3
   m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 1

@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 67862de1871b149d6ae7d790e6911d11
+labels:
+- GameScene
 DefaultImporter:
   externalObjects: {}
   userData: 
