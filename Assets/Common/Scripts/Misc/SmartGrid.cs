@@ -8,17 +8,26 @@ namespace Misc
 {
     public class SmartGrid<TGridElement> : IEnumerable<TGridElement>
     {
+        #region DEBUG_ONLY
+
         private readonly Color DEBUG_LINE_COLOR = new(136, 8, 8, 0.2f);
         private const float DEBUG_LINE_DURATION = 100000f;
+
+        #endregion
+
+        #region PRIVATE_FIELDS
 
         private readonly int _width;
         private readonly int _height;
         private readonly float _cellSize;
         private readonly TGridElement[,] _gridArray;
         private readonly Vector3 _originPosition;
-        private TextMesh[,] _debugTextsGrid;
+        private readonly bool _showDebug = true;
+        
+        #endregion
 
-        private bool _showDebug = true;
+        #region CONSTRUCTORS
+
         public SmartGrid(int width, int height, float cellSize, Vector3 originPosition, Func<SmartGrid<TGridElement>, int, int, TGridElement> createGridObject)
         {
             _width = width;
@@ -36,7 +45,6 @@ namespace Misc
             if (_showDebug)
             {
                 Vector3 shiftFromCellCenter = new Vector3(-cellSize / 2f, 0, -cellSize / 2f);
-                _debugTextsGrid = new TextMesh[width, height];
                 for (int x = 0; x < _gridArray.GetLength(0); x++)
                     for (int y = 0; y < _gridArray.GetLength(1); y++)
                     {
@@ -63,16 +71,11 @@ namespace Misc
                     DEBUG_LINE_COLOR,
                     DEBUG_LINE_DURATION);
             }
-
-            // GenerateRandomObstacles();
         }
+        
+        #endregion
 
-        // public SmartGrid(Vector2Int size, float cellSize, Vector3 originPosition, Func<TGridObject> createGridObject) : 
-        //     this(size.x, size.y, cellSize,
-        //     originPosition, createGridObject)
-        // {
-        // }
-
+        #region COMMUNICATION_WITH_GRID
         public void SetValue(int x, int y, TGridElement value)
         {
             if
@@ -165,6 +168,25 @@ namespace Misc
             return _height;
         }
 
+        public Vector3 GetOrigin()
+        {
+            return _originPosition;
+        }
+
+        public float GetCellSize()
+        {
+            return _cellSize;
+        }
+
+        #endregion
+
+        #region FOREACH_IMPLEMENTATION
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        
         public IEnumerator<TGridElement> GetEnumerator()
         {
             foreach (TGridElement element in _gridArray)
@@ -173,10 +195,7 @@ namespace Misc
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        #endregion
     }
 }
 //

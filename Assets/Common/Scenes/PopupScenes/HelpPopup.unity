@@ -662,29 +662,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Welcome my friend to Voltage Metamorphosis. For minimal assistance here
-    are hint for you to control the game.
-
-
-    - WASD to move on board.
-
-    - Scroll
-    wheel to zoom in/out
-
-    - Tap on schemes from left panel and tick on board
-    to create scheme device
-
-    - Right click to remove elements
-
-    - Press escape
-    to cancel wiring
-
-    - Left click on ports to start wiring
-
-    - Left click
-    and drag to move devices
-
-    - Use right click and left shift to set input value'
+  m_text: "Welcome my friend to Voltage Metamorphosis. For minimal assistance here
+    are hint for you to control the game.\n\n- WASD to move on board.\n-Hold \u201Cleft
+    shift\u201D key to fasten movement on dashboard\n- Scroll wheel to zoom in/out\n-
+    Tap on schemes from left panel and tick on board to create scheme device\n- Right
+    click to remove elements\n- Press escape to cancel wiring\n- Left click on ports
+    to start wiring\n- Left click and drag to move devices\n- Use right click and
+    left shift to set input value"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
   m_sharedMaterial: {fileID: 7695387366603751775, guid: 8d0c12a82558c401fa9fea66bfe87e54, type: 2}
@@ -711,7 +695,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16.3
+  m_fontSize: 15.7
   m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -916,7 +900,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 26.3}
-  m_SizeDelta: {x: 343.0659, y: 254.1805}
+  m_SizeDelta: {x: 421.5574, y: 254.1805}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1807377026
 GameObject:

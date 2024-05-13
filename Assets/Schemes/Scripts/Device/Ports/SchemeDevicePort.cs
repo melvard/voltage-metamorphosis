@@ -12,17 +12,39 @@ namespace Schemes.Device.Ports
 {
     public abstract class SchemeDevicePort : SerializedMonoBehaviour
     {
+        #region SERIALIZED_FIELDS
+
         [OdinSerialize] private PortValueIndicator portValueIndicator;
         [OdinSerialize] private ISchemeDevicePortInteractionHandler _schemeDevicePortInteractionHandler;
+
+        #endregion
+
+        #region PROTECTED_FIELDS
 
         [DisableInPlayMode] [DisableInEditorMode] [ShowInInspector]
         protected byte portIndex;
 
+        #endregion
+
+        #region PRIVATE_FIELDS
+
         private SchemeDevice _schemeDeviceBelonged;
+
+        #endregion
+        
+        #region EVENTS
+        
         public event UnityAction<SchemeDevicePortInteractEventArgs> OnPortClicked;
+        
+        #endregion
+        
+
+        #region GETTERS
 
         public SchemeDevice SchemeDevice => _schemeDeviceBelonged;
         public byte PortIndex => portIndex;
+
+        #endregion
         public void Awake()
         {
             _schemeDevicePortInteractionHandler.OnPortClicked += OnPortClickedHandler;

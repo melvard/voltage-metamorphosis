@@ -15,6 +15,14 @@ namespace Canvas
 {
     public class SchemeSelectionElement : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
+        #region EVENTS
+
+        public event UnityAction<SchemeInteractionEventArgs> OnSchemeEditBtnClick;
+        public event UnityAction<SchemeInteractionEventArgs> OnSchemeSelectBtnClick;
+        public event UnityAction<SchemeInteractionEventArgs> OnSchemeRemoveBtnClick;
+        
+        #endregion
+        
         #region SERIALIZED_FIELDS
 
         [SerializeField] private TextMeshProUGUI schemeName;
@@ -41,15 +49,7 @@ namespace Canvas
         private bool _interactable = false;
         
         #endregion
-
-        #region EVENTS
-
-        public event UnityAction<SchemeInteractionEventArgs> OnSchemeEditBtnClick;
-        public event UnityAction<SchemeInteractionEventArgs> OnSchemeSelectBtnClick;
-        public event UnityAction<SchemeInteractionEventArgs> OnSchemeRemoveBtnClick;
         
-        #endregion
-
         #region GETTERS
 
         public Scheme HoldingScheme => _holdingScheme;

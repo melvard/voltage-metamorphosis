@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Misc;
@@ -6,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Canvas.Popups
+namespace Common.Canvas.Popups
 {
     public class SavePopup : MonoBehaviour
     {

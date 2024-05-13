@@ -16,6 +16,13 @@ namespace Schemes.Device.Wire
 {
     public class SchemeDeviceWire : MonoBehaviour
     {
+        #region EVENTS
+
+        public event UnityAction OnWiringCanceled;
+        public event UnityAction<SchemeDeviceWire> OnWireRemoveCommand;
+        
+        #endregion
+        
         #region CONSTS
 
         private const KeyCode CANCEL_WIRING_KEY = KeyCode.Escape;
@@ -53,13 +60,7 @@ namespace Schemes.Device.Wire
 
         #endregion
 
-        #region EVENTS
-
-        public event UnityAction OnWiringCanceled;
-        public event UnityAction<SchemeDeviceWire> OnWireRemoveCommand;
-        
-        #endregion
-
+      
         private WireNode GenerateWaypointNode()
         {
             var node = GenerateNode(null);

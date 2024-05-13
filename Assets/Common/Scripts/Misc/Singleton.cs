@@ -1,4 +1,4 @@
-namespace Misc
+namespace Common.Misc
 {
     public class Singleton<T> where T : class, new()
     {

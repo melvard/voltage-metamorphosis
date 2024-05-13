@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Canvas;
+using Common.Misc;
 using Cysharp.Threading.Tasks;
 using GameLogic;
 using Misc;
@@ -42,7 +43,9 @@ namespace Schemes.Dashboard
         public SchemeEditor SchemeEditor_Debug => schemeEditor;
         
         #endregion
-        
+
+        #region UNITY_EVENT_FUNCTIONS
+
         private async void Start()
         {
             _saveRemoveSchemeTaskCancellationTokenSource = new();
@@ -50,6 +53,19 @@ namespace Schemes.Dashboard
             schemeEditorUI.OnClearDashboardCommandFromUI += OnClearDashboardHandler;
             schemeEditorUI.OnNewSchemeCommandFromUI += OnNewSchemeHandler;
 
+            SetupGridSystem();
+            
+            await UniTask.WaitUntil(() => InputsManager.GetKeyDown(KeyCode.Slash, gameObject.layer));
+            Debug_GenerateRandomObstaclesOnGrid(_grid);
+        }
+        
+
+        #endregion
+
+        #region GRID_SYSTEM
+        
+        private void SetupGridSystem()
+        {
             var offsetX = gridWidth / 2f * gridCellSize;
             var offsetZ = gridHeight / 2f * gridCellSize;
 
@@ -68,13 +84,9 @@ namespace Schemes.Dashboard
                 gridCellSize,
                 gridOrigin,
                 (grid, x, y) => new DashboardGridElement(grid, x, y));
-            
-            await UniTask.WaitUntil(() => InputsManager.GetKeyDown(KeyCode.Slash, gameObject.layer));
-            Debug_GenerateRandomObstacles(_grid);
         }
 
-
-        private void Debug_GenerateRandomObstacles(SmartGrid<DashboardGridElement> grid)
+        private void Debug_GenerateRandomObstaclesOnGrid(SmartGrid<DashboardGridElement> grid)
         {
             UnityEngine.Random.InitState(1);
             for (int x = 0; x < grid.GetWidth(); x++)
@@ -92,8 +104,8 @@ namespace Schemes.Dashboard
 
             UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
         }
-
-
+        
+        
         public Vector3 GetPositionOnGrid(Vector3 position)
         {
             return _grid.GetAlignedPositionOnGrid(position);
@@ -118,14 +130,7 @@ namespace Schemes.Dashboard
             _grid.GetXY(pos2, out var endX, out var endY);
             return AStarPathfinding.FindPath(_grid, startX, startY, endX, endY, simplified);
         }
-
-        public void Init()
-        {
-            schemeEditor.Init();
-            schemeEditorUI.Init();
-            SetEditorCamCamera(Vector3.zero);
-        }
-
+        
         public bool IsGridCellWalkable(Vector3 mousePositionToGrid)
         {
             return _grid.GetValue(mousePositionToGrid).IsWalkable;
@@ -142,6 +147,21 @@ namespace Schemes.Dashboard
             return wireNodesCoordinates.Select(wireNodesCoordinate => _grid.GetValue(wireNodesCoordinate)).ToList();
         }
 
+        #endregion
+
+        #region INITALIZATION
+
+        public void Init()
+        {
+            schemeEditor.Init();
+            schemeEditorUI.Init();
+            SetEditorCamCamera(Vector3.zero);
+        }
+        
+        #endregion
+        
+        #region EVENT_OBSERVATION
+
         private void OnClearDashboardHandler()
         {
             schemeEditor.ClearComponentsAndWires();
@@ -150,7 +170,7 @@ namespace Schemes.Dashboard
                 dashboardGridElement.businessIntValDebug = 0;
             }
         }
-        
+
         public async void OnSchemeSelectCommandHandler(SchemeInteractionEventArgs arg0)
         {
             schemeEditorUI.DisableSchemeSelector();
@@ -185,15 +205,18 @@ namespace Schemes.Dashboard
             
         }
 
-        private void SetEditorCamCamera(Vector3 position)
-        {
-            schemeEditorCameraTransform.position = position;
-        }
-
         public void OnRemoveSchemeHandler(SchemeInteractionEventArgs arg0)
         {
             SchemesSaverLoader.OnRemoveSchemeHandler(arg0, _saveRemoveSchemeTaskCancellationTokenSource.Token);
         }
+        
+        private void SetEditorCamCamera(Vector3 position)
+        {
+            schemeEditorCameraTransform.position = position;
+        }
+        
+        #endregion
+
     }
 
     public class DashboardGridElement : MustInitializeGridElement<DashboardGridElement>,
@@ -203,13 +226,24 @@ namespace Schemes.Dashboard
         {
         }
 
+        #region PATHFINDING_PROPERTIES
+
         public int gCost { get; set; }
         public int hCost { get; set; }
         public int fCost { get; set; }
+        
+        public DashboardGridElement nodeCameFrom { get; set; }
+        
+        public bool IsWalkable => businessIntValDebug == 0;
+
+        #endregion
+
+        #region DEBUG_ONLY
 
         public int businessIntValDebug = 0;
-        public DashboardGridElement nodeCameFrom { get; set; }
+        
+        #endregion
+        
 
-        public bool IsWalkable => businessIntValDebug == 0;
     }
 }

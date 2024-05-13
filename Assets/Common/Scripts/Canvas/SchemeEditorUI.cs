@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Threading;
 using Canvas.Popups;
+using Common.Canvas.Popups;
 using Common.Scripts.Common.Canvas.Popups;
 using Cysharp.Threading.Tasks;
 using GameLogic;
@@ -57,6 +58,14 @@ namespace Canvas
     }
     public class SchemeEditorUI : MonoBehaviour
     {
+        #region EVENTS
+        
+        public event UnityAction<SchemeUIData> OnSaveSchemeCommandFromUI;
+        public event UnityAction OnClearDashboardCommandFromUI;
+        public event UnityAction OnNewSchemeCommandFromUI;
+        
+        #endregion
+        
         #region SERIALIZED_FIELDS
 
         [SerializeField] private Button helpButton;
@@ -87,8 +96,7 @@ namespace Canvas
         [SerializeField] private SchemesSelectorUI schemesSelectorUI;
         
         #endregion
-
-
+        
         #region PRIVATE_FIELDS
 
         private Scheme _scheme;
@@ -97,13 +105,7 @@ namespace Canvas
 
         #endregion
 
-        #region EVENTS
-        
-        public event UnityAction<SchemeUIData> OnSaveSchemeCommandFromUI;
-        public event UnityAction OnClearDashboardCommandFromUI;
-        public event UnityAction OnNewSchemeCommandFromUI;
-        
-        #endregion
+      
         // debugOnly: internal unity Start function is used to quickly test UI interactions 
         private async void Start()
         {
