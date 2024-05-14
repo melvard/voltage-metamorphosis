@@ -44,7 +44,7 @@ Contributions to the Voltage Metamorphosis project are welcome! Whether you're i
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [APACHE LICENSE, VERSION 2.0](LICENSE).
 
 ---
 
