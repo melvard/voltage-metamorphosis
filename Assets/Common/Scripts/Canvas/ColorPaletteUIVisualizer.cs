@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Misc;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,9 +10,11 @@ namespace Canvas
     {
         #region SERIALIZED_FIELDS
 
-        [SerializeField] private ColorPaletteUICell colorPaletteUICellRef;
+        [Tooltip("Container for generated color cells")]
         [SerializeField] private Transform container;
-        [SerializeField] private ColorPaletteUICell selectedPaletteUICell;
+        
+        [AssetsOnly][SerializeField] private ColorPaletteUICell colorPaletteUICellRef;
+        [ChildGameObjectsOnly][SerializeField] private ColorPaletteUICell selectedPaletteUICell;
 
         #endregion
 

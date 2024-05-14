@@ -25,8 +25,8 @@ namespace Schemes.Dashboard
     {
         #region SERIALIZED_FIELDS
 
-        [AssetsOnly] [SerializeField] private SchemeDevice schemeDeviceRef;
-        [AssetsOnly] [SerializeField] private SchemeDeviceWire schemeDeviceWireRef;
+        [Required] [AssetsOnly] [SerializeField] private SchemeDevice schemeDeviceRef;
+        [Required] [AssetsOnly] [SerializeField] private SchemeDeviceWire schemeDeviceWireRef;
 
         #endregion
 
@@ -93,12 +93,12 @@ namespace Schemes.Dashboard
         {
             if (_currentSchemeLogicUnit != null)
             {
-                if (Input.GetKey(KeyCode.Space))
-                {
-                    _currentSchemeLogicUnit.Process();
-                    UpdateWireValues();
-                    
-                }
+                // if (Input.GetKey(KeyCode.Space))
+                // {
+                //    
+                // }
+                _currentSchemeLogicUnit.Process();
+                UpdateWireValues();
             }
         }
 
