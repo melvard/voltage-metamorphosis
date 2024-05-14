@@ -22,10 +22,13 @@ namespace Schemes
     
     public static class SchemesSaverLoader
     {
+        #region PRIVATE_FIELDS
+
         private static readonly string SavePath = Path.Combine(Application.persistentDataPath, "PlayerData.json");
-        public  static PlayerData PlayerData;
+        private static PlayerData PlayerData;
 
-
+        #endregion
+        
         #region EVENTS
 
         public static event UnityAction<SchemeInteractionEventArgs> OnSchemeRemoved; 
