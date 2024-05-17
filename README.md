@@ -1,5 +1,7 @@
 # Voltage Metamorphosis
 
+<img width="256" alt="Logo" src="https://github.com/melvard/voltage-metamorphosis/assets/69721477/4d425568-aaae-4ec2-a72b-03e924dbeed7">
+
 Welcome to the Voltage Metamorphosis repository! This project is a 3D top-down computer simulator sandbox desktop game developed in Unity Engine. The primary objective of the project is to provide a fun and educational experience for players to learn about basic concepts of computer architecure with the help of electricity and circuit wiring, and gradually design logical gates and more complex modules related to computer architecture.
 
 <img width="1837" alt="Screenshot 2024-05-13 at 01 09 42" src="https://github.com/melvard/voltage-metamorphosis/assets/69721477/0add6bb8-ee80-4db8-a982-7ce3d98bbe4c">
