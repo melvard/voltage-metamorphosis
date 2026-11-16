@@ -159,7 +159,7 @@ namespace DebuggingEssentials
                 if (light.type == LightType.Directional) return directionalLightIcon;
                 else if (light.type == LightType.Point) return pointLightIcon;
                 else if (light.type == LightType.Spot) return spotLightIcon;
-                else if (light.type == LightType.Area) return areaLightIcon;
+                else if (light.type == LightType.Rectangle) return areaLightIcon;
             }
             return null;
         }

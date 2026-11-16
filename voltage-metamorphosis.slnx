@@ -1,0 +1,18 @@
+﻿<Solution>
+  <Project Path="UniTask.Linq.csproj" />
+  <Project Path="SingularityGroup.HotReload.Editor.csproj" />
+  <Project Path="UniTask.csproj" />
+  <Project Path="LunarConsole.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="LunarConsoleEditor.csproj" />
+  <Project Path="UniTask.Editor.csproj" />
+  <Project Path="AYellowpaper.SerializedCollections.Editor.csproj" />
+  <Project Path="AYellowpaper.SerializedCollections.csproj" />
+  <Project Path="SingularityGroup.HotReload.Runtime.Public.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="SingularityGroup.HotReload.Runtime.csproj" />
+  <Project Path="UniTask.DOTween.csproj" />
+  <Project Path="UniTask.TextMeshPro.csproj" />
+  <Project Path="UniTask.Addressables.csproj" />
+  <Project Path="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
+</Solution>
