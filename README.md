@@ -26,8 +26,8 @@ Every scheme below was wired by hand in the game, starting from a voltage source
 
 | NAND | XOR | D-type latch |
 |:---:|:---:|:---:|
-| <img src="docs/schemes/nand.png" width="260" alt="NAND gate: a saved AND block followed by NOT"> | <img src="docs/schemes/xor.png" width="260" alt="XOR gate from AND, NOT and OR blocks"> | <img src="docs/schemes/d-latch.png" width="260" alt="D-type latch built from four NAND blocks"> |
-| A saved AND block followed by NOT | (A AND NOT B) OR (NOT A AND B) | Four NAND blocks that remember one bit |
+| <img src="docs/schemes/nand.png" width="260" alt="NAND gate: a saved AND block followed by NOT"> | <img src="docs/schemes/xor.png" width="260" alt="XOR gate from AND, NOT and OR blocks"> | <img src="docs/schemes/d-latch.png" width="260" alt="D-type latch built from four NAND blocks and a NOT"> |
+| A saved AND block followed by NOT | (A AND NOT B) OR (NOT A AND B) | Four NAND blocks and a NOT that remember one bit |
 
 ## Objectives
 
